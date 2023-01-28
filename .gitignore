@@ -1,0 +1,16 @@
+/.bsp/
+target/
+# bloop and metals
+.bloop
+.bsp
+# metals
+project/metals.sbt
+.metals
+# scala 3
+.tasty
+.scala_dependencies
+*.class
+# sbt
+project/project/
+project/target/
+target/
