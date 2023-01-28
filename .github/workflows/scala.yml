@@ -13,7 +13,8 @@ on:
 
 permissions:
   contents: read
-
+env:
+  TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
 jobs:
   build:
 
