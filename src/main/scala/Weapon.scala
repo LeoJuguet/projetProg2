@@ -21,6 +21,7 @@ class Weapon:
 
     var projectile_speed : Int
     var reload_time : Int
+    var reloading : Int
 
     var energy : Int
     var ballistic : Boolean
@@ -44,114 +45,168 @@ class Weapon:
 
         projectile
 
-def new_weapon(name)
-    var weapon = new Weapon()
-    weapon.name = name
-    if name == "Blaster I":
-        weapon.strength = 1
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 10
-        weapon.reload_time = 10
-        weapon.energy = 1
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Blaser II":
-        weapon.strength = 2
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 10
-        weapon.reload_time = 10
-        weapon.energy = 2
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Blaster III":
-        weapon.strength = 3
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 10
-        weapon.reload_time = 10
-        weapon.energy = 3
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Heavy Blaster I":
-        weapon.strength = 2
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 10
-        weapon.reload_time = 20
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Heavy Blaster II":
-        weapon.strength = 4
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 10
-        weapon.reload_time = 20
-        weapon.energy = 2
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Heavy Blaster III":
-        weapon.strength = 6
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 10
-        weapon.reload_time = 20
-        weapon.energy = 3
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Machine Blaster":
-        weapon.strength = 1
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 10
-        weapon.reload_time = 1
-        weapon.energy = 4
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Ion Blaster I":
-        weapon.strength = 0
-        weapon.ion_strength = 1
-        weapon.projectile_speed = 5
-        weapon.reload_time = 5
-        weapon.energy = 1
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name == "Ion Blaster II":
-        weapon.strength = 0
-        weapon.ion_strength = 2
-        weapon.projectile_speed = 5
-        weapon.reload_time = 5
-        weapon.energy = 2
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name = "Ion Machine":
-        weapon.strength = 0
-        weapon.ion_strength = 1
-        weapon.projectile_speed = 5
-        weapon.reload_time = 1
-        weapon.energy = 4
-        weapon.target = -1
-        weapon.ballistic = false
-        weapon.pos = (0, 0)
-    else if name = "Space Revolver"
-        weapon.strength = 6
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 20
-        weapon.reload_time = 20
-        weapon.energy = 1
-        weapon.target = -1
-        weapon.ballistic = true
-        weapon.pos = (0, 0)
-    else if name = "Ocelot"
-        /* TODO : badass item description, no information displayed */
-        weapon.strength = 6
-        weapon.ion_strength = 0
-        weapon.projectile_speed = 20
-        weapon.reload_time = 10
-        weapon.energy = 1
-        weapon.target = -1
-        weapon.ballistic = true
-        weapon.pos = (0, 0)
+class Blaster_I extends Weapon:
+    var name = "Blaster I"
+    var strength = 1
+    var projectile_speed = 10
+    var reload_time = 10
+    var energy = 1
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Blaster_II extends Weapon:
+    var name = "Blaster II"
+    var strength = 2
+    var projectile_speed = 10
+    var reload_time = 10
+    var energy = 2
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Blaster_III extends Weapon:
+    var name = "Blaster III"
+    var strength = 3
+    var projectile_speed = 10
+    var reload_time = 10
+    var energy = 3
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Heavy_Blaster_I extends Weapon:
+    var name = "Heavy Blaster I"
+    var strength = 2
+    var projectile_speed = 10
+    var reload_time = 20
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Heavy_Blaster_II extends Weapon:
+    var name = "Heavy Blaster II"
+    var strength = 4
+    var projectile_speed = 10
+    var reload_time = 20
+    var energy = 2
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Heavy_Blaster_III extends Weapon:
+    var name = "Heavy Blaster III"
+    var strength = 6
+    var projectile_speed = 10
+    var reload_time = 20
+    var energy = 3
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Machine_Blaster extends Weapon:
+    var name = "Machine Blaster"
+    var strength = 1
+    var projectile_speed = 10
+    var reload_time = 1
+    var energy = 4
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Ion_Blaster_I extends Weapon:
+    var name = "Ion Blaster I"
+    var ion_strength = 1
+    var projectile_speed = 10
+    var reload_time = 10
+    var energy = 1
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Ion_Blaster_II extends Weapon:
+    var name = "Ion Blaster II"
+    var ion_strength = 2
+    var projectile_speed = 10
+    var reload_time = 10
+    var energy = 2
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Ion_Machine extends Weapon:
+    var name = "Ion Machine"
+    var ion_strength = 1
+    var projectile_speed = 10
+    var reload_time = 1
+    var energy = 4
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+class Space_Revolver extends Weapon:
+    var name = "Space Revolver"
+    var strength = 6
+    var projectile_speed = 20
+    var reload_time = 20
+    var energy = 1
+    var target = -1
+    var ballistic = true
+    var amunition = 6 * 15
+    var pos = (0, 0)
+
+class Ocelot extends Weapon:
+    /* TODO : badass item description, no information displayed */
+    var name = "Ocelot"
+    var strength = 6
+    var projectile_speed = 20
+    var reload_time = 10
+    var energy = 1
+    var target = -1
+    var ballistic = true
+    var amunition = 6 * 15
+    var pos = (0, 0)
+
+class Advanced_Hacking_L3_Slave extends Weapon:
+    var name = "Advanced Hacking L3 Slave"
+    var target = -1
+    var ballistic = false
+    var pos = (0, 0)
+
+    def fire(src_pos, trg_pos):
+        /* TODO : vérifier si il y a une synthaxe particulière pour réécrire une méthode */
+        /* TODO : générer un langage aléatoire */
+        course_choice = random(0, 3)
+        match course_choice:
+            case 0:
+                /* écrit en gros le langage en mode OBJECTION ! */
+                draw scala
+                puts target power to 0
+                -> retourner le choix pour que le jeu s'en charge
+            case 1:
+                draw lisp
+                kill target's crew
+            case 2:
+                draw python
+                heals target's hull
+            case 3:
+                draw C++
+                heals target's shield and power
+            case 4:
+                draw C
+                inflicts 3 damage constant
+            case 5:
+                draw assembly x86_64
+                deactivate target's shield
+            case 6:
+                draw LaTeX
+                inflicts 2 damage
+            case 7:
+                draw Ocaml
+                inflicts 3 damage
+            case 8:
+                draw SFML
+                kills the whole ally fleet and prints a special defeat message
+            case GimML:
+                draw GimML
+                kills half of the enemy fleet

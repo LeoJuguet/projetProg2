@@ -83,16 +83,44 @@ def game_window(window: RenderWindow, game: Game):
     continue = true
     while continue do
         if state == "running" then
+            /*t = time*/
+            for projectile <- game.universe.projectiles do
+                move
+                if contact avec target then
+                    apu projectile
+                    bobo vaisseau
+                    draw_boom
+                else draw
+
+            for asteroid <- game.universe.asteroids do
+                move
+                if contact avec ship then
+                    apu asteroid
+                    bobo vaisseau
+                else draw
+
+            for ennemy <- game.universe.ennemies do
+                ennemy.IA
+
+            for ally <- world.allies do
+                /* call ally IA depending on its name */
+                /* si pas target, alors target ? */
+                /* si target, alors move ou attaque */
+
+                ()
+
             for event <- window.pollEvent() do
             event match {
                 case _: Event.Closed =>
                     window.closeWindow()
                     continue = false
                     "exit"
-                case _ => state = "pause"
+                case _ =>
+                    state = "pause"
                 case _ => ()
             }
-            draw(game)
+            /*wait max 0 time - t - 1/60s*/
+            
         else if state == "pause" then
             for event <- window.pollEvent() do
             event match {
@@ -115,15 +143,15 @@ def game_window(window: RenderWindow, game: Game):
     var universe = Universe()
     var player = init_player()
 
-    univers.player = player
-    univers.ships = player :: univers.ships
+    universe.player = player
+    universe.ships = player :: universe.ships
 
     /* faire du perlin noise */
-    univers.asteroids = create_asteroids(univers)
-    univers.ennemies = create_ennemies(univers)
-    univers.allies = create_allies(univers)
+    universe.asteroids = create_asteroids(universe)
+    universe.ennemies = create_ennemies(universe)
+    universe.allies = create_allies(universe)
 
-    univers.ships = univers.ships ++ univers.ennemies ++ univers.allies
+    universe.ships = universe.ships ++ universe.ennemies ++ universe.allies
 
     player.pos = (width / 2, height / 2)
 
@@ -150,20 +178,4 @@ def game_window(window: RenderWindow, game: Game):
             else
                 /* afficher un message d'erreur */
                 ()
-            /*t = time*/
-
-            for event <- window.pollEvent() do
-                event match {
-                    case _: Event.Closed => window.closeWindow()
-                    /* TODO : take the actions */
-                    case _ => ()
-                }
-            
-            for ennemy <- world.ennemies do
-                /* call ennemy IA depending on its name */
-                /* si pas target, alors target ? */
-                /* si target, alors move ou attaque */
-
-                ()
-            /*wait max 0 time - t - 1/60s*/
     }

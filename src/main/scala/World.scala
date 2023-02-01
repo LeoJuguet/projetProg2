@@ -6,6 +6,12 @@ class asteroid:
     var speed_norm
     var speed
 
+    def draw(window: RenderWindow) =
+        grey_circle = CircleShape(10)
+        grey_circle.setFillColor(Color(100, 100, 100))
+        grey_circle.setPosition(pos)
+        window.draw(grey_circle)
+
 
 class Universe:
     var player : Ship
