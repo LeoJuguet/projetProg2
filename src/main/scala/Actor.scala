@@ -7,6 +7,9 @@ import sfml.window.*
 import gamestate.*
 
 /** Actor
+ *
+ * @constructor crate a new Actor
+ * @param gameState the game state who draw this actor
  */
 class Actor(var gameState :GameState) extends Transformable with Drawable with Resource :
     var textures: String = "src/main/resources/sfml-logo.png"
