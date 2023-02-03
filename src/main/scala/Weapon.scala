@@ -31,7 +31,7 @@ class Weapon:
     /* si l'arme est dans un vaisseau, c'est / au vaisseau, sinon, à l'univers */
     var pos : (Int, Int)
 
-    def fire(src_pos, trg_pos):
+    def fire(src_pos: (Int, Int), trg_pos: (Int, Int)):
         /* ship's x and y are the origin of the projectile */
         /* TODO : quand le ship sera vraiment un ship et pas un rond, il faudra ajuster x  et y */
         var projectile = new Projectile()

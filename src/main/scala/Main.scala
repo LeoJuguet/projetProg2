@@ -1,4 +1,4 @@
-import sfml.graphics.*
+/*import sfml.graphics.*
 import sfml.window.*
 
 import World.*
@@ -24,10 +24,10 @@ class Game:
 
     /* faire du perlin noise */
     univers.asteroids = create_asteroids(univers)
-    univers.ennemies = create_ennemies(univers)
+    univers.enemies = create_enemies(univers)
     univers.allies = create_allies(univers)
 
-    univers.ships = univers.ships ++ univers.ennemies ++ univers.allies
+    univers.ships = univers.ships ++ univers.enemies ++ univers.allies
 
     player.pos = (width / 2, height / 2)
 
@@ -47,6 +47,8 @@ class Game:
         val texture = use(Texture())
         texture.loadFromFile("src/main/resources/sfml-logo.png")
 
+        val rectangle = use(sf::RectangleShape())
+
         val sprite = use(Sprite(texture))
         
         window.clear(Color.Black())
@@ -61,7 +63,7 @@ class Game:
             /*t = time*/
             if frame % 60 == 0 then
                 id += 1
-                create_ennemy(world, id)
+                create_enemy(world, id)
 
             for event <- window.pollEvent() do
                 event match {
@@ -70,12 +72,12 @@ class Game:
                     case _ => ()
                 }
             
-            for ennemy <- world.ennemies do
-                /* call ennemy IA depending on its name */
+            for enemy <- world.enemies do
+                /* call enemy IA depending on its name */
                 /* si pas target, alors target ? */
                 /* si target, alors move ou attaque */
 
                 ()
             /*wait max 0 time - t - 1/60s*/
             frame += 1
-    }
+    }*/

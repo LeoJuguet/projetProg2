@@ -1,10 +1,15 @@
 import sfml.graphics.*
 import sfml.window.*
 
-import World.*
+import World.scala
 import Ship.*
 import Weapon.*
-import Menu.*
+
+
+class Settings:
+    var volume = 100
+    var fullscreen = false
+    var resolution = (1280, 720)
 
 class Game:
     var settings : Settings
@@ -12,8 +17,8 @@ class Game:
 
 
 def menu_window(window: RenderWindow, settings: Settings):
-    state = "main_menu"
-    continue = true
+    var state = "main_menu"
+    var continue = true
     while continue do
         if state == "main_menu" then
             for event <- window.pollEvent() do
@@ -79,11 +84,12 @@ def menu_window(window: RenderWindow, settings: Settings):
             state = "main_menu"
 
 def game_window(window: RenderWindow, game: Game):
-    state = "running"
-    continue = true
+    var state = "running"
+    var continue = true
     while continue do
         if state == "running" then
-            /*t = time*/
+            /* t = time */
+            /* the frame starts by updating the projectiles */
             for projectile <- game.universe.projectiles do
                 move
                 if contact avec target then
@@ -92,6 +98,7 @@ def game_window(window: RenderWindow, game: Game):
                     draw_boom
                 else draw
 
+            /* then the asteroids */
             for asteroid <- game.universe.asteroids do
                 move
                 if contact avec ship then
@@ -99,9 +106,13 @@ def game_window(window: RenderWindow, game: Game):
                     bobo vaisseau
                 else draw
 
-            for ennemy <- game.universe.ennemies do
-                ennemy.IA
-
+            /* then the enemies */
+            for enemy <- game.universe.enemies do
+                enemy.IA
+                ennemy.move
+                ennemy.draw
+            
+            /* then the allies */
             for ally <- world.allies do
                 /* call ally IA depending on its name */
                 /* si pas target, alors target ? */
@@ -109,6 +120,7 @@ def game_window(window: RenderWindow, game: Game):
 
                 ()
 
+            /* then the player */
             for event <- window.pollEvent() do
             event match {
                 case _: Event.Closed =>
@@ -148,10 +160,10 @@ def game_window(window: RenderWindow, game: Game):
 
     /* faire du perlin noise */
     universe.asteroids = create_asteroids(universe)
-    universe.ennemies = create_ennemies(universe)
+    universe.enemies = create_enemies(universe)
     universe.allies = create_allies(universe)
 
-    universe.ships = universe.ships ++ universe.ennemies ++ universe.allies
+    universe.ships = universe.ships ++ universe.enemies ++ universe.allies
 
     player.pos = (width / 2, height / 2)
 
