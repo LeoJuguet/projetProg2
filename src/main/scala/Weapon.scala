@@ -13,6 +13,12 @@ class Projectile:
     /* ballistic weapons can pass through shields */
     var ballistic : Boolean
 
+    var life_time : Int = 0
+
+    def move() : Unit =
+        pos = (pos._1 + speed._1, pos._2 + speed._2)
+        life_time += 1
+
 class Weapon:
     var name : String
 

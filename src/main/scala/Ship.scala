@@ -9,9 +9,9 @@ class Crew:
 
 
 class Ship:
-    var id
+    var id : Int  
 
-    var pos
+    var pos : (Int, Int)
     var speed_norm = 0
     var speed = (1, 0)
 
@@ -27,6 +27,23 @@ class Ship:
     
     var shield
     var max_shield
+
+    def take_damage(projectile : Projectile) : Unit =
+        if projectile.ballistic then
+            health -= projectile.damage
+            // TODO : remove_energy deals with the priority between the differents modules of the ship.
+            remove_energy(projectile.damage)
+        else
+            lock_energy(projectile.ion_damage)
+            if shield > projectile.damage then
+                shield -= projectile.damage
+            else if shield > 0 then
+                health -= projectile.damage - shield
+                shield = 0
+            else
+                health -= projectile.damage
+                remove_energy(projectile.damage)
+            shield -= projectile.damage
 
 
 def init_player() : Ship =

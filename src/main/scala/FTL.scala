@@ -1,7 +1,7 @@
 import sfml.graphics.*
 import sfml.window.*
 
-import World.scala
+import World.*
 import Ship.*
 import Weapon.*
 
@@ -91,34 +91,36 @@ def game_window(window: RenderWindow, game: Game):
             /* t = time */
             /* the frame starts by updating the projectiles */
             for projectile <- game.universe.projectiles do
-                move
+                projectile.move()
+                if projectile.life_time > some_constant then
+                    apu projectile
+
                 if contact avec target then
                     apu projectile
-                    bobo vaisseau
+                    target.take_damage(projectile)
                     draw_boom
-                else draw
+                else projectile.draw()
 
             /* then the asteroids */
             for asteroid <- game.universe.asteroids do
-                move
+                asteroid.move()
                 if contact avec ship then
+                    //not search among all ships, but any ship in the vicinity
                     apu asteroid
                     bobo vaisseau
                 else draw
 
             /* then the enemies */
             for enemy <- game.universe.enemies do
-                enemy.IA
-                ennemy.move
-                ennemy.draw
+                enemy.IA()
+                ennemy.move()
+                ennemy.draw()
             
             /* then the allies */
             for ally <- world.allies do
-                /* call ally IA depending on its name */
-                /* si pas target, alors target ? */
-                /* si target, alors move ou attaque */
-
-                ()
+                ally.IA()
+                ally.move()
+                ally.draw()
 
             /* then the player */
             for event <- window.pollEvent() do
@@ -129,6 +131,8 @@ def game_window(window: RenderWindow, game: Game):
                     "exit"
                 case _ =>
                     state = "pause"
+                case _ =>
+                    game.univers.player.target = closest_ship(event.x, event.y)
                 case _ => ()
             }
             /*wait max 0 time - t - 1/60s*/
