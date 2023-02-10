@@ -1,77 +1,39 @@
-import Weapon.*
+package character
 
-class Crew:
-    var name = "smith"
-    var health = 100
-    var max_health = 100
-    var ship = -1
-    var pos = (0, 0)
+import actor.*
+import gamestate.*
+import sfml.system.*
+import sfml.graphics.*
 
+//importing math for sqrt
+import scala.math.*
 
-class Ship:
-    var id : Int  
+//norm takes a vector and returns its norm
 
-    var pos : (Int, Int)
-    var speed_norm = 0
-    var speed = (1, 0)
-
-    var health = 100
-    var max_health = 100
-
-    var crew = List[Crew]()
-    var weapons = List[Weapon]()
-
-    var energy
-    var max_energy
-    var fuel
+class Ship(gameState : GameState, team : Int, initialPosition : Vector2[Float]) extends GameUnit(gameState):
+    var maxSpeed = 100.0;
+    var speed = Vector2(0.0f, 0.0f);
+    var maxHealth = 50;
+    var health = 50;
+    var regenerationRate = 0;
+    var attackDamage = 10;
+    var pos = initialPosition;
+    var targetPosition = initialPosition;
     
-    var shield
-    var max_shield
-
-    def take_damage(projectile : Projectile) : Unit =
-        if projectile.ballistic then
-            health -= projectile.damage
-            // TODO : remove_energy deals with the priority between the differents modules of the ship.
-            remove_energy(projectile.damage)
-        else
-            lock_energy(projectile.ion_damage)
-            if shield > projectile.damage then
-                shield -= projectile.damage
-            else if shield > 0 then
-                health -= projectile.damage - shield
-                shield = 0
-            else
-                health -= projectile.damage
-                remove_energy(projectile.damage)
-            shield -= projectile.damage
-
-
-def init_player() : Ship =
-    var player = new Ship()
-    player.id = 0
-
-    player.pos = (0, 0)
-    player.speed = (0, 0)
-    player.speed_norm = 0
-
-    player.health = 100
-    player.max_health = 100
-
-    player.energy = 100
-    player.max_energy = 100
-    player.fuel = 100
-
-    player.shield = 100
-    player.max_shield = 100
-
-    player.crew = List[Crew]()
-    for i <- 0 to 3 do
-        crew = new Crew()
-        crew.name = "smith_" + i.toString
-        crew.ship = 0
-        player.crew = crew :: player.crew
-    
-    player.weapons = List[Weapon]()
-    
-    canon = new_weapon("Blaster I")
-    ion = new_weapon("Ion Blaster I")
+    //TODO : each ship should be its own class, so this constructor should be removed
+    def this(gameState: GameState, team: Int, shipID: Int, initialPosition: Vector2[Float]) =
+        this(gameState, team, initialPosition)
+        shipID match { 
+            case 0 => {
+                this.maxSpeed = 100.0;
+                this.speed = Vector2(0.0f, 0.0f);
+                this.maxHealth = 50;
+                this.health = 50;
+                this.regenerationRate = 0;
+                this.attackDamage = 10;
+                this.pos = initialPosition;
+                this.targetPosition = initialPosition
+            }
+            case _ => () //No other ship yet implemented
+        }
+        gameState.actors_list += this

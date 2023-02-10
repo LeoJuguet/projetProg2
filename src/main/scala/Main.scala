@@ -1,16 +1,23 @@
 import scala.util.Using
 
+import sfml.system.*
 import sfml.graphics.*
 import sfml.window.*
+
+import character.*
+import gamestate.*
 
 @main def main =
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(1024, 768), "Hello world"))
 
-        val texture = use(Texture())
-        texture.loadFromFile("cat.png")
+        val gamestate = GameState(window)
+        val player = Ship(gamestate, 0, 0, Vector2(0, 0))
+        player.textures = "src/main/resources/ovni.png"
+        player.loadTexture()
 
-        val sprite = use(Sprite(texture))
+        var mouseWindow = Vector2(0, 0)
+        var mouseView = Vector2(0.0f, 0.0f)
 
         while window.isOpen() do
             for event <- window.pollEvent() do
@@ -18,10 +25,16 @@ import sfml.window.*
                     case _: Event.Closed => window.closeWindow()
                     case _               => ()
                 }
+            
+            mouseWindow = Mouse.position(window)
+            mouseView = window.mapPixelToCoords(mouseWindow)
+            
+            player.targetPosition = mouseView
+            player.moveUnit()
+            
+            window.clear(Color(100, 50, 170, 255))
 
-            window.clear(Color.Black())
-
-            window.draw(sprite)
-
-            window.display()
+            gamestate.drawGame()
+        
+        for actor <- gamestate.actors_list do actor.destroy()
     }
