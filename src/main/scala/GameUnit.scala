@@ -44,19 +44,20 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState):
         return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
 
     def moveUnit() =
-        if this.position == this.targetPosition then
+        val centered_target = Vector2(targetPosition.x - this.position.x,
+                                      this.targetPosition.y - this.position.y)
+        
+        val distance = norm(centered_target)
+
+        if distance < 1.0f then
             speed = Vector2(0.0f, 0.0f)
         else
-            val centered_target = Vector2(targetPosition.x - this.position.x,
-                                          this.targetPosition.y - this.position.y)
-            val distance = norm(centered_target)
             val normalized = Vector2(centered_target.x / distance,
                                      centered_target.y / distance)
-            this.speed = Vector2((0.95 * speed.x + 0.05 * normalized.x).toFloat,
-                                 (0.95 * speed.y + 0.05 * normalized.y).toFloat)
+            this.speed = Vector2(0.95f * speed.x + 0.05f * normalized.x,
+                                 0.95f * speed.y + 0.05f * normalized.y)
             this.position = Vector2(this.position.x + this.speed.x, this.position.y + this.speed.y)
             //this.transform = Transform.translate(this.position)
-            this.sprite.position = this.position
     
     def attack(target: GameUnit)=
         target.takeDamage(this.attackDamage)
