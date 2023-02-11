@@ -8,7 +8,7 @@ import sfml.graphics.*
 def norm(vector: Vector2[Float]) : Float =
     Math.sqrt(vector.x * vector.x + vector.y * vector.y).toFloat
 
-abstract class GameUnit(gameState: GameState) extends Actor(gameState):
+abstract class GameUnit(gameState: GameState) extends Actor_Clickable(gameState):
     var speed: Vector2[Float];
     var maxSpeed: Float;
     var maxHealth: Int;
@@ -57,6 +57,7 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState):
             this.speed = Vector2(0.95f * speed.x + 0.05f * normalized.x,
                                  0.95f * speed.y + 0.05f * normalized.y)
             this.position = Vector2(this.position.x + this.speed.x, this.position.y + this.speed.y)
+            this.rotation = Math.atan2(this.speed.y, this.speed.x).toFloat * 180 / Math.PI.toFloat
             //this.transform = Transform.translate(this.position)
     
     def attack(target: GameUnit)=

@@ -2,6 +2,8 @@ package character
 
 import actor.*
 import gamestate.*
+import module.*
+
 import sfml.system.*
 import sfml.graphics.*
 
@@ -19,6 +21,8 @@ class Ship(gameState : GameState, team : Int, initialPosition : Vector2[Float]) 
     var attackDamage = 10;
     var pos = initialPosition;
     var targetPosition = initialPosition;
+
+    var modules = List[Module]()
     
     //TODO : each ship should be its own class, so this constructor should be removed
     def this(gameState: GameState, team: Int, shipID: Int, initialPosition: Vector2[Float]) =
