@@ -13,9 +13,9 @@ class Ship(gameState: GameState, team:Int, initialPosition: Vector2[Float]) exte
     var attackDamage = 10;
     var targetPosition = initialPosition;
     
-    def this(gameState: GameState, team:Int, shipID: Int, initialPosition: Vector2[Float])=
+    def this(gameState: GameState, team:Int, shipId: Int, initialPosition: Vector2[Float])=
         this(gameState, team, initialPosition)
-        shipID match { 
+        shipId match { 
             case 0 => {
                 this.maxSpeed = 100.0;
                 this.maxHealth = 50;

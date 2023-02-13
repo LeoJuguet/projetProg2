@@ -17,7 +17,7 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState):
     def killUnit()=
         this.destroy()
 
-    def setHealth(newHealth: Int)=
+    def health_(newHealth: Int)=
         if newHealth > this.maxHealth then
             this.currentHealth = this.maxHealth
         else if newHealth <= 0 then
@@ -26,15 +26,15 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState):
             this.currentHealth = newHealth
     
     def regenerate()=
-        this.setHealth(this.currentHealth + regenerationRate)
+        this.health_(this.currentHealth + regenerationRate)
     
     def takeDamage(damageTaken: Int)=
-        this.setHealth(this.currentHealth - damageTaken)
+        this.health_(this.currentHealth - damageTaken)
     
     def moveTo(target: Vector2[Float])=
         this.targetPosition = target
     
-    def setPosition(target: Vector2[Float])=
+    def position_(target: Vector2[Float])=
         this.position = target
     
     def distance2D(p1: Vector2[Float], p2: Vector2[Float]): Float=
