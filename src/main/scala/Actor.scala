@@ -2,18 +2,12 @@ package actor
 
 import sfml.graphics.*
 import sfml.Resource
-import sfml.window.*
 import sfml.system.*
-
-import gui.*
 
 import gamestate.*
 
-
-
 enum States:
     case IDLE, HOVER, PRESSED
-
 
 trait Clickable
 {
@@ -35,7 +29,6 @@ trait Clickable
     // Called whenever the button was hovered by the user the frame before and it's not in this frame
     var onUnhoveredBind : () => Unit = () => {}
 
-
     var idleColor: Color = Color.White()
     var hoverColor: Color = Color.Green()
     var pressedColor: Color = Color.Red()
@@ -44,11 +37,14 @@ trait Clickable
         return this.state == States.PRESSED
 
     def update(mousePos : Vector2[Float], leftMouse: Boolean, rightMouse : Boolean) =
-        if(this.sprite.globalBounds.contains(mousePos.x, mousePos.y)){
+        if(this.sprite.localBounds.contains(mousePos.x, mousePos.y)){
             if(leftMouse){
                 if(this.state != States.PRESSED) then
                     this.onClicked()
-                this.state = States.PRESSED
+                    this.state = States.PRESSED
+                else if(this.state == States.PRESSED) then
+                    this.onReleased()
+                    this.state = States.HOVER
             }else {
                 if (rightMouse && this.state == States.PRESSED)
                     this.onReleased()
@@ -95,16 +91,14 @@ trait Clickable
     def onUnhovered()=
         this.sprite.color= this.idleColor
         this.onUnhoveredBind()
-
 }
 
-
-/** Actor
- *
+/** Actor class
  * @constructor crate a new Actor
  * @param gameState the game state who draw this actor
  */
-class Actor(var gameState :GameState) extends Transformable with Drawable with Resource with Clickable :
+class Actor(var gameState :GameState) extends Transformable with Drawable with Resource with Clickable
+{
     var textures: String = "src/main/resources/sfml-logo.png"
 
     def draw(target: RenderTarget, states: RenderStates) =
@@ -114,16 +108,15 @@ class Actor(var gameState :GameState) extends Transformable with Drawable with R
     override def close() =
       sprite.close()
 
-/** Load the textures save in textures
- */
+    // Load the textures save in textures
     def loadTexture() =
         val texture = Texture()
         texture.loadFromFile(textures)
         sprite = Sprite(texture)
+        sprite.origin = Vector2(sprite.globalBounds.width / 2, sprite.globalBounds.height / 2)
 
     def destroy() =
       // code pour supprimer l'actor
       gameState.actors_list -= this
       this.close
-
-end Actor
+}

@@ -7,37 +7,70 @@ import module.*
 import sfml.system.*
 import sfml.graphics.*
 
-//importing math for sqrt
 import scala.math.*
 
-//norm takes a vector and returns its norm
-
-class Ship(gameState : GameState, team : Int, initialPosition : Vector2[Float]) extends GameUnit(gameState):
+class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extends GameUnit(gameState)
+{
     var maxSpeed = 100.0;
     var speed = Vector2(0.0f, 0.0f);
     var maxHealth = 50;
     var health = 50;
     var regenerationRate = 0;
     var attackDamage = 10;
-    var pos = initialPosition;
+    this.position = initialPosition;
     var targetPosition = initialPosition;
+
+    var ID = shipID;
+    var team : Int = teamID;
+    var target = this
 
     var modules = List[Module]()
     
-    //TODO : each ship should be its own class, so this constructor should be removed
-    def this(gameState: GameState, team: Int, shipID: Int, initialPosition: Vector2[Float]) =
-        this(gameState, team, initialPosition)
-        shipID match { 
-            case 0 => {
-                this.maxSpeed = 100.0;
-                this.speed = Vector2(0.0f, 0.0f);
-                this.maxHealth = 50;
-                this.health = 50;
-                this.regenerationRate = 0;
-                this.attackDamage = 10;
-                this.pos = initialPosition;
-                this.targetPosition = initialPosition
+   
+    gameState.actors_list += this
+    if teamID == 0 then
+        gameState.player = this
+}
+
+class Player(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float])
+{
+    override def update(mousePos: Vector2[Float], leftMouse: Boolean, rightMouse: Boolean): Unit =
+        if(this.sprite.globalBounds.contains(mousePos.x, mousePos.y)){
+            if(leftMouse){
+                if(this.state != States.PRESSED) then
+                    this.onClicked()
+                    this.state = States.PRESSED
+                else if(this.state == States.PRESSED) then
+                    this.onReleased()
+                    this.state = States.HOVER
+            }else {
+                if (rightMouse && this.state == States.PRESSED)
+                    this.onReleased()
+                    this.state = States.HOVER
+                if this.state == States.IDLE then
+                    this.state = States.HOVER
             }
-            case _ => () //No other ship yet implemented
+        }else{
+            if(this.state == States.HOVER)
+                this.onUnhovered()
+                this.state = States.IDLE
+
+            if (leftMouse && this.state == States.PRESSED)
+                this.onReleased()
+                this.state = States.IDLE
+            
+            if (rightMouse && this.state == States.PRESSED && this.target == this)
+                this.targetPosition = mousePos
         }
-        gameState.actors_list += this
+
+        state match
+            case States.IDLE => {
+                this.sprite.color= this.idleColor
+            }
+            case States.HOVER => {
+                this.onHovered()
+            }
+            case States.PRESSED => {
+                this.onPressed()
+            }
+}

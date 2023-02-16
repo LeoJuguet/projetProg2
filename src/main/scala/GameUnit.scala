@@ -8,19 +8,20 @@ import sfml.graphics.*
 def norm(vector: Vector2[Float]) : Float =
     Math.sqrt(vector.x * vector.x + vector.y * vector.y).toFloat
 
-abstract class GameUnit(gameState: GameState) extends Actor(gameState):
-    var speed: Vector2[Float];
-    var maxSpeed: Float;
-    var maxHealth: Int;
-    var health: Int;
-    var regenerationRate: Int;
-    var attackDamage: Int;
-    var targetPosition: Vector2[Float];
+abstract class GameUnit(gameState: GameState) extends Actor(gameState)
+{
+    var speed: Vector2[Float]
+    var maxSpeed: Float
+    var maxHealth: Int
+    var health: Int
+    var regenerationRate: Int
+    var attackDamage: Int
+    var targetPosition: Vector2[Float]
 
-    def killUnit()=
+    def killUnit() : Unit =
         this.destroy()
 
-    def setHealth(newHealth: Int)=
+    def setHealth(newHealth: Int) : Unit =
         if newHealth > this.maxHealth then
             this.health = this.maxHealth
         else if newHealth <= 0 then
@@ -28,25 +29,24 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState):
         else
             this.health = newHealth
     
-    def regenerate()=
+    def regenerate() : Unit =
         this.setHealth(this.health + regenerationRate)
     
-    def takeDamage(damageTaken: Int)=
+    def takeDamage(damageTaken: Int) : Unit =
         this.setHealth(this.health - damageTaken)
     
-    def moveTo(target: Vector2[Float])=
+    def moveTo(target: Vector2[Float]) : Unit =
         this.targetPosition = target
     
-    def setPosition(target: Vector2[Float])=
+    def setPosition(target: Vector2[Float]) : Unit =
         this.position = target
     
-    def distance2D(p1: Vector2[Float], p2: Vector2[Float]): Float=
+    def distance2D(p1: Vector2[Float], p2: Vector2[Float]) : Float =
         return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
 
-    def moveUnit() =
+    def moveUnit() : Unit =
         val centered_target = Vector2(targetPosition.x - this.position.x,
                                       this.targetPosition.y - this.position.y)
-        
         val distance = norm(centered_target)
 
         if distance < 1.0f then
@@ -58,7 +58,7 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState):
                                  0.95f * speed.y + 0.05f * normalized.y)
             this.position = Vector2(this.position.x + this.speed.x, this.position.y + this.speed.y)
             this.rotation = Math.atan2(this.speed.y, this.speed.x).toFloat * 180 / Math.PI.toFloat
-            //this.transform = Transform.translate(this.position)
     
     def attack(target: GameUnit)=
         target.takeDamage(this.attackDamage)
+}
