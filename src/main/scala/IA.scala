@@ -7,7 +7,7 @@ import perlin.*
 
 def IA(ship : Ship, player : Ship) : Unit =
     //perlin noise pour mouvements aléatoires
-    if norm(Vector2(ship.position.x - player.position.x, ship.position.y - player.position.y)) < 500 then
+    if norm(Vector2(ship.sprite.position.x - player.sprite.position.x, ship.sprite.position.y - player.sprite.position.y)) < 500 then
         ship.target = player
         ship.targetPosition = player.position
     

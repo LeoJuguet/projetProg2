@@ -11,7 +11,6 @@ import clickable.*
 import ia.*
 
 def game_window(window: RenderWindow, gamestate: GameState) : Unit =
-    var state = "running"
     var continue = true
 
     var mouseWindow = Vector2(0, 0)
@@ -25,7 +24,7 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         for event <- window.pollEvent() do
         event match {
             case _: Event.Closed =>
-                window.closeWindow()
+                window.close()
                 continue = false
             case Event.MouseButtonPressed(button, x, y) : Event.MouseButtonPressed =>
                 if button == Mouse.Button.Left then
@@ -33,8 +32,6 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
                 else if button == Mouse.Button.Right then
                     right_click = true
             case _ => ()
-            case _ =>
-                state = "pause"
         }
 
         mouseWindow = Mouse.position(window)
@@ -66,8 +63,8 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         val window = use(RenderWindow(VideoMode(1024, 768), "Hello world"))
 
         val gamestate = GameState(window)
-        val player = use(Player(gamestate, 0, 0, Vector2(0, 0)))
-        var ennemy = use(Ship(gamestate, 1, 1, Vector2(600, 600)))
+        val player = Player(gamestate, 0, 0, Vector2(0, 0))
+        var ennemy = Ship(gamestate, 1, 1, Vector2(600, 600))
 
         print(ennemy.team)
         
