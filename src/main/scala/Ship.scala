@@ -1,6 +1,7 @@
 package character
 
 import actor.*
+import clickable.*
 import gamestate.*
 import module.*
 
@@ -25,6 +26,9 @@ class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : 
     var target = this
 
     var modules = List[Module]()
+
+    var random_move_array : Array[Vector2[Float]] = Array(Vector2(0.0f, 0.0f))
+    var move_index = 0
     
    
     gameState.actors_list += this

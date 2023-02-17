@@ -5,9 +5,6 @@ import gamestate.*
 import sfml.system.*
 import sfml.graphics.*
 
-def norm(vector: Vector2[Float]) : Float =
-    Math.sqrt(vector.x * vector.x + vector.y * vector.y).toFloat
-
 abstract class GameUnit(gameState: GameState) extends Actor(gameState)
 {
     var speed: Vector2[Float]

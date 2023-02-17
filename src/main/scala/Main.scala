@@ -7,6 +7,8 @@ import sfml.window.*
 import character.*
 import gamestate.*
 import actor.*
+import clickable.*
+import ia.*
 
 def game_window(window: RenderWindow, gamestate: GameState) : Unit =
     var state = "running"
@@ -18,55 +20,43 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
     var left_click = false
     var right_click = false
     while continue do
-        if state == "running" then
-            left_click = false
-            right_click = false
-            for event <- window.pollEvent() do
-            event match {
-                case _: Event.Closed =>
-                    window.closeWindow()
-                    continue = false
-                case Event.MouseButtonPressed(button, x, y) : Event.MouseButtonPressed =>
-                    if button == Mouse.Button.Left then
-                        left_click = true
-                    else if button == Mouse.Button.Right then
-                        right_click = true
+        left_click = false
+        right_click = false
+        for event <- window.pollEvent() do
+        event match {
+            case _: Event.Closed =>
+                window.closeWindow()
+                continue = false
+            case Event.MouseButtonPressed(button, x, y) : Event.MouseButtonPressed =>
+                if button == Mouse.Button.Left then
+                    left_click = true
+                else if button == Mouse.Button.Right then
+                    right_click = true
+            case _ => ()
+            case _ =>
+                state = "pause"
+        }
+
+        mouseWindow = Mouse.position(window)
+        mouseView = window.mapPixelToCoords(mouseWindow)
+
+        for actor <- gamestate.actors_list do
+            actor match {
+                case ennemy : Ship  if ennemy.team == 1 =>
+                    IA(ennemy, gamestate.player)
+                    ennemy.update(mouseView, left_click, right_click)
+                    ennemy.moveUnit()
+                    if ennemy.sprite.globalBounds.contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
+                        //gamestate.player.target = ennemy
+                        ennemy.destroy()
                 case _ => ()
-                case _ =>
-                    state = "pause"
             }
+        
+        gamestate.player.update(mouseView, left_click, right_click)
+        gamestate.player.moveUnit()
 
-            mouseWindow = Mouse.position(window)
-            mouseView = window.mapPixelToCoords(mouseWindow)
+        gamestate.drawGame()
 
-            for actor <- gamestate.actors_list do
-                actor match {
-                    case ennemy : Ship  if ennemy.team == 1 =>
-                        ennemy.update(mouseView, left_click, right_click)
-                        if ennemy.sprite.globalBounds.contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
-                            //gamestate.player.target = ennemy
-                            ennemy.destroy()
-                    case _ => ()
-                }
-            
-            gamestate.player.update(mouseView, left_click, right_click)
-            gamestate.player.moveUnit()
-
-            gamestate.drawGame()
-            
-        else if state == "pause" then
-            for event <- window.pollEvent() do
-            event match {
-                case _: Event.Closed =>
-                    window.closeWindow()
-                    continue = false
-                    "exit"
-                case _ => ()
-                case _ => state = "running"
-                case _ =>
-                    continue = false
-                    "main_menu"
-            }
 
 @main def main =
     val height = 720
