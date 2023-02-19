@@ -2,6 +2,7 @@ package gui
 
 import scala.collection.mutable.ArrayBuffer
 import sfml.graphics.*
+import sfml.system.*
 import sfml.Resource
 
 
@@ -10,10 +11,12 @@ enum EVisibility:
     case Visible, Collapsed, Hidden, HitTestInvisible, SelfHitTestInvisible
 end EVisibility
 
-class UIComponent extends Transformable with Drawable with Resource :
+class UIComponent extends Drawable with Resource :
     var height = 100
     var width = 100
+    var globalBounds = Rect(0.0f,0.0f,0.0f,0.0f)
     var childs = ArrayBuffer[UIComponent]()
+    var transform = Transform()
 
     var isFocused = false
 
@@ -21,17 +24,24 @@ class UIComponent extends Transformable with Drawable with Resource :
     //var onPressedBind: () => Unit = () => {}
     //var onHoveredBind: () => Unit  = () => {}
     //var onIdleBind : () => Unit = () => {}
+    def close()=
+        {}
 
+    def position : Vector2[Float]= Vector2(0.0f,0.0f)
+
+    def position_=(x: Float, y: Float): Unit=
+        this.position= Vector2(x,y)
+
+    def position_=(position: Vector2[Float])=
+        {}
 
     //TODO
     //var ToolTipText: String
     //var ToolTipWidget : UIComponent
     //var Visibility :
-    final def draw(target: RenderTarget, states:RenderStates)=
-        println("cool")
+    def draw(target: RenderTarget, states:RenderStates)=
+        childs.foreach(_.draw(target,states))
 
-    def render(target: RenderTarget)=
-        println("nothing")
 
     //def onPressed =
     //    this.onPressedBind()

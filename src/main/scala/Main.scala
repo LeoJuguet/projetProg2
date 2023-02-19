@@ -12,11 +12,15 @@ import gui.*
         val window = use(RenderWindow(VideoMode(1024, 768), "Hello world"))
         var currentGame = GameState(window);
 
-        var but = Button(300,300,200,50,"cool");
-        but.onHoveredBind = () => {println("yes")}
-        but.onPressedBind = () => {println("the button is pressed")}
+        var but = Button(400,500,200,50,"cool");
+        //but.onHoveredBind = () => {println("yes")}
+        //but.onPressedBind = () => {println("the button is pressed")}
         var mouseView = Vector2(0.0f,0.0f)
         var mouseWindow = Vector2(0,0)
+ //       var but2 = Button(300,300,200,50,"yes")
+        var verticalBox = VerticalBox()
+        verticalBox.childs += but
+//        verticalBox.childs += but2
 
         var textBox = TextBox("textBox")
         textBox.isFocused = true
@@ -26,7 +30,7 @@ import gui.*
         while window.isOpen() do
             for event <- window.pollEvent() do
                 event match {
-                    case _: Event.Closed => window.closeWindow()
+                    case _: Event.Closed => window.close()
                     case Event.MouseButtonPressed(x,y,z) =>{
                         x match {
                             case Mouse.Button.Left => leftMouse = true
@@ -47,8 +51,12 @@ import gui.*
             window.clear(Color.Black())
             mouseWindow = Mouse.position(window)
             mouseView = window.mapPixelToCoords(mouseWindow)
-            but.update(mouseView, leftMouse)
-            but.render(window)
-            textBox.render(window)
+            but.updateClick(mouseView, leftMouse)
+   //         but2.updateClick(mouseView, leftMouse)
+            textBox.updateClick(mouseView, leftMouse)
+            window.draw(verticalBox)
+            //window.draw(but2)
+            //window.draw(but)
+            window.draw(textBox)
             window.display()
     }

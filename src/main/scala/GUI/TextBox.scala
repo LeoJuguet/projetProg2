@@ -5,17 +5,16 @@ import sfml.window.*
 import sfml.system.*
 
 import gui.UIComponent
+import gui.Clickable
 
 
 
-class TextBox extends UIComponent:
+class TextBox extends UIComponent with Clickable:
     var text = Text()
     var textLimit = 100
     var defaultText = "default text"
-
     var font = Font()
 
-    var onClickedBind: () => Unit = () => {}
 /** Called whenever the text is changed interactively by the user
  *
  * @param newText the newText commited
@@ -42,28 +41,42 @@ class TextBox extends UIComponent:
         this.text.string = defaultText
         this.text.color = Color.Red()
         this.text.position= Vector2(100,100)
+        this.globalBounds = this.text.globalBounds
 
-    def onClicked() =
+    override def onClicked() =
         this.isFocused = true
+        this.text.string = this.defaultText + "_"
+        this.globalBounds = this.text.globalBounds
         this.onClickedBind()
 
-    override def render(target: RenderTarget)=
-        target.draw(this.text)
+    override def unFocused()=
+        this.isFocused = false
+        this.text.string = this.defaultText
+        this.onTextCommited()
 
-    def typedOn(input: Event.TextEntered)=
+    override def draw(target: RenderTarget, states: RenderStates)=
+        val transformStates = RenderStates(states.transform.combine(this.transform))
+        this.text.draw(target,transformStates)
+
+    def typedOn(input: Event.TextEntered) : Unit=
         if(this.isFocused){
             val charTyped = input.unicode
             if(charTyped < 128){
-                if(this.textLimit >= 0){
-                    if(this.defaultText.length < textLimit && charTyped != 8){
-                        this.defaultText = this.defaultText + charTyped.toChar
-                        this.text.string = this.defaultText + "_"
-                        this.onTextChanged()
-                    }else if(charTyped == 8){
-                        this.defaultText = this.defaultText.dropRight(1)
-                        this.text.string = this.defaultText + "_"
-                        this.onTextChanged()
-                    }
+                if(charTyped == 13 || charTyped == 27){
+                    this.isFocused = false
+                    this.text.string = this.defaultText
+                    onTextCommited()
+                    return
                 }
+                if((this.textLimit < 0 || this.defaultText.length < textLimit) && charTyped != 8){
+                    this.defaultText = this.defaultText + charTyped.toChar
+                    this.text.string = this.defaultText + "_"
+                    this.onTextChanged()
+                }else if(charTyped == 8){
+                    this.defaultText = this.defaultText.dropRight(1)
+                    this.text.string = this.defaultText + "_"
+                    this.onTextChanged()
+                }
+                this.globalBounds = this.text.globalBounds
             }
         }

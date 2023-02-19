@@ -13,15 +13,14 @@ import gamestate.*
  */
 class Actor(var gameState :GameState) extends Transformable with Drawable with Resource :
     var textures: String = "src/main/resources/sfml-logo.png"
-    var sprite: Transformable with Drawable with Resource = new Sprite(Texture())
+    var sprite: Transformable with Drawable = new Sprite(Texture())
 
     def draw(target: RenderTarget, states: RenderStates)=
         val render_states = RenderStates(states.blendMode,this.transform);
         target.draw(sprite,render_states)
 
     override def close()=
-      sprite.close()
-
+      {}
 /** Load the textures save in textures
  */
     def loadTexture() =
