@@ -10,4 +10,4 @@ enablePlugins(ScalaNativePlugin)
 githubSuppressPublicationWarning := true
 githubTokenSource := TokenSource.GitConfig("github.token") || TokenSource.Environment("GITHUB_TOKEN")
 resolvers += Resolver.githubPackages("lafeychine")
-libraryDependencies += "io.github.lafeychine" %%% "scala-native-sfml" % "0.3.7"
+libraryDependencies += "io.github.lafeychine" %%% "scala-native-sfml" % "0.4.1"

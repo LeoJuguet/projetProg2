@@ -31,7 +31,7 @@ import actor.*
         while window.isOpen() do
             for event <- window.pollEvent() do
                 event match {
-                    case _: Event.Closed => window.closeWindow()
+                    case _: Event.Closed => window.close()
                     case _ => ()
                 }
 

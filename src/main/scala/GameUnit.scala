@@ -31,11 +31,8 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState):
     def takeDamage(damageTaken: Int)=
         this.health_(this.currentHealth - damageTaken)
     
-    def moveTo(target: Vector2[Float])=
+    def targetPosition_(target: Vector2[Float])=
         this.targetPosition = target
-    
-    def position_(target: Vector2[Float])=
-        this.position = target
     
     def distance2D(p1: Vector2[Float], p2: Vector2[Float]): Float=
         return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
