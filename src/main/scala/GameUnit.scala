@@ -34,13 +34,7 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
 
     def moveTo(target: Vector2[Float]) : Unit =
         this.targetPosition = target
-    
-    def setPosition(target: Vector2[Float]) : Unit =
-        this.sprite.position = target
-    
-    def distance2D(p1: Vector2[Float], p2: Vector2[Float]) : Float =
-        return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
-
+        
     def moveUnit() : Unit =
         val centered_target = Vector2(this.targetPosition.x - this.sprite.position.x,
                                       this.targetPosition.y - this.sprite.position.y)
