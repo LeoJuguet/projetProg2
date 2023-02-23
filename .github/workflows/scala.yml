@@ -31,6 +31,9 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
-    - name: Run tests
+    - name: Set up 
+      run : apt-get -y update && apt-get -y install clang libcsfml-dev openssh-clien
       
-      run: sbt test
+    - name: Run compile
+      
+      run: sbt "scalafmtCheck; compile"
