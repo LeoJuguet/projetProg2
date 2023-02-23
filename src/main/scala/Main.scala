@@ -73,8 +73,6 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         val player = Player(gamestate, 0, 0, Vector2(0, 0))
         var ennemy = Ship(gamestate, 1, 1, Vector2(600, 600))
         var ressource = Resource(gamestate, 0, Vector2(300, 300))
-
-        print(ennemy.team)
         
         player.textures = "src/main/resources/ovni.png"
         player.loadTexture()
@@ -82,8 +80,8 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         ennemy.textures = "src/main/resources/ovni.png"
         ennemy.loadTexture()
 
-        ressource.textures = "src/main/resources/ressource.png"
-        ressource.loadTexture()
+        //ressource.textures = "src/main/resources/ore.png"
+        //ressource.loadTexture()
 
         gamestate.player = player
 

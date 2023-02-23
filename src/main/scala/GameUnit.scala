@@ -16,6 +16,7 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
     var targetPosition: Vector2[Float]
 
     def kill() : Unit =
+        print("killing game unit\n")
         this.destroy()
         this.live = false
 
@@ -41,8 +42,8 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
         this.targetPosition = target
 
     def moveUnit() : Unit =
-        val centered_target = Vector2(this.targetPosition.x - this.sprite.position.x,
-                                      this.targetPosition.y - this.sprite.position.y)
+        val centered_target = Vector2(this.targetPosition.x - this.position.x,
+                                      this.targetPosition.y - this.position.y)
         val distance = norm(centered_target)
 
         if distance < 1.0f then
@@ -52,5 +53,7 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
                                      centered_target.y / distance)
             this.speed = Vector2(0.95f * speed.x + 0.05f * normalized.x,
                                  0.95f * speed.y + 0.05f * normalized.y)
-            this.sprite.position=(this.sprite.position.x + this.speed.x, this.sprite.position.y + this.speed.y)
+            this.position=(this.position.x + this.speed.x, this.position.y + this.speed.y)
+
+            //this.sprite.globalBounds = this.transform.transformRect(this.sprite.globalBounds)
 }

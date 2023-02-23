@@ -24,5 +24,6 @@ class Resource(gameState: GameState, resourceId: Int, initialPosition: Vector2[F
         }
     
     def kill() : Unit =
+        print("killing ressource\n")
         this.destroy()
         this.live = false
