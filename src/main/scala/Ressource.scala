@@ -6,7 +6,7 @@ import sfml.system.*
 
 val rand = new scala.util.Random
 
-class Resources(gameState: GameState, resourceId: Int, initialPosition: Vector2[Float]) extends Actor(gameState):
+class Resource(gameState: GameState, resourceId: Int, initialPosition: Vector2[Float]) extends Actor(gameState):
     // Map will be considered 32768*32768 units² for now
     this.position = initialPosition;
     var remainingQuantity = 500;
@@ -15,13 +15,14 @@ class Resources(gameState: GameState, resourceId: Int, initialPosition: Vector2[
         case _ => () // No specific resource type implemented yet. TODO: add other resource cases when implemented
     }
 
-    def remainingQuantity_(newQuantity: Int) =
-        remainingQuantity = newQuantity
+    gameState.actors_list += this
 
-    def mined() =
-        var newQuantity = remainingQuantity - 10;
-        remainingQuantity_(newQuantity);
-        if newQuantity == 0 then {
-            this.destroy()
+    def mined(damage : Int) : Unit =
+        this.remainingQuantity -= damage
+        if this.remainingQuantity <= 0 then {
+            this.kill()
         }
     
+    def kill() : Unit =
+        this.destroy()
+        this.live = false

@@ -14,7 +14,7 @@ import character.Ship
 
 class Player(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float])
 {
-    override def update(mousePos: Vector2[Float], leftMouse: Boolean, rightMouse: Boolean): Unit =
+    override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean, rightMouse: Boolean): Unit =
         if(this.sprite.globalBounds.contains(mousePos.x, mousePos.y)){
             if(leftMouse){
                 if(this.state != States.PRESSED) then
@@ -39,7 +39,7 @@ class Player(gameState : GameState, team : Int, shipID : Int, initialPosition : 
                 this.onReleased()
                 this.state = States.IDLE
 
-            if (rightMouse && this.state == States.PRESSED && this.target == this)
+            if (rightMouse && this.state == States.PRESSED)// && this.targetShip == this)
                 this.targetPosition = mousePos
         }
 

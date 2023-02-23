@@ -10,6 +10,11 @@ import sfml.graphics.*
 
 import scala.math.*
 
+enum Action:
+    case IDLE
+    case ATTACK
+    case MINE
+
 class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extends GameUnit(gameState)
 {
     var maxSpeed = 100.0;
@@ -19,24 +24,27 @@ class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : 
     var health = 50;
     var regenerationRate = 0;
 
+    //bruh, tout ça ce sera dans les modules dédiés, pourquoi tu les met ici ? :o
     var attackDamage = 10;
+    var attackSpeed = 15;
+    var attackCoolDown = 0;
+
+    var miningDamage = 10;
+    var miningSpeed = 150;
+    var miningCoolDown = 0;
+
+    var scrap = 0;
 
     this.position = initialPosition;
     var targetPosition = initialPosition;
 
-    var currentAction = 0; //Action ID : 0 = Idle, 1 = Attacking, 2 = Mining
+    var currentAction = Action.IDLE; //Action ID : 0 = Idle, 1 = Attacking, 2 = Mining
     
-    //bruh, tout ça ce sera dans les modules dédiés, pourquoi tu les met ici ? :o
-    var miningSpeed = 150;
-    var miningCoolDown = 0;
-    var attackSpeed = 15;
-    var attackCoolDown = 0;
-    var targetResource: Resources = _;
-    var targetShip: Ship = _;
+    var targetResource: Resource = _;
+    var targetShip: Ship = this;
 
     var ID = shipID;
     var team : Int = teamID;
-    var target = this
 
     var modules = List[Module]()
 
@@ -50,31 +58,36 @@ class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : 
     
     
     def attack() : Unit =
-        this.currentAction = 1
-        this.attackCoolDown = this.attackSpeed
-        //mais... on n'attaque rien là :o
+        this.targetShip.takeDamage(this.attackDamage)
     
     def mine() : Unit =
-        this.currentAction = 2
-        this.miningCoolDown = this.miningSpeed
+        //TODO: Implement mining function here and in ressource
+        this.targetResource.mined(this.miningDamage)
+        this.scrap += this.miningDamage
     
     def updateUnit() =
         this.moveUnit()
         this.regenerate()
         this.currentAction match {
-            case 0 => ()
-            case 1 => {
+            case Action.IDLE => ()
+            case Action.ATTACK => {
                 if this.attackCoolDown > 0 then
                     this.attackCoolDown = min(0, this.attackCoolDown - 1)
                 else
                     this.attack()
+                    this.attackCoolDown = this.attackSpeed
+                    if this.targetShip.live == false then
+                        this.currentAction = Action.IDLE
             }
-            case 2 => {
+            case Action.MINE => {
                 if this.miningCoolDown > 0 then
                     this.miningCoolDown = min(0, this.miningCoolDown - 1)
                 else
                     //TODO: Implement gathering of resource for the team
                     this.mine()
+                    this.miningCoolDown = this.miningSpeed
+                    if this.targetResource.live == false then
+                        this.currentAction = Action.IDLE
             }
         }
 }

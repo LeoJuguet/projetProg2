@@ -18,6 +18,7 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
 
     var left_click = false
     var right_click = false
+    //TODO : la prochaine chose à faire est de centrer la vision sur le vaisseau, et de se déplacer sur l'image de fond.
     while continue do
         left_click = false
         right_click = false
@@ -39,18 +40,24 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
 
         for actor <- gamestate.actors_list do
             actor match {
-                case ennemy : Ship  if ennemy.team == 1 =>
+                case ennemy : Ship if ennemy.team == 1 =>
                     IA(ennemy, gamestate.player)
-                    ennemy.update(mouseView, left_click, right_click)
-                    ennemy.moveUnit()
+                    ennemy.updateClick(mouseView, left_click, right_click)
+                    ennemy.updateUnit()
                     if ennemy.sprite.globalBounds.contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
-                        //gamestate.player.target = ennemy
-                        ennemy.destroy()
+                        gamestate.player.targetShip = ennemy
+                        gamestate.player.currentAction = Action.ATTACK
+
+                case ressource : Resource =>
+                    ressource.updateClick(mouseView, left_click, right_click)
+                    if ressource.sprite.globalBounds.contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
+                        gamestate.player.targetResource = ressource
+                        gamestate.player.currentAction = Action.MINE
                 case _ => ()
             }
         
-        gamestate.player.update(mouseView, left_click, right_click)
-        gamestate.player.moveUnit()
+        gamestate.player.updateClick(mouseView, left_click, right_click)
+        gamestate.player.updateUnit()
 
         gamestate.drawGame()
 
@@ -65,6 +72,7 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         val gamestate = GameState(window)
         val player = Player(gamestate, 0, 0, Vector2(0, 0))
         var ennemy = Ship(gamestate, 1, 1, Vector2(600, 600))
+        var ressource = Resource(gamestate, 0, Vector2(300, 300))
 
         print(ennemy.team)
         
@@ -73,6 +81,9 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
 
         ennemy.textures = "src/main/resources/ovni.png"
         ennemy.loadTexture()
+
+        ressource.textures = "src/main/resources/ressource.png"
+        ressource.loadTexture()
 
         gamestate.player = player
 

@@ -15,6 +15,7 @@ class Actor(var gameState :GameState) extends Transformable with Drawable with C
 {
     var textures: String = "src/main/resources/sfml-logo.png"
     var texture: Texture = _
+    var live: Boolean = false
 
 
     def draw(target: RenderTarget, states: RenderStates) =
@@ -44,6 +45,8 @@ class Actor(var gameState :GameState) extends Transformable with Drawable with C
         texture.loadFromFile(textures)
         sprite = Sprite(texture)
         sprite.origin = Vector2(sprite.globalBounds.width / 2, sprite.globalBounds.height / 2)
+
+        this.live = true
 
     def destroy() =
       // code pour supprimer l'actor

@@ -33,7 +33,7 @@ trait Clickable
     def isPressed: Boolean =
         return this.state == States.PRESSED
 
-    def update(mousePos : Vector2[Float], leftMouse: Boolean, rightMouse : Boolean) =
+    def updateClick(mousePos : Vector2[Float], leftMouse: Boolean, rightMouse : Boolean) =
         if(this.sprite.localBounds.contains(mousePos.x, mousePos.y)){
             if(leftMouse){
                 if(this.state != States.PRESSED) then

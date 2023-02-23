@@ -15,14 +15,15 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
     var attackDamage: Int
     var targetPosition: Vector2[Float]
 
-    def killUnit() : Unit =
+    def kill() : Unit =
         this.destroy()
+        this.live = false
 
     def health_(newHealth: Int) : Unit =
         if newHealth > this.maxHealth then
             this.health = this.maxHealth
         else if newHealth <= 0 then
-            this.killUnit()
+            this.kill()
         else
             this.health = newHealth
     
@@ -31,10 +32,14 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
 
     def takeDamage(damageTaken: Int) : Unit =
         this.health = this.health - damageTaken
+        if this.health <= 0 then
+            //TODO : explosion animation
+            //Maybe add a destroyed list buffer in the gamestate
+            this.kill()
 
     def moveTo(target: Vector2[Float]) : Unit =
         this.targetPosition = target
-        
+
     def moveUnit() : Unit =
         val centered_target = Vector2(this.targetPosition.x - this.sprite.position.x,
                                       this.targetPosition.y - this.sprite.position.y)
@@ -48,8 +53,4 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
             this.speed = Vector2(0.95f * speed.x + 0.05f * normalized.x,
                                  0.95f * speed.y + 0.05f * normalized.y)
             this.sprite.position=(this.sprite.position.x + this.speed.x, this.sprite.position.y + this.speed.y)
-            this.rotation = Math.atan2(this.speed.y, this.speed.x).toFloat * 180 / Math.PI.toFloat
-    
-    def attack(target: GameUnit)=
-        target.takeDamage(this.attackDamage)
 }
