@@ -55,5 +55,4 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
                                  0.95f * speed.y + 0.05f * normalized.y)
             this.position=(this.position.x + this.speed.x, this.position.y + this.speed.y)
 
-            //this.sprite.globalBounds = this.transform.transformRect(this.sprite.globalBounds)
 }

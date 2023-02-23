@@ -19,12 +19,12 @@ class Actor(var gameState :GameState) extends Transformable with Drawable with C
 
 
     def draw(target: RenderTarget, states: RenderStates) =
-        val render_states = RenderStates(states.blendMode, this.transform)
+        val render_states = RenderStates(this.transform.combine(states.transform))
         target.draw(sprite, render_states)
 
     //def position : Vector2[Float] = this.sprite.position
-    def position_= : Float => Float => Unit =
-        x => y => this.position=(x,y)
+    //def position_= : Float => Float => Unit =
+    //    x => y => this.position=(x,y)
 
     //def position_= : Vector2[Float] => Unit =
     //    position => this.sprite.position=position

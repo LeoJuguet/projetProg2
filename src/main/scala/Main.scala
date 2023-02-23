@@ -44,13 +44,13 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
                     IA(ennemy, gamestate.player)
                     ennemy.updateClick(mouseView, left_click, right_click)
                     ennemy.updateUnit()
-                    if ennemy.sprite.globalBounds.contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
+                    if ennemy.transform.transformRect(ennemy.sprite.globalBounds).contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
                         gamestate.player.targetShip = ennemy
                         gamestate.player.currentAction = Action.ATTACK
 
                 case ressource : Resource =>
                     ressource.updateClick(mouseView, left_click, right_click)
-                    if ressource.sprite.globalBounds.contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
+                    if ressource.transform.transformRect(ressource.sprite.globalBounds).contains(mouseView) && right_click && gamestate.player.state == States.PRESSED then
                         gamestate.player.targetResource = ressource
                         gamestate.player.currentAction = Action.MINE
                 case _ => ()
@@ -64,10 +64,10 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
 
 @main def main =
     val height = 720
-    val width = 1280
+    val width = 1080
 
     Using.Manager { use =>
-        val window = use(RenderWindow(VideoMode(1024, 768), "Hello world"))
+        val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
 
         val gamestate = GameState(window)
         val player = Player(gamestate, 0, 0, Vector2(0, 0))
@@ -80,8 +80,8 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         ennemy.textures = "src/main/resources/ovni.png"
         ennemy.loadTexture()
 
-        //ressource.textures = "src/main/resources/ore.png"
-        //ressource.loadTexture()
+        ressource.textures = "src/main/resources/ore.png"
+        ressource.loadTexture()
 
         gamestate.player = player
 

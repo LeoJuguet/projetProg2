@@ -15,7 +15,7 @@ import character.Ship
 class Player(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float])
 {
     override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean, rightMouse: Boolean): Unit =
-        if(this.sprite.globalBounds.contains(mousePos.x, mousePos.y)){
+        if(this.transform.transformRect(this.sprite.globalBounds).contains(mousePos.x, mousePos.y)){
             if(leftMouse){
                 if(this.state != States.PRESSED) then
                     this.onClicked()

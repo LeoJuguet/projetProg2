@@ -24,13 +24,12 @@ class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : 
     var health = 50;
     var regenerationRate = 0;
 
-    //bruh, tout ça ce sera dans les modules dédiés, pourquoi tu les met ici ? :o
-    var attackDamage = 10;
-    var attackSpeed = 15;
-    var attackCoolDown = 0;
+    var attackDamage = 5;
+    var attackSpeed = 500;
+    var attackCoolDown = 10;
 
     var miningDamage = 10;
-    var miningSpeed = 150;
+    var miningSpeed = 200;
     var miningCoolDown = 0;
 
     var scrap = 0;
@@ -72,7 +71,7 @@ class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : 
             case Action.IDLE => ()
             case Action.ATTACK => {
                 if this.attackCoolDown > 0 then
-                    this.attackCoolDown = min(0, this.attackCoolDown - 1)
+                    this.attackCoolDown = max(0, this.attackCoolDown - 1)
                 else
                     this.attack()
                     this.attackCoolDown = this.attackSpeed
@@ -81,7 +80,7 @@ class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : 
             }
             case Action.MINE => {
                 if this.miningCoolDown > 0 then
-                    this.miningCoolDown = min(0, this.miningCoolDown - 1)
+                    this.miningCoolDown = max(0, this.miningCoolDown - 1)
                 else
                     //TODO: Implement gathering of resource for the team
                     this.mine()
