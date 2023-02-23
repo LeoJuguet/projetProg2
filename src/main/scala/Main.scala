@@ -3,6 +3,10 @@ import scala.util.Using
 import sfml.system.*
 import sfml.graphics.*
 import sfml.window.*
+import gamestate.*
+import actor.*
+
+
 
 import character.*
 import gamestate.*
@@ -91,4 +95,5 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
             window.display()
         
         for actor <- gamestate.actors_list do actor.destroy()
+
     }

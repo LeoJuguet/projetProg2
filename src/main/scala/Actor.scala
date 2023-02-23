@@ -1,5 +1,6 @@
 package actor
 
+
 import sfml.system.*
 import sfml.graphics.*
 import sfml.Resource
@@ -48,7 +49,9 @@ class Actor(var gameState :GameState) extends Transformable with Drawable with C
 
         this.live = true
 
+
     def destroy() =
       // code pour supprimer l'actor
       gameState.actors_list -= this
+
 }

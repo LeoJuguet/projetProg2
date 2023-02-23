@@ -44,6 +44,7 @@ class GameState(var window: RenderWindow)
       window.draw(this.textPlayerResources)
       window.draw(this.textPlayerLife)
 
+
     /** Draw all the images for the game
      */
     def drawGame() =
@@ -52,3 +53,4 @@ class GameState(var window: RenderWindow)
       drawWidget()
       window.display()
 }
+
