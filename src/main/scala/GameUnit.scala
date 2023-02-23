@@ -5,51 +5,54 @@ import gamestate.*
 import sfml.system.*
 import sfml.graphics.*
 
-abstract class GameUnit(gameState: GameState) extends Actor(gameState):
-    var speed = 0.0;
-    var maxSpeed: Float;
-    var maxHealth: Int;
-    var currentHealth: Int;
-    var regenerationRate: Int;
-    var attackDamage: Int;
-    var targetPosition: Vector2[Float];
+abstract class GameUnit(gameState: GameState) extends Actor(gameState)
+{
+    var speed: Vector2[Float]
+    var maxSpeed: Float
+    var maxHealth: Int
+    var health: Int
+    var regenerationRate: Int
+    var attackDamage: Int
+    var targetPosition: Vector2[Float]
 
-    def killUnit()=
+    def kill() : Unit =
+        print("killing game unit\n")
         this.destroy()
+        this.live = false
 
-    def health_(newHealth: Int)=
+    def health_(newHealth: Int) : Unit =
         if newHealth > this.maxHealth then
-            this.currentHealth = this.maxHealth
+            this.health = this.maxHealth
         else if newHealth <= 0 then
-            this.killUnit()
+            this.kill()
         else
-            this.currentHealth = newHealth
+            this.health = newHealth
     
-    def regenerate()=
-        this.health_(this.currentHealth + regenerationRate)
-    
-    def takeDamage(damageTaken: Int)=
-        this.health_(this.currentHealth - damageTaken)
-    
-    def moveTo(target: Vector2[Float])=
-        this.targetPosition = target
-    
-    def position_(target: Vector2[Float])=
-        this.position = target
-    
-    def distance2D(p1: Vector2[Float], p2: Vector2[Float]): Float=
-        return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
+    def regenerate() : Unit =
+        this.health = this.maxHealth.min(this.health + regenerationRate)
 
-    def moveUnit()=
-        var distanceToTarget = distance2D(this.targetPosition,this.position);
-        var xDelta = this.targetPosition.x - this.position.x;
-        var yDelta = this.targetPosition.y - this.position.y;
-        if distanceToTarget < maxSpeed then
-            this.move(xDelta,yDelta)
+    def takeDamage(damageTaken: Int) : Unit =
+        this.health = this.health - damageTaken
+        if this.health <= 0 then
+            //TODO : explosion animation
+            //Maybe add a destroyed list buffer in the gamestate
+            this.kill()
+
+    def moveTo(target: Vector2[Float]) : Unit =
+        this.targetPosition = target
+
+    def moveUnit() : Unit =
+        val centered_target = Vector2(this.targetPosition.x - this.position.x,
+                                      this.targetPosition.y - this.position.y)
+        val distance = norm(centered_target)
+
+        if distance < 1.0f then
+            speed = Vector2(0.0f, 0.0f)
         else
-            var xMove: Float = maxSpeed * xDelta / distanceToTarget;
-            var yMove: Float = maxSpeed * yDelta / distanceToTarget;
-            this.move(xMove, yMove)
-    
-    def attack(target: GameUnit)=
-        target.takeDamage(this.attackDamage)
+            val normalized = Vector2(centered_target.x / distance,
+                                     centered_target.y / distance)
+            this.speed = Vector2(0.95f * speed.x + 0.05f * normalized.x,
+                                 0.95f * speed.y + 0.05f * normalized.y)
+            this.position=(this.position.x + this.speed.x, this.position.y + this.speed.y)
+
+}
