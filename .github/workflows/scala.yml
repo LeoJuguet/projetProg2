@@ -31,8 +31,6 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
-    - name: Set up 
-      run : apt-get -y update && apt-get -y install clang libcsfml-dev openssh-clien
       
     - name: Run compile
       
