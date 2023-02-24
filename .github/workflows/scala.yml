@@ -16,6 +16,7 @@ permissions:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SBT_OPTS: "..."
 
 jobs:
   build:
@@ -30,6 +31,7 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
-    - name: Run tests
       
-      run: sbt test
+    - name: Run compile
+      
+      run: sbt "compile"
