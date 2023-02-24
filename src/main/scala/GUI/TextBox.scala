@@ -6,7 +6,7 @@ import sfml.system.*
 
 import gui.UIComponent
 import gui.Clickable
-
+import gui.{TextStyle, Style}
 
 
 class TextBox extends UIComponent with Clickable:
@@ -15,6 +15,7 @@ class TextBox extends UIComponent with Clickable:
     var defaultText = "default text"
     var font = Font()
 
+    var style = TextStyle(style = Style(outlineColor = Color.White()))
 /** Called whenever the text is changed interactively by the user
  *
  * @param newText the newText commited
@@ -39,8 +40,13 @@ class TextBox extends UIComponent with Clickable:
         this.text.characterSize = 100
         this.defaultText = defaultText
         this.text.string = defaultText
-        this.text.color = Color.Red()
-        this.text.position= Vector2(100,100)
+        this.style.apply(this.text)
+        this.position= Vector2(100,100)
+
+    override def position: Vector2[Float]= this.text.position
+
+    override def position_=(position: Vector2[Float]) =
+        this.text.position = position
         this.globalBounds = this.text.globalBounds
 
     override def onClicked() =

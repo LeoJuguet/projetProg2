@@ -3,9 +3,11 @@ package gui
 import sfml.graphics.*
 import sfml.system.*
 
-import gui.{UIComponent, Clickable, ShapeStyle, TextStyle}
+import gui.{UIComponent, Clickable}
+import gui.{Style,ShapeStyle, TextStyle, ClickStates}
 
-class ButtonStyle(
+
+class ButtonStyleState(
     val shapeStyle: ShapeStyle = ShapeStyle(),
     val textStyle: TextStyle = TextStyle())
 {
@@ -14,30 +16,45 @@ class ButtonStyle(
         textStyle.apply(text)
 }
 
+class ButtonStyle(
+    var idleStyle: ButtonStyleState = ButtonStyleState(shapeStyle = ShapeStyle()),
+    var hoverStyle: ButtonStyleState = ButtonStyleState(shapeStyle = ShapeStyle(style = Style(outlineColor = Color.Red()))),
+    var pressedStyle: ButtonStyleState = ButtonStyleState(shapeStyle = ShapeStyle(style = Style(fillColor = Color.Green(),outlineColor = Color.Red()))),
+){
+    def apply(shape: Shape,text: Text, state: ClickStates)=
+        state match {
+            case ClickStates.CLICK_IDLE => idleStyle.apply(shape,text)
+            case ClickStates.CLICK_HOVER => hoverStyle.apply(shape,text)
+            case ClickStates.CLICK_PRESSED => pressedStyle.apply(shape,text)
+        }
+}
 
-class Button extends UIComponent with Clickable:
-    var shape: Shape = _
+
+class Button(
+    var x : Float =0f,
+    var y : Float = 0f,
+    width: Float,
+    height: Float,
+    var string: String = "",
+    var buttonStyle: ButtonStyle = ButtonStyle()
+)
+extends UIComponent(width,height) with Clickable{
+
+    var shape: Shape = RectangleShape(this.width,this.height)
     var font: Font = Font()
     var text: Text = Text()
+    this.text.string = this.string
+    this.font.loadFromFile("src/main/resources/fonts/game_over.ttf")
+    this.text.font_= (this.font)
+    this.text.characterSize = 30
+    this.applyStyle()
+    this.position= Vector2(x,y)
 
-    var idleStyle: ButtonStyle = ButtonStyle(shapeStyle = ShapeStyle())
-    var hoverStyle: ButtonStyle = ButtonStyle(shapeStyle = ShapeStyle(style = Style(outlineColor = Color.Red())))
-    var pressedStyle: ButtonStyle = ButtonStyle(shapeStyle = ShapeStyle(style = Style(fillColor = Color.Green(),outlineColor = Color.Red())))
+    //def this(x: Float,y: Float, width: Float, height: Float,text: String) =
+    //    this(x = x, y = y, width = width, height = height, string = text)
 
-    def this(x: Float,y: Float, width: Float, height: Float,text: String) =
-        this()
-        this.shape = RectangleShape(width,height)
-        this.position= Vector2(x,y)
-        this.font.loadFromFile("src/main/resources/fonts/game_over.ttf")
-        this.text.font_= (this.font)
-        this.text.characterSize = 30
-        this.text.string= text
-        this.text.fillColor = Color.Yellow()
-        this.applyStyle(idleStyle)
-        this.globalBounds = this.text.globalBounds
-
-    def applyStyle(buttonStyle: ButtonStyle)=
-        buttonStyle.apply(this.shape, this.text)
+    def applyStyle()=
+        this.buttonStyle.apply(this.shape, this.text, this.clickState)
 
 
     override def position: Vector2[Float]= this.shape.position
@@ -45,7 +62,8 @@ class Button extends UIComponent with Clickable:
     override def position_=(position: Vector2[Float]) =
         this.shape.position = position
         this.text.position = position
-        this.globalBounds = this.text.globalBounds
+        this.globalBounds = Rect(this.shape.position.x, this.shape.position.y,
+        this.width, this.height)
 
     override def draw(target: RenderTarget, states: RenderStates) =
         //val transformStates = RenderStates(states.transform.combine(this.transform))
@@ -54,22 +72,22 @@ class Button extends UIComponent with Clickable:
 
 
     override def onPressed()=
-        this.applyStyle(this.pressedStyle)
+        this.applyStyle()
         this.onPressedBind()
 
     override def onClicked()=
         this.onClickedBind()
 
     override def onHovered()=
-        this.applyStyle(this.hoverStyle)
+        this.applyStyle()
         this.onHoveredBind()
 
     override def onReleased()=
-        this.applyStyle(this.hoverStyle)
+        this.applyStyle()
         this.onReleasedBind()
 
     override def onUnhovered()=
-        this.applyStyle(this.idleStyle)
+        this.applyStyle()
         this.onUnhoveredBind()
 
-end Button
+}

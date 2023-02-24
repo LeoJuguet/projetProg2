@@ -5,48 +5,54 @@ import sfml.graphics.*
 import sfml.system.*
 import sfml.Resource
 
-
+import gui.*
 
 enum EVisibility:
-    case Visible, Collapsed, Hidden, HitTestInvisible, SelfHitTestInvisible
+  case Visible, Collapsed, Hidden, HitTestInvisible, SelfHitTestInvisible
 end EVisibility
 
-class UIComponent extends Drawable with Resource :
-    var height = 100
-    var width = 100
-    var globalBounds = Rect(0.0f,0.0f,0.0f,0.0f)
-    var childs = ArrayBuffer[UIComponent]()
-    var transform = Transform()
+class UIComponent(
+    var width: Float = 100f,
+    var height: Float = 100f
+) extends Drawable
+    with Resource with Clickable {
+  var childs = ArrayBuffer[UIComponent]()
+  var globalBounds = Rect(0.0f, 0.0f, 0.0f, 0.0f)
+  var transform = Transform()
 
-    var isFocused = false
+  var isFocused = false
 
-    //var onClickedBind: () => Unit = () => {}
-    //var onPressedBind: () => Unit = () => {}
-    //var onHoveredBind: () => Unit  = () => {}
-    //var onIdleBind : () => Unit = () => {}
-    def close()=
-        {}
+  // var onClickedBind: () => Unit = () => {}
+  // var onPressedBind: () => Unit = () => {}
+  // var onHoveredBind: () => Unit  = () => {}
+  // var onIdleBind : () => Unit = () => {}
+  def close() = {}
 
-    def position : Vector2[Float]= Vector2(0.0f,0.0f)
+  def position: Vector2[Float] = Vector2(0.0f, 0.0f)
 
-    def position_=(x: Float, y: Float): Unit=
-        this.position= Vector2(x,y)
+  def position_=(x: Float, y: Float): Unit =
+    this.position = Vector2(x, y)
 
-    def position_=(position: Vector2[Float])=
-        {}
+  def position_=(position: Vector2[Float]) = {}
 
-    //TODO
-    //var ToolTipText: String
-    //var ToolTipWidget : UIComponent
-    //var Visibility :
-    def draw(target: RenderTarget, states:RenderStates)=
-        childs.foreach(_.draw(target,states))
+  // TODO
+  // var ToolTipText: String
+  // var ToolTipWidget : UIComponent
+  // var Visibility :
+  def draw(target: RenderTarget, states: RenderStates) =
+    childs.foreach(_.draw(target, states))
 
+  def addChild(component: UIComponent): Unit =
+    this.childs += component
 
-    //def onPressed =
-    //    this.onPressedBind()
-    //def onCliked =
-    //    this.isFocused = true
-    //    this.onClickedBind()
-    //def onHovered =
-    //    this.onHoveredBind()
+  def removeChild(component: UIComponent): Unit =
+    this.childs -= component
+
+  // def onPressed =
+  //    this.onPressedBind()
+  // def onCliked =
+  //    this.isFocused = true
+  //    this.onClickedBind()
+  // def onHovered =
+  //    this.onHoveredBind()
+}
