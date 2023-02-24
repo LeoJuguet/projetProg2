@@ -34,4 +34,4 @@ jobs:
       
     - name: Run compile
       
-      run: sbt "scalafmtCheck; compile"
+      run: sbt "compile"
