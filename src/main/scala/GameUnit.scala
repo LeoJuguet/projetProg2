@@ -1,11 +1,14 @@
 package character
 
 import actor.*
+import controller.*
 import gamestate.*
 import sfml.system.*
 import sfml.graphics.*
 
-abstract class GameUnit(gameState: GameState) extends Actor(gameState)
+import scala.math.*
+
+abstract class GameUnit(gameState: GameState, controller : Controller) extends Actor(gameState, controller)
 {
     var speed: Vector2[Float]
     var maxSpeed: Float
@@ -53,6 +56,9 @@ abstract class GameUnit(gameState: GameState) extends Actor(gameState)
                                      centered_target.y / distance)
             this.speed = Vector2(0.95f * speed.x + 0.05f * normalized.x,
                                  0.95f * speed.y + 0.05f * normalized.y)
+            var angle = atan2(speed.y, speed.x)
+
             this.position=(this.position.x + this.speed.x, this.position.y + this.speed.y)
+            this.sprite.rotation = (angle * 180 / Pi).toFloat
 
 }

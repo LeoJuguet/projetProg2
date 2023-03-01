@@ -3,10 +3,12 @@ package clickable
 import sfml.system.*
 import sfml.graphics.*
 
+import controller.*
+
 enum States:
     case IDLE, HOVER, PRESSED
 
-trait Clickable
+trait Clickable(var controller : Controller) extends Transformable
 {
     var sprite: Sprite = new Sprite(Texture())
     var state = States.IDLE
@@ -34,7 +36,7 @@ trait Clickable
         return this.state == States.PRESSED
 
     def updateClick(mousePos : Vector2[Float], leftMouse: Boolean, rightMouse : Boolean) =
-        if(this.sprite.localBounds.contains(mousePos.x, mousePos.y)){
+        if(this.transform.transformRect(this.sprite.globalBounds).contains(mousePos.x, mousePos.y)){
             if(leftMouse){
                 if(this.state != States.PRESSED) then
                     this.onClicked()

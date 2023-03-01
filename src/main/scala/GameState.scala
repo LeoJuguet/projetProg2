@@ -7,6 +7,7 @@ import scala.collection.mutable.ListBuffer
 
 import actor.*
 import character.*
+import controller.*
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
@@ -15,7 +16,7 @@ import character.*
 class GameState(var window: RenderWindow)
 {
     var actors_list = new ListBuffer[Actor]()
-    var player = new Ship(this, 0, 0, Vector2(0, 0))
+    var player : Ship = new Ship(this, new Controller(this.window, this), 0, 0, Vector2(0,0))
 
     var font = Font()
 
