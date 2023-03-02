@@ -20,6 +20,7 @@ class Controller(window : RenderWindow, gamestate : GameState) {
     var viewPos = Vector2(0.0f, 0.0f)
     //if None then player view
     var viewBind : Option[Actor] = None
+    var view = View(viewPos, Vector2(1080, 720))
 
     var selectedActor : Option[Actor] = None
     var selectedSecondaryActor : Option[Actor] = None
@@ -119,12 +120,14 @@ class Controller(window : RenderWindow, gamestate : GameState) {
     }
 
     //TODO : fonction pas encore utilisée. Il faut faire la view.
-    /*
     def updateView() = {
         viewPos = viewBind match {
-            case Some(actor) => actor.transform.transformPoint(actor.sprite.globalBounds.center)
-            case None => gamestate.player.transform.transformPoint(gamestate.player.sprite.globalBounds.center)
+            case Some(actor) =>
+                actor.position
+            case None =>
+                gamestate.player.position
         }
-        gamestate.view.center = viewPos
-    }*/
+        this.view.center = viewPos
+        window.view_=(this.view)
+    }
 }

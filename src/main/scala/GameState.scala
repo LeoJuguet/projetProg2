@@ -35,9 +35,11 @@ class GameState(var window: RenderWindow)
     this.textPlayerResources.font = this.font
     this.textPlayerResources.string = this.player.scrap.toString
 
-    private def drawMap() =
-      for actor <- actors_list do window.draw(actor)
+    var map_list = ListBuffer[Sprite]()
 
+    private def drawMap() =
+      for map <- map_list do window.draw(map)
+      for actor <- actors_list do window.draw(actor)
 
     private def drawWidget()=
       this.textPlayerResources.string = this.player.scrap.toString

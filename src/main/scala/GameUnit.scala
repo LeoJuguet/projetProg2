@@ -60,5 +60,4 @@ abstract class GameUnit(gameState: GameState, controller : Controller) extends A
 
             this.position=(this.position.x + this.speed.x, this.position.y + this.speed.y)
             this.sprite.rotation = (angle * 180 / Pi).toFloat
-
 }

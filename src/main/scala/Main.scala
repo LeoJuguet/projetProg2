@@ -24,20 +24,28 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         controller.updateEvents()
         controller.updateClick()
         controller.updateActors()
-        //controller.updateView()
+        controller.updateView()
 
         gamestate.drawGame()
 
 
 @main def main =
-    val height = 720
     val width = 1080
+    val height = 720
 
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
-
         val gamestate = GameState(window)
         val controller = Controller(window, gamestate)
+
+        window.view_=(controller.view)
+
+        var map_name = "src/main/resources/maps/purple/purple_00.png"
+        var map_texture = Texture()
+        map_texture.loadFromFile(map_name)
+        var map_sprite = Sprite(map_texture)
+        gamestate.map_list += map_sprite
+
         val player = Player(gamestate, controller, 0, 0, Vector2(0, 0))
         var ennemy = Ship(gamestate, controller, 1, 1, Vector2(600, 600))
         var ressource = Resource(gamestate, controller, 0, Vector2(300, 300))
@@ -59,5 +67,4 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
             window.display()
         
         for actor <- gamestate.actors_list do actor.destroy()
-
     }
