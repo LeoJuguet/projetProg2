@@ -7,12 +7,13 @@ import sfml.Resource
 
 import gamestate.*
 import clickable.*
+import controller.*
 
 /** Actor class
  * @constructor crate a new Actor
  * @param gameState the game state who draw this actor
  */
-class Actor(var gameState :GameState) extends Transformable with Drawable with Clickable
+class Actor(var gameState : GameState, controller : Controller) extends Drawable with Clickable(controller)
 {
     var textures: String = "src/main/resources/sfml-logo.png"
     var texture: Texture = _
@@ -48,7 +49,6 @@ class Actor(var gameState :GameState) extends Transformable with Drawable with C
         sprite.origin = Vector2(sprite.globalBounds.width / 2, sprite.globalBounds.height / 2)
 
         this.live = true
-
 
     def destroy() =
       // code pour supprimer l'actor
