@@ -1,3 +1,6 @@
+import scala.util.Using
+
+import sfml.system.*
 import sfml.graphics.*
 import sfml.window.*
 import sfml.system.*
@@ -7,55 +10,67 @@ import actor.*
 import scala.collection.mutable.ArrayBuffer
 import gui.*
 
+import character.*
+import gamestate.*
+import controller.*
+import actor.*
+import clickable.*
+import ia.*
+import controller.*
+
+def game_window(window: RenderWindow, gamestate: GameState) : Unit =
+    var continue = true
+    var controller = Controller(window, gamestate)
+
+    window.clear(Color(0, 0, 0))
+
+    //TODO : la prochaine chose à faire est de centrer la vision sur le vaisseau, et de se déplacer sur l'image de fond.
+    
+    while window.isOpen() do
+        controller.updateEvents()
+        controller.updateClick()
+        controller.updateActors()
+        controller.updateView()
+
+        gamestate.drawGame()
+
+
 @main def main =
-    scala.util.Using.Manager { use =>
-        val window = use(RenderWindow(VideoMode(1024, 768), "Hello world"))
-        var currentGame = GameState(window);
+    val width = 1080
+    val height = 720
 
-        var but = Button(0,0,200,50,"yes")
-        //but.onPressedBind = () => {println("the button is pressed")}
-        var mouseView = Vector2(0.0f,0.0f)
-        var mouseWindow = Vector2(0,0)
-        var but2 = Button(0,0,200,50,"Rage Quit")
-        var verticalBox = VerticalBox(20f,40f)
-        verticalBox.addChild(but)
-        verticalBox.addChild(but2)
-        var sliderBar = Slider(x = 100f, y = 500f, width = 200, height = 50)
-        var selectBox = SelectBox(x= 400, y= 100, items = ArrayBuffer("oui","cool","ca fonctionne","test"))
+    Using.Manager { use =>
+        val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
+        val gamestate = GameState(window)
+        val controller = Controller(window, gamestate)
 
-        var textBox = TextBox("textBox")
+        window.view_=(controller.view)
 
-        var leftMouse = false
+        var map_name = "src/main/resources/maps/purple/purple_00.png"
+        var map_texture = Texture()
+        map_texture.loadFromFile(map_name)
+        var map_sprite = Sprite(map_texture)
+        gamestate.map_list += map_sprite
 
-        while window.isOpen() do {
-            leftMouse = false
-            for event <- window.pollEvent() do
-                event match {
-                    case _: Event.Closed => window.close()
-                    case Event.MouseButtonPressed(x,y,z) =>{
-                        x match {
-                            case Mouse.Button.Left => leftMouse = true
-                            case _ =>
-                        }
-                    }
-                    case e: Event.TextEntered => textBox.typedOn(e)
-                    case _ => ()
-                }
-            //currentGame.drawGame()
-            window.clear(Color.Black())
-            mouseWindow = Mouse.position(window)
-            mouseView = window.mapPixelToCoords(mouseWindow)
-            but.updateClick(mouseView, leftMouse)
-            but2.updateClick(mouseView, leftMouse)
-            selectBox.updateClick(mouseView, leftMouse)
-            textBox.updateClick(mouseView, leftMouse)
-            sliderBar.updateClick(mouseView,leftMouse)
-            window.draw(verticalBox)
-            window.draw(selectBox)
-            window.draw(sliderBar)
-            //window.draw(but2)
-            //window.draw(but)
-            window.draw(textBox)
+        val player = Player(gamestate, controller, 0, 0, Vector2(0, 0))
+        var ennemy = Ship(gamestate, controller, 1, 1, Vector2(600, 600))
+        var ressource = Resource(gamestate, controller, 0, Vector2(300, 300))
+        
+        player.textures = "src/main/resources/ovni.png"
+        player.loadTexture()
+
+        ennemy.textures = "src/main/resources/ovni.png"
+        ennemy.loadTexture()
+
+        ressource.textures = "src/main/resources/ore.png"
+        ressource.loadTexture()
+
+        gamestate.player = player
+
+        while window.isOpen() do
+            game_window(window, gamestate)
+
             window.display()
-        }
+        
+        for actor <- gamestate.actors_list do actor.destroy()
     }
