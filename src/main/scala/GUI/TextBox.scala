@@ -42,23 +42,24 @@ class TextBox extends UIComponent with Clickable:
         this.text.string = defaultText
         this.style.apply(this.text)
         this.position= Vector2(100,100)
-
+/*
     override def position: Vector2[Float]= this.text.position
 
     override def position_=(position: Vector2[Float]) =
         this.text.position = position
         this.globalBounds = this.text.globalBounds
-
+ */
     override def onClicked() =
         this.isFocused = true
         this.text.string = this.defaultText + "_"
-        this.globalBounds = this.text.globalBounds
         this.onClickedBind()
 
     override def unFocused()=
         this.isFocused = false
         this.text.string = this.defaultText
         this.onTextCommited()
+
+    override def globalBounds = this.text.globalBounds
 
     override def draw(target: RenderTarget, states: RenderStates)=
         val transformStates = RenderStates(states.transform.combine(this.transform))
@@ -83,6 +84,5 @@ class TextBox extends UIComponent with Clickable:
                     this.text.string = this.defaultText + "_"
                     this.onTextChanged()
                 }
-                this.globalBounds = this.text.globalBounds
             }
         }

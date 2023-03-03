@@ -52,7 +52,7 @@ class Slider(
 
   def applyStyle(sliderStyle: SliderStyle)=
         sliderStyle.apply(this.sliderCursor, this.sliderBar)
-
+/*
   override def position: Vector2[Float]= this.sliderBar.position
 
   override def position_=(position: Vector2[Float]) =
@@ -60,12 +60,12 @@ class Slider(
         this.sliderCursor.position = (position.x + this.width * this.value - 1f, position.y)
         this.globalBounds = Rect(this.sliderBar.position.x, this.sliderBar.position.y,
         this.width, this.height)
-
+ */
 
   override def draw(target: RenderTarget, states: RenderStates) =
-        //val transformStates = RenderStates(states.transform.combine(this.transform))
-        this.sliderBar.draw(target,states)
-        this.sliderCursor.draw(target,states)
+        val transformStates = RenderStates(states.transform.combine(this.transform))
+        this.sliderBar.draw(target,transformStates)
+        this.sliderCursor.draw(target,transformStates)
 
 
   override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean)=

@@ -6,16 +6,28 @@ import sfml.system.*
 import gui.{UIComponent, Clickable}
 import gui.{Style,ShapeStyle, TextStyle, ClickStates}
 
-
+/** A class for define a style for a special state of a button
+ *
+ * @constructor create a new style for a button state
+ * @param shapeStyle the style of the Button
+ * @param textStyle the style of the text on the Button
+ */
 class ButtonStyleState(
-    val shapeStyle: ShapeStyle = ShapeStyle(),
-    val textStyle: TextStyle = TextStyle())
+    var shapeStyle: ShapeStyle = ShapeStyle(),
+    var textStyle: TextStyle = TextStyle())
 {
     def apply(shape: Shape,text: Text)=
         shapeStyle.apply(shape)
         textStyle.apply(text)
 }
 
+/** A class for define the style of a Button
+ *
+ *  @constructor create a new style for a button
+ *  @param idleStyle the style of the button when it's in idle
+ *  @param hoverStyle the style of the button when it's hover
+ *  @param pressedStyle the style of the button when it's pressed
+ */
 class ButtonStyle(
     var idleStyle: ButtonStyleState = ButtonStyleState(shapeStyle = ShapeStyle()),
     var hoverStyle: ButtonStyleState = ButtonStyleState(shapeStyle = ShapeStyle(style = Style(outlineColor = Color.Red()))),
@@ -29,7 +41,15 @@ class ButtonStyle(
         }
 }
 
-
+/** A button is an UIComponent of our gui
+ *
+ *  @constructor create a new buton with somes parameters
+ *  @param pos the pos of the button, default value = Vector2(0f,0f)
+ *  @tparam width the width of the button, default value = 100
+ *  @param height the height of the button, default value = 50
+ *  @param string the text show on top of the button, default value = ""
+ *  @param buttonStyle the style of the button, the default value is the default value of ButtonStyle
+ */
 class Button(
     var x : Float =0f,
     var y : Float = 0f,
@@ -50,25 +70,25 @@ extends UIComponent(width,height) with Clickable{
     this.applyStyle()
     this.position= Vector2(x,y)
 
-    //def this(x: Float,y: Float, width: Float, height: Float,text: String) =
-    //    this(x = x, y = y, width = width, height = height, string = text)
 
     def applyStyle()=
         this.buttonStyle.apply(this.shape, this.text, this.clickState)
 
 
-    override def position: Vector2[Float]= this.shape.position
+    //override def position: Vector2[Float]= this.shape.position
 
-    override def position_=(position: Vector2[Float]) =
-        this.shape.position = position
-        this.text.position = position
-        this.globalBounds = Rect(this.shape.position.x, this.shape.position.y,
-        this.width, this.height)
+    //override def position_=(position: Vector2[Float]) =
+    //    this.shape.position = position
+    //    this.text.position = position
+    //    this.globalBounds = Rect(this.shape.position.x, this.shape.position.y,
+    //    this.width, this.height)
+
+    override def globalBounds = this.shape.globalBounds
 
     override def draw(target: RenderTarget, states: RenderStates) =
-        //val transformStates = RenderStates(states.transform.combine(this.transform))
-        this.shape.draw(target,states)
-        this.text.draw(target,states)
+        val transformStates = RenderStates(states.transform.combine(this.transform))
+        this.shape.draw(target,transformStates)
+        this.text.draw(target,transformStates)
 
 
     override def onPressed()=

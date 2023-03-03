@@ -7,13 +7,18 @@ enum ClickStates:
   case CLICK_IDLE, CLICK_HOVER, CLICK_PRESSED
 
 trait Clickable:
+  /** Function call when it's clicked */
   var onClickedBind: () => Unit = () => {}
+  /** Function call when it's pressed */
   var onPressedBind: () => Unit = () => {}
+  /** Function call when it's released */
   var onReleasedBind: () => Unit = () => {}
+  /** Function call when it's hovered */
   var onHoveredBind: () => Unit = () => {}
+  /** Function call when it's unhovered */
   var onUnhoveredBind: () => Unit = () => {}
 
-  var globalBounds: Rect[Float]
+  def clickBounds: Rect[Float] = Rect[Float]()
   var clickState = ClickStates.CLICK_IDLE
 
   def onClicked() =
@@ -34,14 +39,15 @@ trait Clickable:
   def unFocused() = {}
 
   def updateClick(mousePos: Vector2[Float], leftMouse: Boolean) =
-    if (this.globalBounds.contains(mousePos.x, mousePos.y)) {
+    if (this.clickBounds.contains(mousePos.x, mousePos.y)) {
       if (leftMouse) {
-        if (this.clickState != ClickStates.CLICK_PRESSED) then this.onClicked()
         this.clickState = ClickStates.CLICK_PRESSED
         this.onPressed()
       } else {
-        if (this.clickState == ClickStates.CLICK_PRESSED)
+        if (this.clickState == ClickStates.CLICK_PRESSED){
+          this.onClicked()
           this.onReleased()
+        }
         this.clickState = ClickStates.CLICK_HOVER
         this.onHovered()
       }

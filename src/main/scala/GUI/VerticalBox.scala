@@ -9,24 +9,29 @@ import gui.UIComponent
 enum E_Direction:
   case Top, Bottom, Left ,Right
 
-class VerticalBox extends UIComponent {
+class VerticalBox(
 
-  var _position = Vector2(0f, 0f)
+
+)
+    extends UIComponent {
+
   var direction = E_Direction.Bottom
   var spacing = 5f
+  var globalBoundsRect = Rect[Float]()
+
 
   def this(x: Float, y: Float) =
     this()
     this.position = (x, y)
 
-  override def position: Vector2[Float] = this._position
+  //override def position: Vector2[Float] = this._position
 
-  override def position_=(position: Vector2[Float]) =
-    this._position = position
-    this.updateChildPosition()
+  //override def position_=(position: Vector2[Float]) =
+  //  this._position = position
+  //  this.updateChildPosition()
 
   def updateChildPosition() =
-    var pos = this._position
+    var pos = this.position
     for child <- childs do {
       child.position = pos
       this.direction match {
@@ -36,12 +41,14 @@ class VerticalBox extends UIComponent {
         case E_Direction.Left => pos = pos - Vector2(child.globalBounds.width + this.spacing,0f)
       }
     }
-    this.globalBounds = Rect(
-      this._position.x,
+    this.globalBoundsRect = Rect(
+      this.position.x,
       this.position.y,
       pos.x - this.position.x,
       pos.y - this.position.y
     )
+
+  override def globalBounds = this.globalBoundsRect
 
   override def addChild(component: UIComponent) =
     this.childs += component
@@ -56,8 +63,9 @@ class VerticalBox extends UIComponent {
     this.updateChildPosition()
 
   override def draw(target: RenderTarget, states: RenderStates) =
+    val transformStates = RenderStates(states.transform.combine(this.transform))
     for child <- childs do {
-      child.draw(target, states)
+      child.draw(target, transformStates)
     }
 
 }
