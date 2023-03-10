@@ -17,6 +17,7 @@ import actor.*
 import clickable.*
 import ia.*
 import controller.*
+import sfml.Immutable
 
 def game_window(window: RenderWindow, gamestate: GameState) : Unit =
     var continue = true
@@ -41,10 +42,10 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
 
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
-        val gamestate = GameState(window)
+        val gamestate = GameState(window, View(Vector2(0f,0f), Vector2(1080, 720)),View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
         val controller = Controller(window, gamestate)
 
-        window.view_=(controller.view)
+        //window.view = Immutable(controller.view)
 
         var map_name = "src/main/resources/maps/purple/purple_00.png"
         var map_texture = Texture()

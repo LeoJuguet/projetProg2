@@ -9,19 +9,21 @@ import gui.Clickable
 import gui.{TextStyle, Style}
 
 
-class TextBox extends UIComponent with Clickable:
+class TextBox(
+    var textLimit: Int = 100,
+    var font: Font = Font(),
+    var defaultText: String = "default text",
+    var style: TextStyle = TextStyle(style = Style(outlineColor = Color.White()))
+) extends UIComponent with Clickable:
     var text = Text()
-    var textLimit = 100
-    var defaultText = "default text"
-    var font = Font()
 
-    var style = TextStyle(style = Style(outlineColor = Color.White()))
 /** Called whenever the text is changed interactively by the user
  *
  * @param newText the newText commited
  */
     var onTextChangedBind = (newText: String) => {}
     def onTextChanged()=
+        this.globalBounds = this.text.globalBounds
         this.onTextChangedBind(this.defaultText)
 
 /** Called whenever the text is committed.
@@ -42,13 +44,13 @@ class TextBox extends UIComponent with Clickable:
         this.text.string = defaultText
         this.style.apply(this.text)
         this.position= Vector2(100,100)
-/*
+
     override def position: Vector2[Float]= this.text.position
 
     override def position_=(position: Vector2[Float]) =
         this.text.position = position
         this.globalBounds = this.text.globalBounds
- */
+
     override def onClicked() =
         this.isFocused = true
         this.text.string = this.defaultText + "_"
@@ -59,7 +61,6 @@ class TextBox extends UIComponent with Clickable:
         this.text.string = this.defaultText
         this.onTextCommited()
 
-    override def globalBounds = this.text.globalBounds
 
     override def draw(target: RenderTarget, states: RenderStates)=
         val transformStates = RenderStates(states.transform.combine(this.transform))
@@ -85,4 +86,5 @@ class TextBox extends UIComponent with Clickable:
                     this.onTextChanged()
                 }
             }
+            this.globalBounds = this.text.globalBounds
         }

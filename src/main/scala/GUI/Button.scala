@@ -75,20 +75,20 @@ extends UIComponent(width,height) with Clickable{
         this.buttonStyle.apply(this.shape, this.text, this.clickState)
 
 
-    //override def position: Vector2[Float]= this.shape.position
+    override def position: Vector2[Float]= this.shape.position
 
-    //override def position_=(position: Vector2[Float]) =
-    //    this.shape.position = position
-    //    this.text.position = position
-    //    this.globalBounds = Rect(this.shape.position.x, this.shape.position.y,
-    //    this.width, this.height)
+    override def position_=(position: Vector2[Float]) =
+        this.shape.position = position
+        this.text.position = position
+        this.globalBounds = Rect(this.shape.position.x, this.shape.position.y,
+        this.width, this.height)
 
-    override def globalBounds = this.shape.globalBounds
+    override def clickBounds = this.shape.globalBounds
 
     override def draw(target: RenderTarget, states: RenderStates) =
-        val transformStates = RenderStates(states.transform.combine(this.transform))
-        this.shape.draw(target,transformStates)
-        this.text.draw(target,transformStates)
+        //val transformStates = RenderStates(states.transform.combine(this.transform))
+        this.shape.draw(target,states)
+        this.text.draw(target,states)
 
 
     override def onPressed()=
