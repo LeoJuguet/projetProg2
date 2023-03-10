@@ -6,6 +6,8 @@ import sfml.system.*
 import gui.{UIComponent, Clickable}
 import gui.{Style,ShapeStyle, TextStyle, ClickStates}
 
+import manager.*
+
 /** A class for define a style for a special state of a button
  *
  * @constructor create a new style for a button state
@@ -61,10 +63,9 @@ class Button(
 extends UIComponent(width,height) with Clickable{
 
     var shape: Shape = RectangleShape(this.width,this.height)
-    var font: Font = Font()
+    var font: Font = FontManager.get("game_over.ttf")
     var text: Text = Text()
     this.text.string = this.string
-    this.font.loadFromFile("src/main/resources/fonts/game_over.ttf")
     this.text.font_= (this.font)
     this.text.characterSize = 30
     this.applyStyle()

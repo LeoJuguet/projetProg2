@@ -8,6 +8,7 @@ import sfml.Resource
 import gamestate.*
 import clickable.*
 import controller.*
+import manager.*
 
 /** Actor class
  * @constructor crate a new Actor
@@ -43,8 +44,7 @@ class Actor(var gameState : GameState, controller : Controller) extends Drawable
 
     // Load the textures save in textures
     def loadTexture() =
-        texture = Texture()
-        texture.loadFromFile(textures)
+        texture = TextureManager.get(textures)
         sprite = Sprite(texture)
         sprite.origin = Vector2(sprite.globalBounds.width / 2, sprite.globalBounds.height / 2)
 

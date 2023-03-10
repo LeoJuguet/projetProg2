@@ -9,6 +9,7 @@ import actor.*
 
 import scala.collection.mutable.ArrayBuffer
 import gui.*
+import manager.*
 
 import character.*
 import gamestate.*
@@ -18,6 +19,7 @@ import clickable.*
 import ia.*
 import controller.*
 import sfml.Immutable
+
 
 def game_window(window: RenderWindow, gamestate: GameState) : Unit =
     var continue = true
@@ -57,13 +59,11 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         var ennemy = Ship(gamestate, controller, 1, 1, Vector2(600, 600))
         var ressource = Resource(gamestate, controller, 0, Vector2(300, 300))
         
-        player.textures = "src/main/resources/ovni.png"
+        player.textures = "ovni.png"
         player.loadTexture()
-
-        ennemy.textures = "src/main/resources/ovni.png"
+        ennemy.textures = "ovni.png"
         ennemy.loadTexture()
-
-        ressource.textures = "src/main/resources/ore.png"
+        ressource.textures = "ore.png"
         ressource.loadTexture()
 
         gamestate.player = player
