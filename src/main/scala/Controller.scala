@@ -9,10 +9,12 @@ import clickable.*
 import actor.*
 import character.*
 import ia.*
+import sfml.Immutable
 
 class Controller(window : RenderWindow, gamestate : GameState) {
     var mousePos = Vector2(0,0)
     var mouseView = Vector2(0.0f, 0.0f)
+    var mouseWindow = Vector2(0.0f, 0.0f)
 
     var leftMouse = false
     var rightMouse = false
@@ -20,14 +22,12 @@ class Controller(window : RenderWindow, gamestate : GameState) {
     var viewPos = Vector2(0.0f, 0.0f)
     //if None then player view
     var viewBind : Option[Actor] = None
-    var view = View(viewPos, Vector2(1080, 720))
+    //var view = View(viewPos, Vector2(1080, 720))
 
     var selectedActor : Option[Actor] = None
     var selectedSecondaryActor : Option[Actor] = None
 
     def updateEvents() = {
-        this.leftMouse = false
-        this.rightMouse = false
         for event <- window.pollEvent() do
         event match {
             case _: Event.Closed =>
@@ -37,17 +37,25 @@ class Controller(window : RenderWindow, gamestate : GameState) {
                     this.leftMouse = true
                 else if button == Mouse.Button.Right then
                     this.rightMouse = true
+            case Event.MouseButtonReleased(button, x,y) =>
+                if button == Mouse.Button.Left then
+                    this.leftMouse = false
+                else if button == Mouse.Button.Right then
+                    this.rightMouse = false
             //TODO : cas pour bouger la view
             case _ => ()
         }
             
         this.mousePos = Mouse.position(window)
         this.mouseView = window.mapPixelToCoords(mousePos)
+        this.mouseWindow = window.mapPixelToCoords(mousePos, this.gamestate.windowView)
     }
     
     def updateClick() = {
         //TODO : faire une liste d'acteurs affichés (pour ne pas parcourir tous les acteurs)
         this.selectedSecondaryActor = None
+
+        this.gamestate.widgets.foreach(_.updateClick(this.mouseWindow, this.leftMouse))
 
         for actor <- gamestate.actors_list do
             actor.updateClick(this.mouseView, this.leftMouse, this.rightMouse)
@@ -127,7 +135,7 @@ class Controller(window : RenderWindow, gamestate : GameState) {
             case None =>
                 gamestate.player.position
         }
-        this.view.center = viewPos
-        window.view_=(this.view)
+        this.gamestate.view.center = viewPos
+        //window.view = Immutable(this.view)
     }
 }

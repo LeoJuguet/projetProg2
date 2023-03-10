@@ -8,15 +8,20 @@ import scala.collection.mutable.ListBuffer
 import actor.*
 import character.*
 import controller.*
+import sfml.Immutable
+import gui.{Widget, DemoWidget}
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
  * @param window the RenderWindow
  */
-class GameState(var window: RenderWindow)
+class GameState(var window: RenderWindow, var view: View, var windowView : View)
 {
     var actors_list = new ListBuffer[Actor]()
     var player : Ship = new Ship(this, new Controller(this.window, this), 0, 0, Vector2(0,0))
+    var widgets = new ListBuffer[Widget]()
+
+    this.widgets += DemoWidget(window)
 
     var font = Font()
 
@@ -42,10 +47,12 @@ class GameState(var window: RenderWindow)
       for actor <- actors_list do window.draw(actor)
 
     private def drawWidget()=
+      window.view = window.defaultView
       this.textPlayerResources.string = this.player.scrap.toString
       this.textPlayerLife.string = this.player.health.toString
       window.draw(this.textPlayerResources)
       window.draw(this.textPlayerLife)
+      widgets.foreach(window.draw(_))
 
 
     /** Draw all the images for the game
@@ -55,5 +62,6 @@ class GameState(var window: RenderWindow)
       drawMap()
       drawWidget()
       window.display()
+      this.window.view = Immutable(this.view)
 }
 
