@@ -54,13 +54,16 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         var ennemy = Ship(gamestate, controller, 1, 1, Vector2(600, 600))
         var ressource = Resource(gamestate, controller, 0, Vector2(300, 300))
         
-        player.textures = "src/main/resources/ovni.png"
+        gamestate.player = player
+        gamestate.camera.viewBind = ViewBind.ACTOR(gamestate.player)
+
+        player.textures = "ovni.png"
         player.loadTexture()
 
-        ennemy.textures = "src/main/resources/ovni.png"
+        ennemy.textures = "ovni.png"
         ennemy.loadTexture()
 
-        ressource.textures = "src/main/resources/ore.png"
+        ressource.textures = "ore.png"
         ressource.loadTexture()
 
         while window.isOpen() do
