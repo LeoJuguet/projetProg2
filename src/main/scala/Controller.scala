@@ -1,5 +1,7 @@
 package controller
 
+import scala.math.*
+
 import sfml.window.*
 import sfml.graphics.*
 import sfml.system.*
@@ -18,11 +20,6 @@ class Controller(window : RenderWindow, gamestate : GameState) {
 
     var leftMouse = false
     var rightMouse = false
-
-    var viewPos = Vector2(0.0f, 0.0f)
-    //if None then player view
-    var viewBind : Option[Actor] = None
-    //var view = View(viewPos, Vector2(1080, 720))
 
     var selectedActor : Option[Actor] = None
     var selectedSecondaryActor : Option[Actor] = None
@@ -48,7 +45,7 @@ class Controller(window : RenderWindow, gamestate : GameState) {
             
         this.mousePos = Mouse.position(window)
         this.mouseView = window.mapPixelToCoords(mousePos)
-        this.mouseWindow = window.mapPixelToCoords(mousePos, this.gamestate.windowView)
+        this.mouseWindow = window.mapPixelToCoords(mousePos, this.gamestate.camera.guiView)
     }
     
     def updateClick() = {
@@ -129,13 +126,16 @@ class Controller(window : RenderWindow, gamestate : GameState) {
 
     //TODO : fonction pas encore utilisée. Il faut faire la view.
     def updateView() = {
-        viewPos = viewBind match {
-            case Some(actor) =>
-                actor.position
-            case None =>
-                gamestate.player.position
-        }
-        this.gamestate.view.center = viewPos
-        //window.view = Immutable(this.view)
+        this.gamestate.camera.updateView()
+        this.gamestate.window.view = Immutable(this.gamestate.camera.playerView)
+
+        var x = this.gamestate.camera.playerView.center.x
+        var y = this.gamestate.camera.playerView.center.y
+
+        for i <- 0 to 7 do
+            for j <- 0 to 7 do
+                if abs(x - 540 - i * 512) < 540 + 512 && abs(y - 360 - j * 512) < 360 + 512 then
+                    this.gamestate.map_array(j)(i).loadTexture()
+                else this.gamestate.map_array(j)(i).unloadTexture()
     }
 }

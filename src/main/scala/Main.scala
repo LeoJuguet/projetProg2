@@ -17,6 +17,7 @@ import actor.*
 import clickable.*
 import ia.*
 import controller.*
+import camera.*
 import sfml.Immutable
 
 def game_window(window: RenderWindow, gamestate: GameState) : Unit =
@@ -42,31 +43,27 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
 
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
-        val gamestate = GameState(window, View(Vector2(0f,0f), Vector2(1080, 720)),View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
+        val gamestate = GameState(window)
         val controller = Controller(window, gamestate)
 
         //window.view = Immutable(controller.view)
 
-        var map_name = "src/main/resources/maps/purple/purple_00.png"
-        var map_texture = Texture()
-        map_texture.loadFromFile(map_name)
-        var map_sprite = Sprite(map_texture)
-        gamestate.map_list += map_sprite
-
-        val player = Player(gamestate, controller, 0, 0, Vector2(0, 0))
+        var player = Player(gamestate, controller, 0, 0, Vector2(0, 0))
         var ennemy = Ship(gamestate, controller, 1, 1, Vector2(600, 600))
         var ressource = Resource(gamestate, controller, 0, Vector2(300, 300))
         
-        player.textures = "src/main/resources/ovni.png"
-        player.loadTexture()
+        gamestate.player = player
+        gamestate.player.textures = "src/main/resources/ovni.png"
+        gamestate.player.loadTexture()
+        
+        gamestate.camera.viewBind = ViewBind.ACTOR(gamestate.player)
 
         ennemy.textures = "src/main/resources/ovni.png"
         ennemy.loadTexture()
+        gamestate.player.controller = controller
 
         ressource.textures = "src/main/resources/ore.png"
         ressource.loadTexture()
-
-        gamestate.player = player
 
         while window.isOpen() do
             game_window(window, gamestate)
