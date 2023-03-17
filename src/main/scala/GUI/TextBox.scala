@@ -7,11 +7,12 @@ import sfml.system.*
 import gui.UIComponent
 import gui.Clickable
 import gui.{TextStyle, Style}
+import manager.FontManager
 
 
 class TextBox(
     var textLimit: Int = 100,
-    var font: Font = Font(),
+    var font: Font = FontManager.get("game_over.ttf"),
     var defaultText: String = "default text",
     var style: TextStyle = TextStyle(style = Style(outlineColor = Color.White()))
 ) extends UIComponent with Clickable:
@@ -37,7 +38,6 @@ class TextBox(
 
     def this(defaultText: String)=
         this()
-        this.font.loadFromFile("src/main/resources/fonts/game_over.ttf")
         this.text.font_= (this.font)
         this.text.characterSize = 100
         this.defaultText = defaultText
