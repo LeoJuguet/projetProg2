@@ -43,20 +43,20 @@ class GameState(var window: RenderWindow)
     this.textPlayerResources.font = this.font
     this.textPlayerResources.string = this.player.scrap.toString
 
-    var map_array = Array.ofDim[TileMap](8,8)
+    var map_array = Array.ofDim[Option[TileMap]](8,8)
 
     for i <- 0 to 7 do
       for j <- 0 to 7 do
-        var map_name = "src/main/resources/maps/purple/purple_" + i.toString + j.toString + ".png"
-        var tile_map = new TileMap(map_name, i, j)
-        map_array(i)(j) = tile_map
+        map_array(i)(j) = None
 
     private def drawMap() =
       for i <- 0 to 7 do
         for j <- 0 to 7 do
           var map = map_array(i)(j)
-          if map.sprite != null then
-            window.draw(map)
+          map match {
+            case Some(mappe) => print("drawing " + i.toString + j.toString + "..."); window.draw(mappe); print("done\n")
+            case None => ()
+          }
 
       for actor <- actors_list do window.draw(actor)
 

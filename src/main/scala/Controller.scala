@@ -11,6 +11,7 @@ import clickable.*
 import actor.*
 import character.*
 import ia.*
+import tilemap.*
 import sfml.Immutable
 
 class Controller(window : RenderWindow, gamestate : GameState) {
@@ -135,7 +136,12 @@ class Controller(window : RenderWindow, gamestate : GameState) {
         for i <- 0 to 7 do
             for j <- 0 to 7 do
                 if abs(x - 540 - i * 512) < 540 + 512 && abs(y - 360 - j * 512) < 360 + 512 then
-                    this.gamestate.map_array(j)(i).loadTexture()
-                else this.gamestate.map_array(j)(i).unloadTexture()
+                    this.gamestate.map_array(j)(i) match {
+                        case Some(tilemap) => tilemap.loadTexture()
+                        case None =>
+                            this.gamestate.map_array(j)(i) = Some(new TileMap("maps/purple/purple_" +  i.toString + j.toString + ".png", i, j))
+                            this.gamestate.map_array(j)(i).get.loadTexture()
+                    }
+                else this.gamestate.map_array(j)(i) = None
     }
 }
