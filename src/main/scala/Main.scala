@@ -49,16 +49,13 @@ def game_window(window: RenderWindow, gamestate: GameState) : Unit =
         val controller = Controller(window, gamestate)
 
         //window.view = Immutable(controller.view)
-
-        var player = Player(gamestate, controller, 0, 0, Vector2(0, 0))
-        var ennemy = Ship(gamestate, controller, 1, 1, Vector2(600, 600))
-        var ressource = Resource(gamestate, controller, 0, Vector2(300, 300))
+        var ennemy = Ship(gamestate, 1, 1, Vector2(600, 600))
+        var ressource = Resource(gamestate, 0, Vector2(300, 300))
         
-        gamestate.player = player
         gamestate.camera.viewBind = ViewBind.ACTOR(gamestate.player)
 
-        player.textures = "ovni.png"
-        player.loadTexture()
+        gamestate.player.textures = "ovni.png"
+        gamestate.player.loadTexture()
 
         ennemy.textures = "ovni.png"
         ennemy.loadTexture()

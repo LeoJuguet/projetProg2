@@ -1,7 +1,6 @@
 package character
 
 import actor.*
-import controller.*
 import clickable.*
 import gamestate.*
 import module.*
@@ -16,7 +15,7 @@ enum Action:
     case ATTACK
     case MINE
 
-class Ship(gameState : GameState, controller : Controller, teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extends GameUnit(gameState, controller)
+class Ship(gameState : GameState, teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extends GameUnit(gameState)
 {
     var maxSpeed = 100.0;
     var speed = Vector2(0.0f, 0.0f);

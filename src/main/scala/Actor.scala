@@ -7,15 +7,13 @@ import sfml.Resource
 
 import gamestate.*
 import clickable.*
-import controller.*
 import manager.*
 
 /** Actor class
  * @constructor crate a new Actor
  * @param gameState the game state who draw this actor
  */
-class Actor(var gameState : GameState, controller : Controller) extends Drawable with Clickable(controller)
-{
+class Actor(var gameState : GameState) extends Drawable with Clickable {
     var textures: String = "src/main/resources/sfml-logo.png"
     var texture: Texture = _
     var live: Boolean = false

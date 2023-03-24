@@ -107,7 +107,6 @@ class Controller(window : RenderWindow, gamestate : GameState) {
                             player.targetShip = ship
                             player.currentAction = Action.ATTACK
                         case Some(resource : Resource) =>
-                            print("player attack resource\n")
                             player.targetResource = resource
                             player.currentAction = Action.MINE
                         case _ => ()

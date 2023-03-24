@@ -1,14 +1,13 @@
 package character
 
 import actor.*
-import controller.*
 import gamestate.*
 import sfml.system.*
 import sfml.graphics.*
 
 import scala.math.*
 
-abstract class GameUnit(gameState: GameState, controller : Controller) extends Actor(gameState, controller)
+abstract class GameUnit(gameState: GameState) extends Actor(gameState)
 {
     var speed: Vector2[Float]
     var maxSpeed: Float

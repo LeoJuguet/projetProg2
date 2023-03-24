@@ -3,12 +3,11 @@ package clickable
 import sfml.system.*
 import sfml.graphics.*
 
-import controller.*
 
 enum States:
     case IDLE, HOVER, PRESSED
 
-trait Clickable(var controller : Controller) extends Transformable
+trait Clickable() extends Transformable
 {
     var sprite: Sprite = new Sprite(Texture())
     var state = States.IDLE

@@ -20,7 +20,7 @@ import camera.*
 class GameState(var window: RenderWindow)
 {
     var actors_list = new ListBuffer[Actor]()
-    var player : Ship = new Ship(this, new Controller(this.window, this), 0, 0, Vector2(0,0))
+    var player : Ship = new Player(this, 0, 0, Vector2(0,0))
     var camera : Camera = new Camera(this)
     var widgets = new ListBuffer[Widget]()
 

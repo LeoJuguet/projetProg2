@@ -2,9 +2,8 @@ package character
 
 import actor.*
 import gamestate.*
-import controller.*
 
-class Character(gameState: GameState, controller : Controller ) extends Actor(gameState, controller):
+class Character(gameState: GameState) extends Actor(gameState):
   private var speed = 0;
   private var maxSpeed = 100;
   private var minSpeed = -100;

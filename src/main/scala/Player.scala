@@ -4,7 +4,6 @@ import sfml.system.*
 import sfml.graphics.*
 
 import actor.*
-import controller.*
 import clickable.*
 import gamestate.*
 import module.*
@@ -13,7 +12,7 @@ import scala.math.*
 
 import character.Ship
 
-class Player(gameState : GameState, controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(gameState : GameState, controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float])
+class Player(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(gameState : GameState, team : Int, shipID : Int, initialPosition : Vector2[Float])
 {
     maxHealth = 100;
     health = 100;
