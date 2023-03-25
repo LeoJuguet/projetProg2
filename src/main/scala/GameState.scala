@@ -7,7 +7,6 @@ import scala.collection.mutable.ListBuffer
 
 import actor.*
 import character.*
-import controller.*
 import tilemap.*
 import sfml.Immutable
 import gui.{Widget, DemoWidget}
@@ -43,6 +42,7 @@ class GameState(var window: RenderWindow)
     this.textPlayerResources.font = this.font
     this.textPlayerResources.string = this.player.scrap.toString
 
+    //Création d'une table vide qui contiendra les TileMap, des bouts de la map chargés dynamiquement en fonction de la position de la vue.
     var map_array = Array.ofDim[Option[TileMap]](8,8)
 
     for i <- 0 to 7 do
@@ -50,6 +50,7 @@ class GameState(var window: RenderWindow)
         map_array(i)(j) = None
 
     private def drawMap() =
+      //affichage de la map
       for i <- 0 to 7 do
         for j <- 0 to 7 do
           var map = map_array(i)(j)
@@ -57,7 +58,8 @@ class GameState(var window: RenderWindow)
             case Some(mappe) => print("drawing " + i.toString + j.toString + "..."); window.draw(mappe); print("done\n")
             case None => ()
           }
-
+      
+      //affichage des acteurs
       for actor <- actors_list do window.draw(actor)
 
     private def drawWidget()=

@@ -1,7 +1,6 @@
 package character
 
 import actor.*
-import controller.*
 import gamestate.*
 import sfml.system.*
 

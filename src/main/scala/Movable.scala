@@ -1,5 +1,7 @@
 package character
 
+//TODO : ATTENTION ! Ce fichier ne sert a rien !!!!
+
 import actor.*
 import gamestate.*
 

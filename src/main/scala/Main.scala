@@ -17,7 +17,6 @@ import controller.*
 import actor.*
 import clickable.*
 import ia.*
-import controller.*
 import camera.*
 import sfml.Immutable
 

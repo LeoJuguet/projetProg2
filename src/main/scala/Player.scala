@@ -6,7 +6,6 @@ import sfml.graphics.*
 import actor.*
 import clickable.*
 import gamestate.*
-import module.*
 
 import scala.math.*
 

@@ -12,6 +12,7 @@ import actor.*
 import character.*
 import ia.*
 import tilemap.*
+import base.*
 import sfml.Immutable
 
 class Controller(window : RenderWindow, gamestate : GameState) {
@@ -104,15 +105,20 @@ class Controller(window : RenderWindow, gamestate : GameState) {
                     this.selectedActor match { case Some(_ : Player) =>
                     this.selectedSecondaryActor match {
                         case Some(ship : Ship) if ship != player =>
-                            player.targetShip = ship
+                            player.targetShip = Some(ship)
                             player.currentAction = Action.ATTACK
                         case Some(resource : Resource) =>
-                            player.targetResource = resource
+                            player.targetResource = Some(resource)
                             player.currentAction = Action.MINE
+                        case Some(base : Base) =>
+                            player.targetBase = Some(base)
+                            if base.team == 0 then player.currentAction = Action.TRANSFER
+                            else player.currentAction = Action.ATTACK //TODO : faire une action pour attaquer une base
                         case _ => ()
                     }
                     case _ => ()}
 
+                    //TODO : ça et IA, c'est pour décider l'action, et updateUnit ça fait les actions
                     player.updateUnit()
 
                 case ennemy : Ship if ennemy.team == 1 =>
@@ -129,6 +135,7 @@ class Controller(window : RenderWindow, gamestate : GameState) {
         this.gamestate.camera.updateView()
         this.gamestate.window.view = Immutable(this.gamestate.camera.playerView)
 
+        //gestion de l'affichage des tilemaps.
         var x = this.gamestate.camera.playerView.center.x
         var y = this.gamestate.camera.playerView.center.y
 
