@@ -8,7 +8,7 @@ import sfml.graphics.*
 
 import scala.math.*
 
-abstract class GameUnit(gameState: GameState, controller : Controller) extends Actor(gameState, controller)
+abstract class GameUnit(controller : Controller) extends Actor(controller)
 {
     var speed: Vector2[Float]
     var maxSpeed: Float

@@ -9,8 +9,8 @@ abstract class Manager[T](var path : String = "src/main/resources/"):
     def loadResource(name: String): T
 
     def get(name : String) : T =
-      resourcesLoaded.find((s,_) => s == name) match{
-        case Some((_,r)) => r
+      resourcesLoaded.get(name) match{
+        case Some(r) => r
         case None => {
           var r = loadResource(name)
           resourcesLoaded += (name -> r)

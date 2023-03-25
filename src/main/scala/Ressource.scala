@@ -7,7 +7,7 @@ import sfml.system.*
 
 val rand = new scala.util.Random
 
-class Resource(gameState : GameState, controller : Controller, resourceId: Int, initialPosition: Vector2[Float]) extends Actor(gameState, controller):
+class Resource(controller : Controller, resourceId: Int, initialPosition: Vector2[Float]) extends Actor(controller):
     // Map will be considered 32768*32768 units² for now
     this.position = initialPosition;
     var remainingQuantity = 100;
@@ -16,7 +16,7 @@ class Resource(gameState : GameState, controller : Controller, resourceId: Int, 
         case _ => () // No specific resource type implemented yet. TODO: add other resource cases when implemented
     }
 
-    gameState.actors_list += this
+    GameState.actors_list += this
 
     def mined(damage : Int) : Unit =
         this.remainingQuantity -= damage

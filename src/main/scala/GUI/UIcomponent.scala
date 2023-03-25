@@ -24,10 +24,7 @@ class UIComponent(
   var globalBounds = Rect(0f,0f,0f,0f)
 
   override def clickBounds = this.globalBounds
-  // var onClickedBind: () => Unit = () => {}
-  // var onPressedBind: () => Unit = () => {}
-  // var onHoveredBind: () => Unit  = () => {}
-  // var onIdleBind : () => Unit = () => {}
+
   def close() = {}
 
   def position: Vector2[Float] = Vector2(0.0f, 0.0f)

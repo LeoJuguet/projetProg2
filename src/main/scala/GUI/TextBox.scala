@@ -13,7 +13,7 @@ import manager.FontManager
 class TextBox(
     var textLimit: Int = 100,
     var font: Font = FontManager.get("game_over.ttf"),
-    var defaultText: String = "default text",
+    var string: String = "default text",
     var style: TextStyle = TextStyle(style = Style(outlineColor = Color.White()))
 ) extends UIComponent with Clickable:
     var text = Text()
@@ -25,7 +25,7 @@ class TextBox(
     var onTextChangedBind = (newText: String) => {}
     def onTextChanged()=
         this.globalBounds = this.text.globalBounds
-        this.onTextChangedBind(this.defaultText)
+        this.onTextChangedBind(this.string)
 
 /** Called whenever the text is committed.
  * This happens when the user presses enter or the text box loses focus.
@@ -34,14 +34,14 @@ class TextBox(
  */
     var onTextCommitedBind = (newText: String) => {}
     def onTextCommited()=
-        this.onTextCommitedBind(this.defaultText)
+        this.onTextCommitedBind(this.string)
 
-    def this(defaultText: String)=
+    def this(string: String)=
         this()
         this.text.font_= (this.font)
         this.text.characterSize = 100
-        this.defaultText = defaultText
-        this.text.string = defaultText
+        this.string = string
+        this.text.string = string
         this.style.apply(this.text)
         this.position= Vector2(100,100)
 
@@ -53,12 +53,12 @@ class TextBox(
 
     override def onClicked() =
         this.isFocused = true
-        this.text.string = this.defaultText + "_"
+        this.text.string = this.string + "_"
         this.onClickedBind()
 
     override def unFocused()=
         this.isFocused = false
-        this.text.string = this.defaultText
+        this.text.string = this.string
         this.onTextCommited()
 
 
@@ -72,17 +72,17 @@ class TextBox(
             if(charTyped < 128){
                 if(charTyped == 13 || charTyped == 27){
                     this.isFocused = false
-                    this.text.string = this.defaultText
+                    this.text.string = this.string
                     onTextCommited()
                     return
                 }
-                if((this.textLimit < 0 || this.defaultText.length < textLimit) && charTyped != 8){
-                    this.defaultText = this.defaultText + charTyped.toChar
-                    this.text.string = this.defaultText + "_"
+                if((this.textLimit < 0 || this.string.length < textLimit) && charTyped != 8){
+                    this.string = this.string + charTyped.toChar
+                    this.text.string = this.string + "_"
                     this.onTextChanged()
                 }else if(charTyped == 8){
-                    this.defaultText = this.defaultText.dropRight(1)
-                    this.text.string = this.defaultText + "_"
+                    this.string = this.string.dropRight(1)
+                    this.text.string = this.string + "_"
                     this.onTextChanged()
                 }
             }

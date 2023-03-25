@@ -6,14 +6,13 @@ import sfml.graphics.*
 import actor.*
 import controller.*
 import clickable.*
-import gamestate.*
 import module.*
 
 import scala.math.*
 
 import character.Ship
 
-class Player(gameState : GameState, controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(gameState : GameState, controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float])
+class Player(controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float])
 {
     maxHealth = 100;
     health = 100;
@@ -56,4 +55,9 @@ class Player(gameState : GameState, controller : Controller, team : Int, shipID 
             case States.PRESSED => {
                 this.onPressed()
             }
+}
+
+
+class PlayerState(){
+
 }

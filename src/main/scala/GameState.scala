@@ -10,22 +10,33 @@ import character.*
 import controller.*
 import sfml.Immutable
 import gui.{Widget, DemoWidget}
+import manager.FontManager
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
  * @param window the RenderWindow
  */
-class GameState(var window: RenderWindow, var view: View, var windowView : View)
+object GameState
 {
+    var window : RenderWindow = _
+    var view : View = _
+    var windowView : View = _
     var actors_list = new ListBuffer[Actor]()
-    var player : Ship = new Ship(this, new Controller(this.window, this), 0, 0, Vector2(0,0))
+    var delete_list = new ListBuffer[Actor]()
+
+    var player : Ship = new Ship(new Controller(this.window), 0, 0, Vector2(0,0))
     var widgets = new ListBuffer[Widget]()
 
     this.widgets += DemoWidget(window)
 
-    var font = Font()
 
-    this.font.loadFromFile("src/main/resources/fonts/game_over.ttf")
+    def init(window: RenderWindow, view: View, windowView : View)={
+      this.window = window
+      this.view = view
+      this.windowView = windowView
+    }
+
+    var font = FontManager.get("game_over.ttf")
 
     var textPlayerLife = new Text()
     this.textPlayerLife.position = (50,50)
@@ -43,11 +54,13 @@ class GameState(var window: RenderWindow, var view: View, var windowView : View)
     var map_list = ListBuffer[Sprite]()
 
     private def drawMap() =
-      for map <- map_list do window.draw(map)
-      for actor <- actors_list do window.draw(actor)
+      map_list.foreach(window.draw(_))
+
+    private def drawActors() =
+      actors_list.foreach(window.draw(_))
 
     private def drawWidget()=
-      window.view = window.defaultView
+      window.view = Immutable(this.windowView)
       this.textPlayerResources.string = this.player.scrap.toString
       this.textPlayerLife.string = this.player.health.toString
       window.draw(this.textPlayerResources)
@@ -60,6 +73,7 @@ class GameState(var window: RenderWindow, var view: View, var windowView : View)
     def drawGame() =
       window.clear(Color.Black())
       drawMap()
+      drawActors()
       drawWidget()
       window.display()
       this.window.view = Immutable(this.view)

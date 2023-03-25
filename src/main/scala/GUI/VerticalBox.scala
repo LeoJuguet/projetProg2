@@ -10,15 +10,12 @@ enum E_Direction:
   case Top, Bottom, Right, Left
 
 class VerticalBox(
+  x : Float = 0f,
+  y : Float = 0f,
   var direction: E_Direction = E_Direction.Bottom,
   var spacing: Float = 5f
 ) extends UIComponent {
-  var _position = Vector2(0f,0f)
-
-
-  def this(x: Float, y: Float) =
-    this()
-    this.position = (x, y)
+  var _position = Vector2(x,y)
 
   override def position: Vector2[Float] = this._position
 

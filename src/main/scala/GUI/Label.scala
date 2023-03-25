@@ -3,15 +3,19 @@ package gui
 import sfml.graphics.*
 
 import gui.UIComponent
+import manager.FontManager
 
-class Label extends UIComponent:
-  var text = Text()
+class Label(
+  var string : String = "",
+  var font : Font = FontManager.get("game_over.ttf"),
+  var characterSize : Int = 20
+) extends UIComponent{
 
-  def this(text: String, font: Font, characterSize: Int) =
-    this()
-    this.text.string = text
-    this.text.font = font
-    this.text.characterSize = characterSize
+  var text = Text(string, font, characterSize)
+
+  def setText(string: String)=
+    this.string = string
+    this.text.string = this.string
 
   override def close() =
     this.text.close()
@@ -19,3 +23,4 @@ class Label extends UIComponent:
   override def draw(target: RenderTarget, states: RenderStates) =
     val transformStates = RenderStates(states.transform.combine(this.transform))
     text.draw(target, transformStates)
+}

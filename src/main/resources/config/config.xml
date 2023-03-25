@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<input>
+    <keybind>
+        <key>Z</key>
+        <function>up</function>
+    </keybind>
+    <keybind>
+        <key>S</key>
+        <function>down</function>
+    </keybind>
+</input>

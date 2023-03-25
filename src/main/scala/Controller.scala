@@ -10,8 +10,10 @@ import actor.*
 import character.*
 import ia.*
 import sfml.Immutable
+import event.{OnMouseButtonPressed, OnMouseButtonReleased}
 
-class Controller(window : RenderWindow, gamestate : GameState) {
+
+class Controller(window : RenderWindow) {
     var mousePos = Vector2(0,0)
     var mouseView = Vector2(0.0f, 0.0f)
     var mouseWindow = Vector2(0.0f, 0.0f)
@@ -27,40 +29,45 @@ class Controller(window : RenderWindow, gamestate : GameState) {
     var selectedActor : Option[Actor] = None
     var selectedSecondaryActor : Option[Actor] = None
 
-    def updateEvents() = {
-        for event <- window.pollEvent() do
-        event match {
-            case _: Event.Closed =>
-                window.close()
-            case Event.MouseButtonPressed(button, x, y) : Event.MouseButtonPressed =>
-                if button == Mouse.Button.Left then
-                    this.leftMouse = true
-                else if button == Mouse.Button.Right then
-                    this.rightMouse = true
-            case Event.MouseButtonReleased(button, x,y) =>
-                if button == Mouse.Button.Left then
-                    this.leftMouse = false
-                else if button == Mouse.Button.Right then
-                    this.rightMouse = false
-            //TODO : cas pour bouger la view
-            case _ => ()
+    OnMouseButtonPressed.connect((button, x, y) =>
+        {
+        print("oui\n")
+        if button == Mouse.Button.Left then
+            print("Button left\n")
+            this.leftMouse = true
+        else if button == Mouse.Button.Right then
+            println("Button Right")
+            this.rightMouse = true
         }
-            
+    )
+
+    OnMouseButtonReleased.connect((button, x ,y) =>
+        {
+            if button == Mouse.Button.Left then
+                this.leftMouse = false
+            else if button == Mouse.Button.Right then
+                this.rightMouse = false
+            println(this.leftMouse)
+        }
+    )
+
+    def updateEvents() = {
+
         this.mousePos = Mouse.position(window)
         this.mouseView = window.mapPixelToCoords(mousePos)
-        this.mouseWindow = window.mapPixelToCoords(mousePos, this.gamestate.windowView)
+        this.mouseWindow = window.mapPixelToCoords(mousePos, GameState.windowView)
     }
     
     def updateClick() = {
         //TODO : faire une liste d'acteurs affichés (pour ne pas parcourir tous les acteurs)
         this.selectedSecondaryActor = None
 
-        this.gamestate.widgets.foreach(_.updateClick(this.mouseWindow, this.leftMouse))
+        GameState.widgets.foreach(_.updateClick(this.mouseWindow, this.leftMouse))
 
-        for actor <- gamestate.actors_list do
+        for actor <- GameState.actors_list do
             actor.updateClick(this.mouseView, this.leftMouse, this.rightMouse)
         
-        for actor <- gamestate.actors_list do
+        for actor <- GameState.actors_list do
             if this.leftMouse && actor.state == States.PRESSED then
                 actor match {
                     case player : Player =>
@@ -100,26 +107,28 @@ class Controller(window : RenderWindow, gamestate : GameState) {
     }
     
     def updateActors() = {
-        for actor <- gamestate.actors_list do
+        for actor <- GameState.actors_list do
             actor match {
                 case player : Player =>
-                    this.selectedActor match { case Some(_ : Player) =>
-                    this.selectedSecondaryActor match {
-                        case Some(ship : Ship) if ship != player =>
-                            player.targetShip = ship
-                            player.currentAction = Action.ATTACK
-                        case Some(resource : Resource) =>
-                            print("player attack resource\n")
-                            player.targetResource = resource
-                            player.currentAction = Action.MINE
+                    this.selectedActor match {
+                        case Some(_ : Player) =>
+                            this.selectedSecondaryActor match {
+                                case Some(ship : Ship) if ship != player =>
+                                    player.targetShip = ship
+                                    player.currentAction = Action.ATTACK
+                                case Some(resource : Resource) =>
+                                    print("player attack resource\n")
+                                    player.targetResource = resource
+                                    player.currentAction = Action.MINE
+                                case _ => ()
+                            }
                         case _ => ()
                     }
-                    case _ => ()}
 
                     player.updateUnit()
 
                 case ennemy : Ship if ennemy.team == 1 =>
-                    IA(ennemy, gamestate.player)
+                    IA(ennemy, GameState.player)
                     ennemy.updateUnit()
 
                 case ressource : Resource => () //éventuellement faire des ressources mouvantes (comme des astéroides minables)
@@ -133,9 +142,9 @@ class Controller(window : RenderWindow, gamestate : GameState) {
             case Some(actor) =>
                 actor.position
             case None =>
-                gamestate.player.position
+                GameState.player.position
         }
-        this.gamestate.view.center = viewPos
+        GameState.view.center = viewPos
         //window.view = Immutable(this.view)
     }
 }

@@ -4,20 +4,23 @@ import actor.*
 import controller.*
 import clickable.*
 import gamestate.*
-import module.*
+import shipmodule.*
 
 import sfml.system.*
 import sfml.graphics.*
 
 import scala.math.*
+import manager.TextureManager
 
 enum Action:
     case IDLE
     case ATTACK
     case MINE
 
-class Ship(gameState : GameState, controller : Controller, teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extends GameUnit(gameState, controller)
+class Ship( controller : Controller, teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extends GameUnit(controller)
 {
+    texture = TextureManager.get("ovni.png")
+    this.applyTexture()
     var maxSpeed = 100.0;
     var speed = Vector2(0.0f, 0.0f);
 
@@ -38,7 +41,7 @@ class Ship(gameState : GameState, controller : Controller, teamID : Int, shipID 
     this.position = initialPosition;
     var targetPosition = initialPosition;
 
-    var currentAction = Action.IDLE; //Action ID : 0 = Idle, 1 = Attacking, 2 = Mining
+    var currentAction = Action.IDLE;
     
     var targetResource: Resource = _;
     var targetShip: Ship = this;
@@ -46,15 +49,17 @@ class Ship(gameState : GameState, controller : Controller, teamID : Int, shipID 
     var ID = shipID;
     var team : Int = teamID;
 
-    var modules = List[Module]()
+
+    var shipDimension = Vector2(5,5)
+    var modules = Array.ofDim[Option[ShipModule]](shipDimension.x,shipDimension.y)
 
     var random_move_array : Array[Vector2[Float]] = Array(Vector2(0.0f, 0.0f))
     var move_index = 0
-    
+
    
-    gameState.actors_list += this
+    GameState.actors_list += this
     if teamID == 0 then
-        gameState.player = this
+        GameState.player = this
     
     
     def attack() : Unit =
