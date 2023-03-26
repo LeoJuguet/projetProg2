@@ -7,10 +7,11 @@ import scala.collection.mutable.ListBuffer
 
 import actor.*
 import character.*
-import controller.*
+import tilemap.*
 import sfml.Immutable
 import gui.{Widget, DemoWidget}
 import manager.FontManager
+import camera.*
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
@@ -23,8 +24,8 @@ object GameState
     var windowView : View = _
     var actors_list = new ListBuffer[Actor]()
     var delete_list = new ListBuffer[Actor]()
-
-    var player : Ship = new Ship(new Controller(this.window), 0, 0, Vector2(0,0))
+    var player : Ship = new Player(0, 0, Vector2(0,0))
+    var camera : Camera = new Camera
     var widgets = new ListBuffer[Widget]()
 
     this.widgets += DemoWidget(window)
@@ -51,21 +52,34 @@ object GameState
     this.textPlayerResources.font = this.font
     this.textPlayerResources.string = this.player.scrap.toString
 
-    var map_list = ListBuffer[Sprite]()
+    //Création d'une table vide qui contiendra les TileMap, des bouts de la map chargés dynamiquement en fonction de la position de la vue.
+    var map_array = Array.ofDim[Option[TileMap]](8,8)
+
+    for i <- 0 to 7 do
+      for j <- 0 to 7 do
+        map_array(i)(j) = None
 
     private def drawMap() =
-      map_list.foreach(window.draw(_))
+      //affichage de la map
+      for i <- 0 to 7 do
+        for j <- 0 to 7 do
+          var map = map_array(i)(j)
+          map match {
+            case Some(tilemap) => window.draw(tilemap)
+            case None => ()
+          }
 
     private def drawActors() =
       actors_list.foreach(window.draw(_))
 
     private def drawWidget()=
-      window.view = Immutable(this.windowView)
+      window.view = Immutable(camera.guiView)
       this.textPlayerResources.string = this.player.scrap.toString
       this.textPlayerLife.string = this.player.health.toString
       window.draw(this.textPlayerResources)
       window.draw(this.textPlayerLife)
       widgets.foreach(window.draw(_))
+      window.view = Immutable(camera.playerView)
 
 
     /** Draw all the images for the game
@@ -76,6 +90,5 @@ object GameState
       drawActors()
       drawWidget()
       window.display()
-      this.window.view = Immutable(this.view)
 }
 

@@ -25,7 +25,7 @@ class ModuleCard(ship: Ship, modulePos: Int , var module : ShipModule) extends W
   var cardBox = VerticalBox(direction = E_Direction.Right)
 
   var button = Button(width = 100, height = 100)
-  var md = ShipModule(_)
+  var md = ShipModule()
   button.onClickedBind = () => {
   }
 

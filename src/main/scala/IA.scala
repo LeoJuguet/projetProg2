@@ -5,20 +5,27 @@ import character.*
 
 import perlin.*
 
+//le but de cette fonction est de faire une démonstration que les fonctionnalités du jeu marchent.
+//Ce n'est certainement pas, à ce stade, une véritable "IA" d'un ennemi du jeu final. Ce n'est qu'un démonstrateur.
 def IA(ship : Ship, player : Ship) : Unit =
-    //perlin noise pour mouvements aléatoires
+    //si l'ennemi est assez proche du joueur, il l'attaque
+    //TODO : quand "le joueur" sera une armée, ce sera évidemment la distance la plus courte qui sera prise en compte
     if norm(Vector2(ship.position.x - player.position.x, ship.position.y - player.position.y)) < 350 then
-        ship.targetShip = player
+        ship.targetShip = Some(player)
         ship.targetPosition = player.position
         ship.currentAction = Action.ATTACK
     
+    //sinon, il se déplace aléatoirement
     else
-        if ship.targetShip != ship then
-            ship.targetShip = ship
+        //TODO : faire une Option[Ship] pour le targetShip, comme ça on peut mettre None à la place de ship
+        if ship.targetShip != None then
+            ship.targetShip = None
         
+        //si l'ennemi est en train d'attaquer, il s'arrête
         if ship.currentAction == Action.ATTACK then
             ship.currentAction = Action.IDLE
         
+        //on génère un bruit de perlin pour déterminer le mouvement de l'ennemi, si il n'a pas déjà été généré
         if ship.random_move_array.length == 1 then
             var x = perlinNoise(128, 1.2)
             var y = perlinNoise(128, 1.2)
@@ -31,6 +38,7 @@ def IA(ship : Ship, player : Ship) : Unit =
 
             ship.move_index = 0
 
+        //l'ennemi se déplace aléatoirement
         ship.move_index += 1
         if ship.move_index % 4 == 0 then
             var index = (ship.move_index / 10).toInt % 128

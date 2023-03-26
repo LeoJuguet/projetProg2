@@ -1,5 +1,7 @@
 package controller
 
+import scala.math.*
+
 import sfml.window.*
 import sfml.graphics.*
 import sfml.system.*
@@ -9,6 +11,8 @@ import clickable.*
 import actor.*
 import character.*
 import ia.*
+import tilemap.*
+import base.*
 import sfml.Immutable
 import event.{OnMouseButtonPressed, OnMouseButtonReleased}
 
@@ -21,22 +25,14 @@ class Controller(window : RenderWindow) {
     var leftMouse = false
     var rightMouse = false
 
-    var viewPos = Vector2(0.0f, 0.0f)
-    //if None then player view
-    var viewBind : Option[Actor] = None
-    //var view = View(viewPos, Vector2(1080, 720))
-
     var selectedActor : Option[Actor] = None
     var selectedSecondaryActor : Option[Actor] = None
 
     OnMouseButtonPressed.connect((button, x, y) =>
         {
-        print("oui\n")
         if button == Mouse.Button.Left then
-            print("Button left\n")
             this.leftMouse = true
         else if button == Mouse.Button.Right then
-            println("Button Right")
             this.rightMouse = true
         }
     )
@@ -47,15 +43,13 @@ class Controller(window : RenderWindow) {
                 this.leftMouse = false
             else if button == Mouse.Button.Right then
                 this.rightMouse = false
-            println(this.leftMouse)
         }
     )
 
     def updateEvents() = {
-
         this.mousePos = Mouse.position(window)
         this.mouseView = window.mapPixelToCoords(mousePos)
-        this.mouseWindow = window.mapPixelToCoords(mousePos, GameState.windowView)
+        this.mouseWindow = window.mapPixelToCoords(mousePos, GameState.camera.guiView)
     }
     
     def updateClick() = {
@@ -64,8 +58,7 @@ class Controller(window : RenderWindow) {
 
         GameState.widgets.foreach(_.updateClick(this.mouseWindow, this.leftMouse))
 
-        for actor <- GameState.actors_list do
-            actor.updateClick(this.mouseView, this.leftMouse, this.rightMouse)
+        GameState.actors_list.foreach(_.updateClick(this.mouseView, this.leftMouse, this.rightMouse))
         
         for actor <- GameState.actors_list do
             if this.leftMouse && actor.state == States.PRESSED then
@@ -114,37 +107,53 @@ class Controller(window : RenderWindow) {
                         case Some(_ : Player) =>
                             this.selectedSecondaryActor match {
                                 case Some(ship : Ship) if ship != player =>
-                                    player.targetShip = ship
+                                    player.targetShip = Some(ship)
                                     player.currentAction = Action.ATTACK
                                 case Some(resource : Resource) =>
-                                    print("player attack resource\n")
-                                    player.targetResource = resource
+                                    player.targetResource = Some(resource)
                                     player.currentAction = Action.MINE
+                                case Some(base : Base) =>
+                                    player.targetBase = Some(base)
+                                    if base.team == 0 then player.currentAction = Action.TRANSFER
+                                    else player.currentAction = Action.ATTACK //TODO : faire une action pour attaquer une base
                                 case _ => ()
                             }
+
+                            //TODO : ça et IA, c'est pour décider l'action, et updateUnit ça fait les actions
+                            player.updateUnit()
+
+                        case Some(ennemy : Ship) if ennemy.team == 1 =>
+                            IA(ennemy, GameState.player)
+                            ennemy.updateUnit()
+
+                        case Some(ressource : Resource) => () //éventuellement faire des ressources mouvantes (comme des astéroides minables)
                         case _ => ()
                     }
-
-                    player.updateUnit()
-
-                case ennemy : Ship if ennemy.team == 1 =>
-                    IA(ennemy, GameState.player)
-                    ennemy.updateUnit()
-
-                case ressource : Resource => () //éventuellement faire des ressources mouvantes (comme des astéroides minables)
-                case _ => ()
+                case _ => {}
             }
     }
 
     //TODO : fonction pas encore utilisée. Il faut faire la view.
     def updateView() = {
-        viewPos = viewBind match {
-            case Some(actor) =>
-                actor.position
-            case None =>
-                GameState.player.position
-        }
-        GameState.view.center = viewPos
-        //window.view = Immutable(this.view)
+        GameState.camera.updateView()
+        GameState.window.view = Immutable(GameState.camera.playerView)
+
+        //gestion de l'affichage des tilemaps.
+        var x = GameState.camera.playerView.center.x
+        var y = GameState.camera.playerView.center.y
+
+        for i <- 0 to 7 do
+            for j <- 0 to 7 do
+                if abs(x - 540 - i * 512) < 540 + 512 && abs(y - 360 - j * 512) < 360 + 512 then
+                    GameState.map_array(j)(i) match {
+                        case Some(tilemap) => tilemap.loadTexture()
+                        case None =>
+                            GameState.map_array(j)(i) = Some(new TileMap("maps/purple/purple_" +  i.toString + j.toString + ".png", i, j))
+                            GameState.map_array(j)(i).get.loadTexture()
+                    }
+                else
+                    GameState.map_array(j)(i) = None
     }
+
+
 }

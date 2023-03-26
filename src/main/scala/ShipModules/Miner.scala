@@ -7,7 +7,7 @@ import character.Resource
 
 import scala.math.*
 
-class MinerModule(controller : Controller) extends ShipModule(controller)
+class MinerModule extends ShipModule
 {
     var targetResource: Option[Resource] = None;
 

@@ -19,13 +19,11 @@ import clickable.*
 import ia.*
 import event.*
 import controller.*
+import camera.*
 import sfml.Immutable
 
 
-def game_loop(window: RenderWindow) : Unit =
-    var continue = true
-    var controller = Controller(window)
-
+def game_loop(window: RenderWindow, controller: Controller) : Unit =
     window.clear(Color(0, 0, 0))
 
     //TODO : la prochaine chose à faire est de centrer la vision sur le vaisseau, et de se déplacer sur l'image de fond.
@@ -37,7 +35,7 @@ def game_loop(window: RenderWindow) : Unit =
         controller.updateActors()
         controller.updateView()
 
-        //Delete actors
+        //Delete actors destroy
         GameState.actors_list --= GameState.delete_list
         GameState.delete_list.clear()
 
@@ -51,29 +49,21 @@ def game_loop(window: RenderWindow) : Unit =
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
         val controller = Controller(window)
-
         GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)),View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
-        //window.view = Immutable(controller.view)
+
         InputManager.init(window)
 
-
-        var map_texture = TextureManager.get("maps/purple/purple_00.png")
-        var map_sprite = Sprite(map_texture)
-        GameState.map_list += map_sprite
-
-        val player = Player(controller, 0, 0, Vector2(0, 0))
-        var ennemy = Ship(controller, 1, 1, Vector2(600, 600))
-        var ressource = Resource(controller, 0, Vector2(300, 300))
+        var ennemy = Ship( 1, 1, Vector2(600, 600))
+        var ressource = Resource( 0, Vector2(300, 300))
         
         ressource.texture = TextureManager.get("ore.png")
         ressource.applyTexture()
 
-        GameState.player = player
 
-        while window.isOpen() do
-            game_loop(window)
+        GameState.camera.viewBind = ViewBind.ACTOR(GameState.player)
 
-            window.display()
-        
+        game_loop(window, controller)
+
+
         for actor <- GameState.actors_list do actor.destroy()
     }

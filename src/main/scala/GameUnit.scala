@@ -1,19 +1,18 @@
 package character
 
 import actor.*
-import controller.*
 import gamestate.*
 import sfml.system.*
 import sfml.graphics.*
 
 import scala.math.*
 
-abstract class GameUnit(controller : Controller) extends Actor(controller)
+abstract class GameUnit extends Actor
 {
     var speed: Vector2[Float]
     var maxSpeed: Float
     var maxHealth: Int
-    var health: Int
+    var _health: Int
     var regenerationRate: Int
     var attackDamage: Int
     var targetPosition: Vector2[Float]
@@ -23,13 +22,15 @@ abstract class GameUnit(controller : Controller) extends Actor(controller)
         this.destroy()
         this.live = false
 
-    def health_(newHealth: Int) : Unit =
+    def health = _health
+
+    def health_=(newHealth: Int) : Unit =
         if newHealth > this.maxHealth then
-            this.health = this.maxHealth
+            this._health = this.maxHealth
         else if newHealth <= 0 then
             this.kill()
         else
-            this.health = newHealth
+            this._health = newHealth
     
     def regenerate() : Unit =
         this.health = this.maxHealth.min(this.health + regenerationRate)

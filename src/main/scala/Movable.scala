@@ -1,10 +1,11 @@
 package character
 
+//TODO : ATTENTION ! Ce fichier ne sert a rien !!!!
+
 import actor.*
 import gamestate.*
-import controller.*
 
-class Character(controller : Controller ) extends Actor(controller):
+class Character extends Actor:
   private var speed = 0;
   private var maxSpeed = 100;
   private var minSpeed = -100;

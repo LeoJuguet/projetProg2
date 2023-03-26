@@ -4,18 +4,18 @@ import sfml.system.*
 import sfml.graphics.*
 
 import actor.*
-import controller.*
 import clickable.*
 import module.*
+import gamestate.*
 
 import scala.math.*
 
 import character.Ship
 
-class Player(controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(controller : Controller, team : Int, shipID : Int, initialPosition : Vector2[Float])
+class Player(team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(team, shipID, initialPosition)
 {
     maxHealth = 100;
-    health = 100;
+    _health = 100;
     override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean, rightMouse: Boolean): Unit =
         if(this.transform.transformRect(this.sprite.globalBounds).contains(mousePos.x, mousePos.y)){
             if(leftMouse){

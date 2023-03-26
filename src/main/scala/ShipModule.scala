@@ -18,7 +18,7 @@ class PriceStruct(
     var ethereum: Int = 0,
 ){}
 
-class ShipModule(controller : Controller) extends Actor(controller)
+class ShipModule extends Actor
 {
     sprite = Sprite()
     var parent: Ship = _
