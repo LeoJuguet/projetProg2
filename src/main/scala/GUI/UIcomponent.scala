@@ -48,11 +48,7 @@ class UIComponent(
   def removeChild(component: UIComponent): Unit =
     this.childs -= component
 
-  // def onPressed =
-  //    this.onPressedBind()
-  // def onCliked =
-  //    this.isFocused = true
-  //    this.onClickedBind()
-  // def onHovered =
-  //    this.onHoveredBind()
+  //def width = globalBounds.width
+  //def height = globalBounds.height
+
 }

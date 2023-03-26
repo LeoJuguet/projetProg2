@@ -36,6 +36,8 @@ def game_loop(window: RenderWindow) : Unit =
         controller.updateClick()
         controller.updateActors()
         controller.updateView()
+
+        //Delete actors
         GameState.actors_list --= GameState.delete_list
         GameState.delete_list.clear()
 
