@@ -7,6 +7,8 @@ import sfml.graphics.*
 
 import scala.math.*
 
+//This class is used to represent a game unit. It is the base class for all game units.
+//It will only be inherited by the ships, but it is a general class that could be used for other game units if the game is further meant to be expanded.
 abstract class GameUnit extends Actor
 {
     var speed: Vector2[Float]
@@ -41,9 +43,6 @@ abstract class GameUnit extends Actor
             //TODO : explosion animation
             //Maybe add a destroyed list buffer in the gamestate
             this.kill()
-
-    def moveTo(target: Vector2[Float]) : Unit =
-        this.targetPosition = target
 
     def moveUnit() : Unit =
         val centered_target = Vector2(this.targetPosition.x - this.position.x,

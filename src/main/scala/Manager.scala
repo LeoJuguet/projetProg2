@@ -3,6 +3,8 @@ package manager
 import scala.collection.mutable.HashMap
 import sfml.graphics.*
 
+// This class is a template for all the managers. It builds a map of loaded resources saved with their name.
+// It allows to have several instances of the same resource without loading it several times.
 abstract class Manager[T](var path : String = "src/main/resources/"):
     var resourcesLoaded: Map[String,T] = Map()
 

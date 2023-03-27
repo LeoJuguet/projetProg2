@@ -51,6 +51,7 @@ class Ship( teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extend
 
     var currentAction = Action.IDLE;
     
+    //TODO : change that for a mining target, a transfer target and an attack target. It will simplify many other cases.
     var targetResource: Option[Resource] = None
     var targetShip: Option[Ship] = None
     var targetBase: Option[Base] = None
@@ -69,7 +70,6 @@ class Ship( teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extend
     GameState.actors_list += this
     if teamID == 0 then
         GameState.player = this
-    
     
     def attack() : Unit =
         //attaque en priorité les vaisseaux ennemis puis les bases.

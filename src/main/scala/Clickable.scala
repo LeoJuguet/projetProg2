@@ -7,6 +7,8 @@ import sfml.graphics.*
 enum States:
     case IDLE, HOVER, PRESSED
 
+// The clickable trait is used to add clickability to any object
+// TODO : this file has to be updated to take into account the new input and event system
 trait Clickable() extends Transformable
 {
     var sprite: Sprite = new Sprite(Texture())

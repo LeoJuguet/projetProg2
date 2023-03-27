@@ -18,6 +18,7 @@ class PriceStruct(
     var ethereum: Int = 0,
 ){}
 
+//This is the base of what will be the ship modules in the final game (weapons, engines, etc.). It is an actor that can be placed on a ship.
 class ShipModule extends Actor
 {
     sprite = Sprite()

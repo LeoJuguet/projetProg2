@@ -17,6 +17,9 @@ import sfml.Immutable
 import event.{OnMouseButtonPressed, OnMouseButtonReleased}
 
 
+//This class is used to controll the game.
+//It is in charge of dealing with inputs and events, and updating the gamestate and game units actions accordingly.
+//TODO : update this file to match the new architecture of events.
 class Controller(window : RenderWindow) {
     var mousePos = Vector2(0,0)
     var mouseView = Vector2(0.0f, 0.0f)
@@ -144,6 +147,7 @@ class Controller(window : RenderWindow) {
 
         for i <- 0 to 7 do
             for j <- 0 to 7 do
+                //On ne veut pas la distance entre le centre de la tilemap et le centre de la vue, mais la distance entre le centre de la tilemap et le bord de la vue.
                 if abs(x - 540 - i * 512) < 540 + 512 && abs(y - 360 - j * 512) < 360 + 512 then
                     GameState.map_array(j)(i) match {
                         case Some(tilemap) => tilemap.loadTexture()

@@ -25,8 +25,6 @@ import sfml.Immutable
 
 def game_loop(window: RenderWindow, controller: Controller) : Unit =
     window.clear(Color(0, 0, 0))
-
-    //TODO : la prochaine chose à faire est de centrer la vision sur le vaisseau, et de se déplacer sur l'image de fond.
     
     while window.isOpen() do
         InputManager.update()
@@ -49,18 +47,18 @@ def game_loop(window: RenderWindow, controller: Controller) : Unit =
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
         val controller = Controller(window)
-        GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)),View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
+        GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
 
         InputManager.init(window)
 
-        var ennemy = Ship( 1, 1, Vector2(600, 600))
-        var ressource = Resource( 0, Vector2(300, 300))
+        var ennemy = Ship(1, 1, Vector2(600, 600))
+        var ressource = Resource(Vector2(300, 300))
         
         ressource.texture = TextureManager.get("ore.png")
         ressource.applyTexture()
 
 
-        GameState.camera.viewBind = ViewBind.ACTOR(GameState.player)
+        GameState.camera.updateBind(ViewBind.ACTOR(GameState.player))
 
         game_loop(window, controller)
 

@@ -12,6 +12,8 @@ import scala.math.*
 
 import character.Ship
 
+
+//Attention ! Cette classe est amenée à être supprimée. Elle sert juste pour la démo pour montrer ce qu'on peut faire, en controllant un unique petit vaisseau.
 class Player(team : Int, shipID : Int, initialPosition : Vector2[Float]) extends Ship(team, shipID, initialPosition)
 {
     maxHealth = 100;

@@ -4,6 +4,9 @@ import sfml.graphics.*
 import sfml.system.*
 import manager.TextureManager
 
+//This structure is used to store the information about a portion of the map that is loaded in memory.
+//It allows to unload the textures when they are not needed anymore, and thus not to overload the memory and display them when they are needed.
+//TODO : when the texture manager will have the free function, use it to unload the textures instead of setting them to null.
 class TileMap(var name : String, var i : Int, var j : Int) extends Transformable with Drawable {
     var sprite : Sprite = null
     var texture : Texture = TextureManager.get(name)

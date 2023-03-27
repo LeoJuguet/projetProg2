@@ -10,14 +10,13 @@ import perlin.*
 def IA(ship : Ship, player : Ship) : Unit =
     //si l'ennemi est assez proche du joueur, il l'attaque
     //TODO : quand "le joueur" sera une armée, ce sera évidemment la distance la plus courte qui sera prise en compte
-    if norm(Vector2(ship.position.x - player.position.x, ship.position.y - player.position.y)) < 350 then
+    if distance(ship.position, player.position) < 350 then
         ship.targetShip = Some(player)
         ship.targetPosition = player.position
         ship.currentAction = Action.ATTACK
     
     //sinon, il se déplace aléatoirement
     else
-        //TODO : faire une Option[Ship] pour le targetShip, comme ça on peut mettre None à la place de ship
         if ship.targetShip != None then
             ship.targetShip = None
         
@@ -43,3 +42,6 @@ def IA(ship : Ship, player : Ship) : Unit =
         if ship.move_index % 4 == 0 then
             var index = (ship.move_index / 10).toInt % 128
             ship.targetPosition += ship.random_move_array(index) * 10
+        
+        //the AI does not allow for a demonstration of the mining behavior. However, it is demonstrated by the player.
+        //The transfer behavior is also not demonstrated, but automatically after the mining is done.
