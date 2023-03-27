@@ -1,6 +1,7 @@
 package event
 
 import event.*
+import gamestate.GameState
 
 import sfml.graphics.RenderWindow
 import sfml.window.Event
@@ -11,6 +12,7 @@ import sfml.window.Joystick.Axis
 import sfml.window.Sensor
 import sfml.window.Keyboard
 import sfml.system.Vector2
+import sfml.window.Mouse
 
 object OnTextEntered extends event.Event[Int]
 object OnKeyPressed extends event.Event[(Key,Boolean,Boolean,Boolean,Boolean)]
@@ -92,9 +94,25 @@ object InputManager {
             OnKeyReleased(code, alt, control, shift, system)
           }
           case Event.MouseWheelScrolled(wheel, delta, x, y) => OnMouseWheelScrolled(wheel, delta, x, y)
-          case Event.MouseButtonPressed(button, x, y) => OnMouseButtonPressed(button, x, y)
-          case Event.MouseButtonReleased(button, x, y) => OnMouseButtonReleased(button, x, y)
-          case Event.MouseMoved(x, y) => OnMouseMoved(x, y)
+          case Event.MouseButtonPressed(button, x, y) =>
+            button match {
+              case Button.Left => KeyboardState.leftMouse = true
+              case Button.Right => KeyboardState.rightMouse = true
+              case _ =>
+            }
+            OnMouseButtonPressed(button, x, y)
+          case Event.MouseButtonReleased(button, x, y) =>
+            button match {
+              case Button.Left => KeyboardState.leftMouse = false
+              case Button.Right => KeyboardState.rightMouse = false
+              case _ =>
+            }
+            OnMouseButtonReleased(button, x, y)
+          case Event.MouseMoved(x, y) =>
+            KeyboardState.mousePos = Vector2(x,y)
+            KeyboardState.mouseView = windows.mapPixelToCoords(KeyboardState.mousePos)
+            KeyboardState.mouseWindow = windows.mapPixelToCoords(KeyboardState.mousePos, GameState.camera.guiView)
+            OnMouseMoved(x, y)
           case Event.MouseEntered() => OnMouseEntered(())
           case Event.MouseLeft() => OnMouseLeft(())
           case Event.JoystickButtonPressed(joystickId, button) => OnJoystickButtonPressed(joystickId, button)
@@ -107,8 +125,7 @@ object InputManager {
           case Event.TouchEnded(finger, x, y) => OnTouchEnded(finger, y, x)
           case Event.SensorChanged(sensor, x, y, z) => OnSensorChanged(sensor, x, y, z)
           }
-        }
-
+  }
 
   def update() = {
     windows.pollEvent().foreach(this.call_events(_))

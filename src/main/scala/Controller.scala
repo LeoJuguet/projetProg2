@@ -22,6 +22,8 @@ import event.InputManager
 //This class is used to controll the game.
 //It is in charge of dealing with inputs and events, and updating the gamestate and game units actions accordingly.
 //TODO : update this file to match the new architecture of events.
+//TODO : This class should not be used to controll the game but only one player. Update the class so that it only controlls one player.
+//       And create a new IAController class.
 class Controller(window : RenderWindow) {
     //the main selected actor is persistant between frames.
     var selectedActor : Option[Actor] = None
@@ -30,32 +32,7 @@ class Controller(window : RenderWindow) {
     var selectedSecondaryActor : Option[Actor] = None
 
     //exemple de gestion d'event correcte avec le nouveau système d'event :
-    OnMouseButtonPressed.connect((button, x, y) =>
-        {
-        if button == Mouse.Button.Left then
-            KeyboardState.leftMouse = true
-        else if button == Mouse.Button.Right then
-            KeyboardState.rightMouse = true
-        }
-    )
 
-    OnMouseButtonReleased.connect((button, x ,y) =>
-        {
-            if button == Mouse.Button.Left then
-                KeyboardState.leftMouse = false
-            else if button == Mouse.Button.Right then
-                KeyboardState.rightMouse = false
-        }
-    )
-
-    def updateEvents() = {
-        KeyboardState.mousePos = Mouse.position(window)
-        KeyboardState.mouseView = window.mapPixelToCoords(KeyboardState.mousePos)
-        KeyboardState.mouseWindow = window.mapPixelToCoords(KeyboardState.mousePos, GameState.camera.guiView)
-
-        InputManager.update()
-    }
-    
     def updateClick() = {
         //TODO : faire une liste d'acteurs affichés (pour ne pas parcourir tous les acteurs)
         this.selectedSecondaryActor = None

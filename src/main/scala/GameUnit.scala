@@ -58,6 +58,6 @@ abstract class GameUnit extends Actor
                                  0.95f * speed.y + 0.05f * normalized.y)
             var angle = atan2(speed.y, speed.x)
 
-            this.position=(this.position.x + this.speed.x, this.position.y + this.speed.y)
+            this.moveActor(this.position + this.speed)
             this.sprite.rotation = (angle * 180 / Pi).toFloat
 }

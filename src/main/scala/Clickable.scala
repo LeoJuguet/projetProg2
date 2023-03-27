@@ -44,6 +44,7 @@ trait Clickable()
 
     var moveConnection = OnMouseMoved.connect((x, y) => {
         if this.clickBounds.contains(x, y) then
+            print("La souris bouge !")
             if this.state == States.IDLE then
                 this.state = States.HOVER
                 this.onHovered()

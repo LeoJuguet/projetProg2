@@ -46,7 +46,7 @@ class Ship( teamID : Int, shipID : Int, initialPosition : Vector2[Float]) extend
     var totalLoad = 0
     var maxTotalLoad = 100
 
-    this.position = initialPosition;
+    this.moveActor(initialPosition);
     var targetPosition = initialPosition;
 
     var currentAction = Action.IDLE;

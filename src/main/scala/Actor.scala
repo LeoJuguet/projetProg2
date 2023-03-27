@@ -35,8 +35,13 @@ class Actor extends Transformable with Drawable with Clickable  {
         val render_states = RenderStates(this.transform.combine(states.transform))
         target.draw(sprite, render_states)
 
-    def move : Float => Float => Unit =
-        x => y => this.sprite.move(x,y)
+    def moveActor(x: Float, y: Float) : Unit =
+        this.position= Vector2(x,y)
+        this.clickBounds = this.sprite.globalBounds
+    
+    def moveActor(pos: Vector2[Float]) : Unit =
+        this.position= pos
+        this.clickBounds = this.sprite.globalBounds
 
 
     // Load the textures save in textures
@@ -44,6 +49,9 @@ class Actor extends Transformable with Drawable with Clickable  {
         sprite = Sprite(texture)
         sprite.origin = Vector2(sprite.globalBounds.width / 2, sprite.globalBounds.height / 2)
         this.live = true
+        this.clickBounds = this.sprite.globalBounds
+
+        print(clickBounds)
 
     var onDestroyed = OnDestroyed()
 
