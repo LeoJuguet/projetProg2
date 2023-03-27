@@ -30,8 +30,10 @@ class ProgressBar(
     
     var backGround = RectangleShape(this.width,this.height)
     var foreGround = RectangleShape(this.width,this.height)
+    backGround.position = Vector2(this.x,this.y)
+    foreGround.position = Vector2(this.x,this.y)
     this.style.apply(backGround,foreGround)
-
+    this.updateValue(0.5f)
 
     def updateValue(newValue: Float) = {
         currentValue =  max(minValue,min(newValue,maxValue))
