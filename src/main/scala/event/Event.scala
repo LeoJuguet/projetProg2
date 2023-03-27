@@ -45,7 +45,7 @@ class Event[T] {
    * @param callback the function to call
    * @return a Connection, this connection it's important if you want disconnect to the event
    * */
-  def connect(callback : Callback): Unit={
+  def connect(callback : Callback): Connection[T] ={
     var connection = Connection(this,callback)
     slots += connection
     connection

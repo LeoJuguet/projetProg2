@@ -15,56 +15,55 @@ import tilemap.*
 import base.*
 import sfml.Immutable
 import event.{OnMouseButtonPressed, OnMouseButtonReleased}
+import event.KeyboardState
+import event.InputManager
 
 
 //This class is used to controll the game.
 //It is in charge of dealing with inputs and events, and updating the gamestate and game units actions accordingly.
 //TODO : update this file to match the new architecture of events.
 class Controller(window : RenderWindow) {
-    var mousePos = Vector2(0,0)
-    var mouseView = Vector2(0.0f, 0.0f)
-    var mouseWindow = Vector2(0.0f, 0.0f)
-
-    var leftMouse = false
-    var rightMouse = false
-
+    //the main selected actor is persistant between frames.
     var selectedActor : Option[Actor] = None
+    //the secondary selected actor is reset at the end of each frame.
+    //it is used to select a secondary target for an action.
     var selectedSecondaryActor : Option[Actor] = None
 
+    //exemple de gestion d'event correcte avec le nouveau système d'event :
     OnMouseButtonPressed.connect((button, x, y) =>
         {
         if button == Mouse.Button.Left then
-            this.leftMouse = true
+            KeyboardState.leftMouse = true
         else if button == Mouse.Button.Right then
-            this.rightMouse = true
+            KeyboardState.rightMouse = true
         }
     )
 
     OnMouseButtonReleased.connect((button, x ,y) =>
         {
             if button == Mouse.Button.Left then
-                this.leftMouse = false
+                KeyboardState.leftMouse = false
             else if button == Mouse.Button.Right then
-                this.rightMouse = false
+                KeyboardState.rightMouse = false
         }
     )
 
     def updateEvents() = {
-        this.mousePos = Mouse.position(window)
-        this.mouseView = window.mapPixelToCoords(mousePos)
-        this.mouseWindow = window.mapPixelToCoords(mousePos, GameState.camera.guiView)
+        KeyboardState.mousePos = Mouse.position(window)
+        KeyboardState.mouseView = window.mapPixelToCoords(KeyboardState.mousePos)
+        KeyboardState.mouseWindow = window.mapPixelToCoords(KeyboardState.mousePos, GameState.camera.guiView)
+
+        InputManager.update()
     }
     
     def updateClick() = {
         //TODO : faire une liste d'acteurs affichés (pour ne pas parcourir tous les acteurs)
         this.selectedSecondaryActor = None
 
-        GameState.widgets.foreach(_.updateClick(this.mouseWindow, this.leftMouse))
-
-        GameState.actors_list.foreach(_.updateClick(this.mouseView, this.leftMouse, this.rightMouse))
+        GameState.widgets.foreach(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse))
         
         for actor <- GameState.actors_list do
-            if this.leftMouse && actor.state == States.PRESSED then
+            if KeyboardState.leftMouse && actor.state == States.PRESSED then
                 actor match {
                     case player : Player =>
                         this.selectedActor = Some(player)
@@ -83,7 +82,7 @@ class Controller(window : RenderWindow) {
                 }
             
             
-            if this.rightMouse && actor.state == States.HOVER then
+            if KeyboardState.rightMouse && actor.state == States.HOVER then
                 actor match {
                     //case player : Player =>
                         //this.selectedSecondaryActor = Some(player)

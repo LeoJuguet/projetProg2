@@ -18,6 +18,7 @@ class Player(team : Int, shipID : Int, initialPosition : Vector2[Float]) extends
 {
     maxHealth = 100;
     _health = 100;
+    /*
     override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean, rightMouse: Boolean): Unit =
         if(this.transform.transformRect(this.sprite.globalBounds).contains(mousePos.x, mousePos.y)){
             if(leftMouse){
@@ -56,7 +57,7 @@ class Player(team : Int, shipID : Int, initialPosition : Vector2[Float]) extends
             }
             case States.PRESSED => {
                 this.onPressed()
-            }
+            }*/
 }
 
 

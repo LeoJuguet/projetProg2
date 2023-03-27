@@ -2,6 +2,8 @@ package clickable
 
 import sfml.system.*
 import sfml.graphics.*
+import sfml.window.Mouse.Button
+import event.*
 
 
 enum States:
@@ -9,86 +11,56 @@ enum States:
 
 // The clickable trait is used to add clickability to any object
 // TODO : this file has to be updated to take into account the new input and event system
-trait Clickable() extends Transformable
+trait Clickable()
 {
-    var sprite: Sprite = new Sprite(Texture())
     var state = States.IDLE
+    var clickBounds: Rect[Float] = Rect[Float]()
 
-    // Called whenever the button is click by the user
-    var onClickedBind: () => Unit = () => {}
-
-    // Called whenever the button is pressed by the user
-    var onPressedBind: () => Unit = () => {}
-
-    // Called whenever the button is released by the user
-    var onReleasedBind: () => Unit = () => {}
-
-    // Called whenever the button is hovered by the user
-    var onHoveredBind: () => Unit  = () => {}
-
-    // Called whenever the button was hovered by the user the frame before and it's not in this frame
-    var onUnhoveredBind : () => Unit = () => {}
-
-    var idleColor: Color = Color.White()
-    var hoverColor: Color = Color.Green()
-    var pressedColor: Color = Color.Red()
-
-    def isPressed: Boolean =
-        return this.state == States.PRESSED
-
-    def updateClick(mousePos : Vector2[Float], leftMouse: Boolean, rightMouse : Boolean) =
-        if(this.transform.transformRect(this.sprite.globalBounds).contains(mousePos.x, mousePos.y)){
-            if(leftMouse){
-                if(this.state != States.PRESSED) then
-                    this.onClicked()
-                    this.state = States.PRESSED
-                else if(this.state == States.PRESSED) then
-                    this.onReleased()
-                    this.state = States.HOVER
-            }else {
-                if (rightMouse && this.state == States.PRESSED)
-                    this.onReleased()
-                    this.state = States.HOVER
-                if this.state == States.IDLE then
-                    this.state = States.HOVER
-            }
+    var onPressed: () => Unit = () => ()
+    var onHovered: () => Unit = () => ()
+    var onReleased: () => Unit = () => ()
+    var onUnhovered: () => Unit = () => ()
+    
+    def updateLeftClick(mousePos : Vector2[Float]) =
+        if(this.clickBounds.contains(mousePos.x, mousePos.y)){
+            this.state = States.PRESSED
+            this.onPressed()
         }else{
-            if(this.state == States.HOVER)
-                this.onUnhovered()
+            if (this.state == States.PRESSED)
+                this.onReleased()
                 this.state = States.IDLE
-
-            if (leftMouse && this.state == States.PRESSED)
+        }
+    
+    def updateRightClick(mousePos : Vector2[Float]) =
+        if(this.clickBounds.contains(mousePos.x, mousePos.y)){
+            if (this.state == States.PRESSED)
+                this.onReleased()
+                this.state = States.HOVER
+        }else{
+            if (this.state == States.PRESSED)
                 this.onReleased()
                 this.state = States.IDLE
         }
 
-        state match
-            case States.IDLE => {
-                this.sprite.color= this.idleColor
-            }
-            case States.HOVER => {
+    var moveConnection = OnMouseMoved.connect((x, y) => {
+        if this.clickBounds.contains(x, y) then
+            if this.state == States.IDLE then
+                this.state = States.HOVER
                 this.onHovered()
-            }
-            case States.PRESSED => {
-                this.onPressed()
-            }
-
-    def onPressed()=
-        this.sprite.color= this.pressedColor
-        this.onPressedBind()
-
-    def onClicked()=
-        this.onClickedBind()
-
-    def onHovered()=
-        this.sprite.color= this.hoverColor
-        this.onHoveredBind()
-
-    def onReleased()=
-        this.sprite.color= this.hoverColor
-        this.onReleasedBind()
-
-    def onUnhovered()=
-        this.sprite.color= this.idleColor
-        this.onUnhoveredBind()
+        else
+            if this.state == States.HOVER then
+                this.state = States.IDLE
+                this.onUnhovered()
+    })
+    
+    var clickConnection = OnMouseButtonPressed.connect((button, x, y) => {
+        if(button == Left)
+            this.updateLeftClick(Vector2(x,y))
+        else if(button == Right)
+            this.updateRightClick(Vector2(x,y))
+    })
+    
+    def isPressed: Boolean =
+        return this.state == States.PRESSED
+        
 }

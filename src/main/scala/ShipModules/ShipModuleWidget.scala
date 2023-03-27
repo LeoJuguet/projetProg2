@@ -16,8 +16,6 @@ class ShipModuleWidget(ship: Ship) extends Widget{
     }
     verticalsBox.addChild(v)
   }
-
-
 }
 
 

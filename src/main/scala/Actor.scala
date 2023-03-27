@@ -8,13 +8,27 @@ import sfml.Resource
 import gamestate.*
 import clickable.*
 import manager.*
+import event.Event
+
+class OnDestroyed extends Event[Unit]()
 
 /** Actor class
  * @constructor crate a new Actor
  */
-class Actor extends Drawable with Clickable {
+class Actor extends Transformable with Drawable with Clickable  {
     var texture: Texture = TextureManager.get("sfml-logo.png")
     var live: Boolean = false
+
+    var sprite: Sprite = Sprite(texture)
+    
+    var idleColor: Color = Color.White()
+    var hoverColor: Color = Color.Green()
+    var pressedColor: Color = Color.Red()
+
+    this.onPressed = () => this.sprite.color= this.pressedColor
+    this.onHovered = () => this.sprite.color= this.hoverColor
+    this.onReleased = () => this.sprite.color= this.hoverColor
+    this.onUnhovered = () => this.sprite.color= this.idleColor
 
 
     def draw(target: RenderTarget, states: RenderStates) =
@@ -31,9 +45,15 @@ class Actor extends Drawable with Clickable {
         sprite.origin = Vector2(sprite.globalBounds.width / 2, sprite.globalBounds.height / 2)
         this.live = true
 
+    var onDestroyed = OnDestroyed()
 
     def destroy() =
-      // code pour supprimer l'actor
-      GameState.delete_list += this
+        // code pour supprimer l'actor
+        GameState.delete_list += this
+
+        this.moveConnection.disconnect()
+        this.clickConnection.disconnect()
+
+        this.onDestroyed(())
 
 }

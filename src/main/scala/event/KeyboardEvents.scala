@@ -10,6 +10,7 @@ import sfml.window.Mouse.Button
 import sfml.window.Joystick.Axis
 import sfml.window.Sensor
 import sfml.window.Keyboard
+import sfml.system.Vector2
 
 object OnTextEntered extends event.Event[Int]
 object OnKeyPressed extends event.Event[(Key,Boolean,Boolean,Boolean,Boolean)]
@@ -37,6 +38,13 @@ object KeyboardState {
   var control = false
   var shift = false
   var system = false
+
+  var leftMouse = false
+  var rightMouse = false
+
+  var mousePos = Vector2(0,0)
+  var mouseView = Vector2(0.0f, 0.0f)
+  var mouseWindow = Vector2(0.0f, 0.0f)
 
   def is_Press(key: Key)={
     keyboard.get(key) match {
