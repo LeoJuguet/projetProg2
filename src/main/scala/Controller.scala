@@ -1,122 +1,144 @@
 package controller
 
-import scala.math.*
+import sfml.system.Vector2
+import sfml.window.Mouse
 
-import sfml.window.*
-import sfml.graphics.*
-import sfml.system.*
+import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
+import scala.util.Random
 
 import gamestate.*
 import clickable.*
 import actor.*
-import character.*
-import ia.*
-import tilemap.*
 import base.*
-import sfml.Immutable
 import event.{OnMouseButtonPressed, OnMouseButtonReleased}
 import event.KeyboardState
 import event.InputManager
+import ship.{Action, Ship}
+import resource.Resource
 
 
-//This class is used to controll the game.
-//It is in charge of dealing with inputs and events, and updating the gamestate and game units actions accordingly.
-//TODO : update this file to match the new architecture of events.
-//TODO : This class should not be used to controll the game but only one player. Update the class so that it only controlls one player.
-//       And create a new IAController class.
-class Controller(window : RenderWindow) {
-    //the main selected actor is persistant between frames.
-    var selectedActor : Option[Actor] = None
-    //the secondary selected actor is reset at the end of each frame.
-    //it is used to select a secondary target for an action.
-    var selectedSecondaryActor : Option[Actor] = None
+//This class is the brain controlling the actions of the player.
+class PlayerController {
+    var selectedUnits : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
+    var selectedTargets : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
+    var selectedPosTarget : Vector2[Float] = Vector2(0.0f, 0.0f)
 
-    //exemple de gestion d'event correcte avec le nouveau système d'event :
+    //this connection clears the selected actors.
+    OnMouseButtonPressed.connect((button, x, y) => {
+        if button == Mouse.Button.Left && KeyboardState.holdLeft == false then
+            this.selectedUnits.clear()
+            this.selectedTargets.clear()
+        if button == Mouse.Button.Right && KeyboardState.holdRight == false then
+            this.selectedTargets.clear()
+    })
 
+    //When the mouse is hold, the controller doesn't need to update anything, as the player hasn't finished his action.
+
+    //this connection wait for the player to end his selection and take decisions accordingly.
+    OnMouseButtonReleased.connect((button, x, y) => {
+        //this case fills the selected units list with the units that are in the selected state.
+        //player_actors_list is enought as the player can't give orders to any actor that is not under his control.
+        if button == Mouse.Button.Left then
+            GameState.player_actors_list.foreach(actor => {
+                if actor.state == States.PRESSED then
+                    this.selectedUnits += actor
+                    //TODO : disconnect this connection when the actor is removed from the selected units list ! (in the press connection above)
+                    actor.onDestroyed.connect(Unit => {
+                        this.selectedUnits -= actor
+                    })
+            })
+        //this case fills the selected targets list with the units that are in the targetted state.
+        //here we need to check all the actors, as the orders may need a reference to any actor.
+        if button == Mouse.Button.Right then
+            GameState.actors_list.foreach(actor => {
+                if actor.state == States.TARGET then
+                    this.selectedTargets += actor
+                    //TODO : disconnect this connection when the actor is removed from the selected targets list ! (in the press connection above)
+                    //TODO : idle the actions of player_actors_list that are targeting this actor.
+                    actor.onDestroyed.connect(Unit => {
+                        this.selectedTargets -= actor
+                    })
+            })
+            this.selectedPosTarget = KeyboardState.mouseWindow
+    })
+    
     def updateClick() = {
-        //TODO : faire une liste d'acteurs affichés (pour ne pas parcourir tous les acteurs)
-        this.selectedSecondaryActor = None
-
+        //TODO : LEO : il faut intégrer les nouveaux event à ta GUI pour que cette ligne disparaisse.
         GameState.widgets.foreach(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse))
-        
-        for actor <- GameState.actors_list do
-            if KeyboardState.leftMouse && actor.state == States.PRESSED then
-                actor match {
-                    case player : Player =>
-                        this.selectedActor = Some(player)
-                    case ship : Ship =>
-                        this.selectedActor match {
-                            case Some(player : Player) => ()
-                            case _ => this.selectedActor = Some(ship)
-                        }
-                    case resource : Resource =>
-                        this.selectedActor match {
-                            case Some(player : Player) => ()
-                            case Some(ship : Ship) => ()
-                            case _ => this.selectedActor = Some(resource)
-                        }
-                    case _ => ()
-                }
-            
-            
-            if KeyboardState.rightMouse && actor.state == States.HOVER then
-                actor match {
-                    //case player : Player =>
-                        //this.selectedSecondaryActor = Some(player)
-                    case ship : Ship =>
-                        this.selectedSecondaryActor match {
-                            case Some(player : Player) => ()
-                            case _ => this.selectedSecondaryActor = Some(ship)
-                        }
-                    case resource : Resource =>
-                        this.selectedSecondaryActor match {
-                            case Some(player : Player) => ()
-                            case Some(ship : Ship) => ()
-                            case _ => this.selectedSecondaryActor = Some(resource)
-                        }
-                    case _ => ()
-                }
     }
+
+    def give_order(unit : Ship) =
+        //we check if he has selected some targets.
+        if this.selectedTargets.nonEmpty then {
+        var target_ships = this.selectedTargets.filter(actor => actor.isInstanceOf[Ship])
+        var target_base = this.selectedTargets.filter(actor => actor.isInstanceOf[Base])
+        var target_ressources = this.selectedTargets.filter(actor => actor.isInstanceOf[Resource])
+
+        //if there is an ennemy ship, we attack it.
+        if target_ships.nonEmpty then {
+            var target_ship = target_ships(Random.nextInt(target_ships.length))
+
+            //TODO : when the target is destroyed, the action should be set to IDLE.
+            unit.action = Action.ATTACK(target_ship)
+
+        //otherwize, if there is a base, we attack it.
+        } else if target_base.nonEmpty then {
+                unit.action = Action.ATTACK(target_base(0))
+        //else, if there is a resource, we mine it.
+        } else if target_ressources.nonEmpty then {
+                unit.action = Action.MINE(target_ressources(Random.nextInt(target_ressources.length)).asInstanceOf[Resource])
+        } else {
+            //finally, if there is no target, we move to the mouse position.
+            this.selectedUnits.foreach(actor => {
+                if actor.isInstanceOf[Ship] then {
+                    actor.asInstanceOf[Ship].action = Action.MOVE(KeyboardState.mouseWindow)
+                }
+            })
+        }
+        } 
+    
+    def clearAction(ship : Ship) =
+        ship.action match {
+            case Action.ATTACK(target) => {
+                if !target.live then
+                    ship.action = Action.IDLE
+            }
+            case Action.MINE(target) => {
+                if !target.live then
+                    ship.action = Action.IDLE
+            }
+            case Action.TRANSFER(target) => {
+                if target.isInstanceOf[Actor] then
+                    if !target.asInstanceOf[Actor].live then
+                        ship.action = Action.IDLE
+            }
+            case _ => {}
+        }
     
     def updateActors() = {
-        for actor <- GameState.actors_list do
-            actor match {
-                case player : Player =>
-                    this.selectedActor match {
-                        case Some(_ : Player) =>
-                            this.selectedSecondaryActor match {
-                                case Some(ship : Ship) if ship != player =>
-                                    player.targetShip = Some(ship)
-                                    player.currentAction = Action.ATTACK
-                                case Some(resource : Resource) =>
-                                    player.targetResource = Some(resource)
-                                    player.currentAction = Action.MINE
-                                case Some(base : Base) =>
-                                    player.targetBase = Some(base)
-                                    if base.team == 0 then player.currentAction = Action.TRANSFER
-                                    else player.currentAction = Action.ATTACK //TODO : faire une action pour attaquer une base
-                                case _ => ()
-                            }
+        //at every turn, we check for unnocupied selected units and give them an action.
+        this.selectedUnits.foreach(unit => {
+            if unit.isInstanceOf[Ship] then
+                if unit.asInstanceOf[Ship].action == Action.IDLE then
+                    give_order(unit.asInstanceOf[Ship])
+        })
 
-                            //TODO : ça et IA, c'est pour décider l'action, et updateUnit ça fait les actions
-                            player.updateUnit()
+        //update the player's units (not only the selected ones as they may have been selected in the previous turn and not finished their action)
+        GameState.player_actors_list.foreach(_.asInstanceOf[Ship].updateUnit())
 
-                        case Some(ennemy : Ship) if ennemy.team == 1 =>
-                            IA(ennemy, GameState.player)
-                            ennemy.updateUnit()
-
-                        case Some(ressource : Resource) => () //éventuellement faire des ressources mouvantes (comme des astéroides minables)
-                        case _ => ()
-                    }
-                case _ => {}
-            }
+        //clear dead actions
+        GameState.player_actors_list.foreach(actor =>
+            if actor.isInstanceOf[Ship] then
+                clearAction(actor.asInstanceOf[Ship]))
     }
 
-    //TODO : fonction pas encore utilisée. Il faut faire la view.
-    def updateView() = {
+    //TODO : this function should be in the main loop, not here.
+    def updateView() = {/*
         GameState.camera.updateView()
         GameState.window.view = Immutable(GameState.camera.playerView)
 
+        //TODO : the map should move twice as slow as the camera so that it looks like it is in the background (and it is artificially extended)
         //gestion de l'affichage des tilemaps.
         var x = GameState.camera.playerView.center.x
         var y = GameState.camera.playerView.center.y
@@ -132,7 +154,7 @@ class Controller(window : RenderWindow) {
                             GameState.map_array(j)(i).get.loadTexture()
                     }
                 else
-                    GameState.map_array(j)(i) = None
+                    GameState.map_array(j)(i) = None*/
     }
 
 

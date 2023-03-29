@@ -1,6 +1,8 @@
+package ShipModules
+
 import gui.*
+import ship.Ship
 import gui.Widget
-import character.Ship
 import shipmodule.*
 import manager.FontManager
 
@@ -35,7 +37,7 @@ class ModuleCard(ship: Ship, modulePos: Int , var module : ShipModule) extends W
   var label = Label("default Text", font, 20)
   var descriptionLabel = Label("default decription text", font, 10)
   var scrapPrice = Label("Scrap : "+ module.price.scrap.toString, font, 20)
-  var cooperPrice = Label("Cooper : "+ module.price.cooper.toString, font, 20)
+  var cooperPrice = Label("Cooper : "+ module.price.copper.toString, font, 20)
   var ironPrice = Label("Iron : "+ module.price.iron.toString, font, 20)
   var uraniumPrice = Label("Uranium : "+ module.price.uranium.toString, font, 20)
   var ethereumPrice = Label("Ethereum : "+ module.price.ethereum.toString, font, 20)

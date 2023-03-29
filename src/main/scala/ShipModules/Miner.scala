@@ -3,7 +3,7 @@ package ShipModules
 import shipmodule.*
 import gamestate.*
 import controller.*
-import character.Resource
+import resource.Resource
 
 import scala.math.*
 
@@ -16,7 +16,7 @@ class MinerModule extends ShipModule
     var miningCoolDown = 0;
 
     def mine() : Unit ={
-        //TODO: Implement mining function here and in ressource
+        //TODO: Implement mining function here and in resource
       this.targetResource match
         case Some(r) => {
               r.mined(this.miningDamage)

@@ -1,9 +1,10 @@
-package character
+package resource
 
 import actor.*
 import gamestate.*
 import sfml.system.*
 import manager.TextureManager
+import scala.math.min
 
 val rand = new scala.util.Random
 
@@ -15,14 +16,15 @@ class Resource(initialPosition: Vector2[Float]) extends Actor
 
     GameState.actors_list += this
 
-    def mined(damage : Int) : Unit =
-        this.remainingQuantity -= damage
-        if this.remainingQuantity <= 0 then {
+    def mined(damage : Int) : Int =
+        var lost = min(damage, this.remainingQuantity)
+        this.remainingQuantity -= lost
+        if this.remainingQuantity <= 0 then
             this.kill()
-        }
+        lost
     
     def kill() : Unit =
-        print("killing ressource\n")
+        print("killing resource\n")
         this.destroy()
         this.live = false
 }
@@ -36,7 +38,7 @@ class Scrap(initialPosition: Vector2[Float]) extends Resource(initialPosition)
 class Cooper(initialPosition: Vector2[Float]) extends Resource(initialPosition)
 {
     this.remainingQuantity = 100
-    this.texture = TextureManager.get("cooper.png")
+    this.texture = TextureManager.get("copper.png")
 }
 
 class Iron(initialPosition: Vector2[Float]) extends Resource(initialPosition)

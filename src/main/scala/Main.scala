@@ -11,7 +11,8 @@ import scala.collection.mutable.ArrayBuffer
 import gui.*
 import manager.*
 
-import character.*
+import ship.Ship
+import resource.Resource
 import gamestate.*
 import controller.*
 import actor.*
@@ -23,7 +24,7 @@ import camera.*
 import sfml.Immutable
 
 
-def game_loop(window: RenderWindow, controller: Controller) : Unit =
+def game_loop(window: RenderWindow, controller: PlayerController) : Unit =
     window.clear(Color(0, 0, 0))
     
     while window.isOpen() do
@@ -45,16 +46,15 @@ def game_loop(window: RenderWindow, controller: Controller) : Unit =
 
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
-        val controller = Controller(window)
+        val controller = PlayerController()
         GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
 
         InputManager.init(window)
 
-        var ennemy = Ship(1, 1, Vector2(600, 600))
-        var ressource = Resource(Vector2(300, 300))
+        var resource = Resource(Vector2(300, 300))
         
-        ressource.texture = TextureManager.get("ore.png")
-        ressource.applyTexture()
+        resource.texture = TextureManager.get("ore.png")
+        resource.applyTexture()
 
 
         GameState.camera.updateBind(ViewBind.ACTOR(GameState.player))

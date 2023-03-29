@@ -4,14 +4,16 @@ import sfml.graphics.*
 import sfml.window.*
 import sfml.system.Vector2
 import scala.collection.mutable.ListBuffer
+import sfml.Immutable
 
 import actor.*
 import character.*
 import tilemap.*
-import sfml.Immutable
 import gui.{Widget, DemoWidget}
 import manager.FontManager
 import camera.*
+
+import ship.Ship
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
@@ -23,13 +25,16 @@ object GameState
     var view : View = _
     var windowView : View = _
     var actors_list = new ListBuffer[Actor]()
+
+    //TODO : integrate those lists properly (ex : delete)
+    var player_actors_list = ListBuffer[Actor]()
+    var ennemy_actor_list = ListBuffer[Actor]()
+
     var delete_list = new ListBuffer[Actor]()
-    var player : Ship = new Player(0, 0, Vector2(0,0))
     var camera : Camera = new Camera
     var widgets = new ListBuffer[Widget]()
 
     this.widgets += DemoWidget(window)
-
 
     def init(window: RenderWindow, view: View, windowView : View)={
       this.window = window
@@ -38,6 +43,10 @@ object GameState
     }
 
     var font = FontManager.get("game_over.ttf")
+
+    //this is for the demo. It will be removed later.
+    var player = new Ship(0, Vector2(0, 0))
+    var ennemy = new Ship(1, Vector2(300, 300))
 
     var textPlayerLife = new Text()
     this.textPlayerLife.position = (50,50)

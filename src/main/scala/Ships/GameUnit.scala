@@ -1,4 +1,4 @@
-package character
+package ship
 
 import actor.*
 import gamestate.*
@@ -17,7 +17,6 @@ abstract class GameUnit extends Actor
     var _health: Int
     var regenerationRate: Int
     var attackDamage: Int
-    var targetPosition: Vector2[Float]
 
     def kill() : Unit =
         print("killing game unit\n")
@@ -44,9 +43,9 @@ abstract class GameUnit extends Actor
             //Maybe add a destroyed list buffer in the gamestate
             this.kill()
 
-    def moveUnit() : Unit =
-        val centered_target = Vector2(this.targetPosition.x - this.position.x,
-                                      this.targetPosition.y - this.position.y)
+    def moveUnit(targetPosition : Vector2[Float]) : Boolean =
+        val centered_target = Vector2(targetPosition.x - this.position.x,
+                                      targetPosition.y - this.position.y)
         val distance = norm(centered_target)
 
         if distance < 1.0f then
@@ -60,4 +59,6 @@ abstract class GameUnit extends Actor
 
             this.moveActor(this.position + this.speed)
             this.sprite.rotation = (angle * 180 / Pi).toFloat
+        //returns true if the unit is close enough to the target
+        distance < 1.0f
 }

@@ -5,14 +5,14 @@ import gamestate.*
 import controller.*
 
 import sfml.system.*
-import character.Ship
+import ship.Ship
 import sfml.graphics.Sprite
 import sfml.graphics.RenderTarget
 import sfml.graphics.RenderStates
 
 class PriceStruct(
     var scrap: Int = 0,
-    var cooper: Int = 0,
+    var copper: Int = 0,
     var iron: Int = 0,
     var uranium: Int = 0,
     var ethereum: Int = 0,

@@ -37,12 +37,16 @@ object OnSensorChanged extends event.Event[(Sensor.Type, Float, Float, Float)]
 object KeyboardState {
   var keyboard = Map[Key,Boolean]()
   var alt = false
-  var control = false
+  var ctrl = false
   var shift = false
   var system = false
 
   var leftMouse = false
   var rightMouse = false
+  var holdLeft = false
+  var holdRight = false
+
+  var mouseHoldPos = Vector2(0.0f,0.0f)
 
   var mousePos = Vector2(0,0)
   var mouseView = Vector2(0.0f, 0.0f)
@@ -58,12 +62,12 @@ object KeyboardState {
   def set_key_status(key: Key,
                      isPressed : Boolean,
                      alt : Boolean,
-                     control: Boolean,
+                     ctrl: Boolean,
                      shift: Boolean,
                      system: Boolean)={
     keyboard += key -> isPressed
     this.alt = alt
-    this.control = control
+    this.ctrl = ctrl
     this.shift = shift
     this.system = system
   }
@@ -85,26 +89,44 @@ object InputManager {
           case Event.LostFocus() => ()
           case Event.GainedFocus() => ()
           case Event.TextEntered(unicode) => OnTextEntered(unicode)
-          case Event.KeyPressed(code, alt, control, shift, system) =>{
-            KeyboardState.set_key_status(code,true,alt,control,shift,system)
-            OnKeyPressed(code, alt, control, shift, system)
+          case Event.KeyPressed(code, alt, ctrl, shift, system) =>{
+            KeyboardState.set_key_status(code,true,alt,ctrl,shift,system)
+            OnKeyPressed(code, alt, ctrl, shift, system)
           }
-          case Event.KeyReleased(code, alt, control, shift, system) =>{
-            KeyboardState.set_key_status(code,false,alt,control,shift,system)
-            OnKeyReleased(code, alt, control, shift, system)
+          case Event.KeyReleased(code, alt, ctrl, shift, system) =>{
+            KeyboardState.set_key_status(code,false,alt,ctrl,shift,system)
+            OnKeyReleased(code, alt, ctrl, shift, system)
           }
           case Event.MouseWheelScrolled(wheel, delta, x, y) => OnMouseWheelScrolled(wheel, delta, x, y)
           case Event.MouseButtonPressed(button, x, y) =>
             button match {
-              case Button.Left => KeyboardState.leftMouse = true
-              case Button.Right => KeyboardState.rightMouse = true
+              case Button.Left =>
+                KeyboardState.leftMouse = true
+              case Button.Right =>
+                KeyboardState.rightMouse = true
               case _ =>
             }
             OnMouseButtonPressed(button, x, y)
+            // /!\ the order is important, as some events happen the first frame that the button is pressed
+            button match {
+              case Button.Left =>
+                if KeyboardState.leftMouse == true && KeyboardState.holdLeft == false then
+                  KeyboardState.mouseHoldPos = KeyboardState.mouseView
+                  KeyboardState.holdLeft = true
+              case Button.Right =>
+                if KeyboardState.rightMouse == true && KeyboardState.holdRight == false then
+                  KeyboardState.mouseHoldPos = KeyboardState.mouseView
+                  KeyboardState.holdRight = true
+              case _ => ()
+            }
           case Event.MouseButtonReleased(button, x, y) =>
             button match {
-              case Button.Left => KeyboardState.leftMouse = false
-              case Button.Right => KeyboardState.rightMouse = false
+              case Button.Left =>
+                KeyboardState.holdLeft = false
+                KeyboardState.leftMouse = false
+              case Button.Right =>
+                KeyboardState.holdRight = false
+                KeyboardState.rightMouse = false
               case _ =>
             }
             OnMouseButtonReleased(button, x, y)

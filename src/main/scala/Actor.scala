@@ -4,18 +4,20 @@ package actor
 import sfml.system.*
 import sfml.graphics.*
 import sfml.Resource
+import scala.math.{min, max}
 
 import gamestate.*
 import clickable.*
 import manager.*
 import event.Event
+import event.KeyboardState
 
 class OnDestroyed extends Event[Unit]()
 
 /** Actor class
  * @constructor crate a new Actor
  */
-class Actor extends Transformable with Drawable with Clickable  {
+class Actor extends Transformable with Drawable with Clickable {
     var texture: Texture = TextureManager.get("sfml-logo.png")
     var live: Boolean = false
 
@@ -27,8 +29,102 @@ class Actor extends Transformable with Drawable with Clickable  {
 
     this.onPressed = () => this.sprite.color= this.pressedColor
     this.onHovered = () => this.sprite.color= this.hoverColor
-    this.onReleased = () => this.sprite.color= this.hoverColor
+    this.onReleased = () => this.sprite.color= this.idleColor
     this.onUnhovered = () => this.sprite.color= this.idleColor
+
+    /**
+     * behavior of controlled drones and other actors :
+     * if ctrl is hold :
+     * Whenever left click is first pressed, all the actors are released, and the position is saved.
+     * Whenever left click is released, all the controlled actors in the rectangle are selected.
+     * Whenever right click is pressed, all the targets are released, and the position is saved.
+     * Whenever right click is released, all the uncontrolled actors in the rectangle are selected as targets.
+     * 
+     * if ctrl is not hold :
+     * Whenever left click is first pressed, all the actors are released.
+     * Whenever left click is released, the controlled actor under the mouse cursor is selected. (/!\ collisions between actors!)
+     * Whenever right click is pressed all targets are released.
+     * Whenever right click is released, the uncontrolled actor under the mouse cursor is selected as a target.
+     *     if there are controlled actors selected, they target the target or the position (sleepy or)
+     * 
+     * in a selection of targets, actors will first attack any ennemy then mine any resource.
+    */
+    //NOTE : this implementation should allow to hold or release ctrl after starting the selection.
+
+    //TODO : change the behavior so that while ctrl is hold, the selection stays (to select severa units not in rectangles)
+    //       it is necessary for the end game but currently not a priority.
+
+    this.updateLeftPress = () =>
+        if this.state == States.PRESSED then
+            this.onReleased()
+            this.state = States.IDLE
+    
+    this.updateLeftHold = () =>
+        if KeyboardState.ctrl then
+            //test the intesection of the sprite and the selection rectangle
+            var firstPos = KeyboardState.mouseHoldPos
+            var secondPos = KeyboardState.mouseView
+            var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
+            var bottomRight = Vector2[Float](max(firstPos.x, secondPos.x), max(firstPos.y, secondPos.y))
+            var size = bottomRight - topLeft
+            // TODO : draw the selection rectangle (to be done in the right file, not here)
+            var selectionRect = Rect(topLeft.x, topLeft.y, size.x, size.y)
+
+            if this.clickBounds.intersects(selectionRect) then
+                if this.state == States.IDLE then
+                    this.state = States.HOVER
+                    this.onHovered()
+            else
+                if this.state == States.HOVER then
+                    this.onUnhovered()
+                    this.state = States.IDLE
+        
+        else
+            if this.clickBounds.contains(KeyboardState.mouseView) then
+                if this.state == States.IDLE then
+                    this.state = States.HOVER
+                    this.onHovered()
+            else
+                if this.state == States.HOVER then
+                    this.onUnhovered()
+                    this.state = States.IDLE
+
+
+    this.updateLeftClick = () =>
+        if this.state == States.HOVER then
+            this.state = States.IDLE
+            this.onUnhovered()
+
+    this.updateRightPress = updateLeftPress
+    
+    this.updateRightHold = updateLeftHold
+
+    this.updateRightClick = () =>
+        if KeyboardState.ctrl then
+            var firstPos = KeyboardState.mouseHoldPos
+            var secondPos = KeyboardState.mouseView
+            var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
+            var bottomRight = Vector2[Float](max(firstPos.x, secondPos.x), max(firstPos.y, secondPos.y))
+            var size = bottomRight - topLeft
+            // TODO : draw the selection rectangle (to be done in the right file, not here)
+            var selectionRect = Rect(topLeft.x, topLeft.y, size.x, size.y)
+
+            if this.clickBounds.intersects(selectionRect) then
+                this.state = States.TARGET
+                this.onPressed()
+            else
+                if this.state == States.HOVER then
+                    this.onUnhovered()
+                    this.state = States.IDLE
+        
+        else
+            if this.clickBounds.contains(KeyboardState.mouseView) then
+                this.state = States.TARGET
+                this.onPressed()
+            else
+                if this.state == States.HOVER then
+                    this.onUnhovered()
+                    this.state = States.IDLE
 
 
     def draw(target: RenderTarget, states: RenderStates) =
@@ -37,11 +133,10 @@ class Actor extends Transformable with Drawable with Clickable  {
 
     def moveActor(x: Float, y: Float) : Unit =
         this.position= Vector2(x,y)
-        this.clickBounds = this.sprite.globalBounds
+        this.clickBounds = this.transform.transformRect(this.sprite.globalBounds)
     
     def moveActor(pos: Vector2[Float]) : Unit =
-        this.position= pos
-        this.clickBounds = this.sprite.globalBounds
+        this.moveActor(pos.x, pos.y)
 
 
     // Load the textures save in textures
@@ -51,15 +146,15 @@ class Actor extends Transformable with Drawable with Clickable  {
         this.live = true
         this.clickBounds = this.sprite.globalBounds
 
-        print(clickBounds)
-
     var onDestroyed = OnDestroyed()
 
     def destroy() =
         // code pour supprimer l'actor
         GameState.delete_list += this
+        this.live = false
 
         this.moveConnection.disconnect()
+        this.releaseConnection.disconnect()
         this.clickConnection.disconnect()
 
         this.onDestroyed(())
