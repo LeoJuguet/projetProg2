@@ -12,6 +12,7 @@ import tilemap.*
 import gui.{Widget, DemoWidget}
 import manager.FontManager
 import camera.*
+import base.*
 import controller.PlayerController
 
 import ship.Drone
@@ -27,12 +28,10 @@ object GameState
     var windowView : View = _
     var actors_list = new ListBuffer[Actor]()
 
-    //TODO : integrate those lists properly (ex : delete)
     var player_actors_list = ListBuffer[Actor]()
     var enemy_actors_list = ListBuffer[Actor]()
 
     var delete_list = new ListBuffer[Actor]()
-    var camera : Camera = new Camera
     var widgets = new ListBuffer[Widget]()
 
     this.widgets += DemoWidget(window)
@@ -46,10 +45,10 @@ object GameState
     var font = FontManager.get("game_over.ttf")
 
     //this is for the demo. It will be removed later.
-    print("Creating player")
     var player = this.createDrone(0, Vector2(0, 0))
     var ennemy = this.createDrone(1, Vector2(100, 100))
-    print("Player created")
+
+    var playerBase = this.createBase(0, Vector2(500, 500))
 
     var textPlayerLife = new Text()
     this.textPlayerLife.position = (50,50)
@@ -73,6 +72,7 @@ object GameState
 
     private def drawMap() =
       //affichage de la map
+      window.view = Immutable(Camera.backgroundView)
       for i <- 0 to 7 do
         for j <- 0 to 7 do
           var map = map_array(i)(j)
@@ -80,18 +80,19 @@ object GameState
             case Some(tilemap) => window.draw(tilemap)
             case None => ()
           }
+      window.view = Immutable(Camera.playerView)
 
     private def drawActors() =
       actors_list.foreach(window.draw(_))
 
     private def drawWidget()=
-      window.view = Immutable(camera.guiView)
+      window.view = Immutable(Camera.guiView)
       this.textPlayerResources.string = this.player.scrap.toString
       this.textPlayerLife.string = this.player.health.toString
       window.draw(this.textPlayerResources)
       window.draw(this.textPlayerLife)
       widgets.foreach(window.draw(_))
-      window.view = Immutable(camera.playerView)
+      window.view = Immutable(Camera.playerView)
 
 
     /** Draw all the images for the game
@@ -136,6 +137,35 @@ object GameState
             c3.disconnect()
         })
         drone
+    }
+
+    def createBase(teamID : Int, position: Vector2[Float]) : Base = {
+        //create a new base and add it to the right team.
+        var base = new Base(teamID, position)
+        this.actors_list += base
+        if teamID == 0 then
+            this.player_actors_list += base
+        else
+            this.enemy_actors_list += base
+        
+        //create the connections to update the selection when the base is clicked.
+        var c2 = base.onTargeted.connect(Unit => {
+            PlayerController.selectedTargets += base
+        })
+        var c3 = base.onReleased.connect(Unit => {
+            PlayerController.selectedTargets -= base
+        })
+        //when the base is destroyed, we remove it from the lists and disconnect the connections.
+        base.onDestroyed.connect(Unit => {
+            this.player_actors_list -= base
+            this.enemy_actors_list -= base
+            this.actors_list -= base
+            PlayerController.selectedUnits -= base
+            PlayerController.selectedTargets -= base
+            c2.disconnect()
+            c3.disconnect()
+        })
+        base
     }
 }
 

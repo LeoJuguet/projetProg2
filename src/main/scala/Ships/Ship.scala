@@ -18,13 +18,11 @@ import sfml.graphics.*
 
 import scala.math.*
 
-//TODO : implement the modification with targets directly in the action
 enum Action:
     case IDLE
     case MOVE(target : Vector2[Float])
     case ATTACK(target : Actor)
     case MINE(target : Resource)
-    //TODO : add transfer action in the player controller
     case TRANSFER(target : Container)
 
 class Ship(
@@ -121,7 +119,6 @@ extends GameUnit with Container
                 if norm(this.position - target.asInstanceOf[Actor].position) < 50 then
                     //Check if cooldown is over
                     if this.miningCoolDown == 0 then
-                        //TODO: Implement gathering of resource for the team
                         this.mine()
                         this.miningCoolDown = this.miningSpeed
 

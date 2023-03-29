@@ -12,6 +12,7 @@ import clickable.*
 import manager.*
 import event.Event
 import event.KeyboardState
+import camera.Camera
 
 class OnDestroyed extends Event[Unit]()
 
@@ -97,6 +98,9 @@ class Actor extends Transformable with Drawable with Clickable {
         if this.state == States.HOVER then
             this.state = States.IDLE
             this.onUnhovered(())
+        
+        if this.clickBounds.contains(KeyboardState.mouseView) && KeyboardState.is_Press(Key.KeyLAlt) then
+            Camera.updateBind(this)
 
     this.updateRightPress = updateLeftPress
     
@@ -109,7 +113,6 @@ class Actor extends Transformable with Drawable with Clickable {
             var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
             var bottomRight = Vector2[Float](max(firstPos.x, secondPos.x), max(firstPos.y, secondPos.y))
             var size = bottomRight - topLeft
-            // TODO : draw the selection rectangle (to be done in the right file, not here)
             var selectionRect = Rect(topLeft.x, topLeft.y, size.x, size.y)
 
             if this.clickBounds.intersects(selectionRect) then

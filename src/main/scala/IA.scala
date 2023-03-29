@@ -12,6 +12,7 @@ import ship.{Action, Ship}
 def IA(ship : Ship, player : Ship) : Unit =
     //si l'ennemi est assez proche du joueur, il l'attaque
     //TODO : quand "le joueur" sera une armée, ce sera évidemment la distance la plus courte qui sera prise en compte
+    //TODO : A REFAIRE EN ENTIER !!!
     if distance(ship.position, player.position) < 350 then
         ship.action = Action.ATTACK(player)
     

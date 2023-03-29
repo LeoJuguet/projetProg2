@@ -32,7 +32,8 @@ def game_loop(window: RenderWindow) : Unit =
         PlayerController.updateClick()
         PlayerController.force_order()
         PlayerController.updateActors()
-        PlayerController.updateView()
+
+        Camera.updateView()
 
         //Delete actors destroy
         GameState.actors_list --= GameState.delete_list
@@ -55,7 +56,7 @@ def game_loop(window: RenderWindow) : Unit =
         var resource = Resource(Vector2(300, 300))
 
 
-        GameState.camera.updateBind(ViewBind.ACTOR(GameState.player))
+        //Camera.updateBind(ViewBind.ACTOR(GameState.player))
 
         game_loop(window)
 

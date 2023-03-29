@@ -2,6 +2,7 @@ package event
 
 import event.*
 import gamestate.GameState
+import camera.Camera
 
 import sfml.graphics.RenderWindow
 import sfml.window.Event
@@ -134,7 +135,7 @@ object InputManager {
           case Event.MouseMoved(x, y) =>
             KeyboardState.mousePos = Vector2(x,y)
             KeyboardState.mouseView = windows.mapPixelToCoords(KeyboardState.mousePos)
-            KeyboardState.mouseWindow = windows.mapPixelToCoords(KeyboardState.mousePos, GameState.camera.guiView)
+            KeyboardState.mouseWindow = windows.mapPixelToCoords(KeyboardState.mousePos, Camera.guiView)
             OnMouseMoved(x, y)
           case Event.MouseEntered() => OnMouseEntered(())
           case Event.MouseLeft() => OnMouseLeft(())

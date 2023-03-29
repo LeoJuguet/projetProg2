@@ -52,8 +52,6 @@ object PlayerController {
         //if there is an ennemy ship, we attack it.
         if target_ships.nonEmpty then {
             var target_ship = target_ships(Random.nextInt(target_ships.length))
-
-            //TODO : when the target is destroyed, the action should be set to IDLE.
             unit.action = Action.ATTACK(target_ship)
 
         //otherwize, if there is a base, we attack it.
@@ -108,37 +106,13 @@ object PlayerController {
         })
 
         //update the player's units (not only the selected ones as they may have been selected in the previous turn and not finished their action)
-        GameState.player_actors_list.foreach(_.asInstanceOf[Ship].updateUnit())
-
+        GameState.player_actors_list.foreach(actor => {
+            if actor.isInstanceOf[Ship] then
+                actor.asInstanceOf[Ship].updateUnit()
+        })
         //clear dead actions
         GameState.player_actors_list.foreach(actor =>
             if actor.isInstanceOf[Ship] then
                 clearAction(actor.asInstanceOf[Ship]))
     }
-
-    //TODO : this function should be in the main loop, not here.
-    def updateView() = {/*
-        GameState.camera.updateView()
-        GameState.window.view = Immutable(GameState.camera.playerView)
-
-        //TODO : the map should move twice as slow as the camera so that it looks like it is in the background (and it is artificially extended)
-        //gestion de l'affichage des tilemaps.
-        var x = GameState.camera.playerView.center.x
-        var y = GameState.camera.playerView.center.y
-
-        for i <- 0 to 7 do
-            for j <- 0 to 7 do
-                //On ne veut pas la distance entre le centre de la tilemap et le centre de la vue, mais la distance entre le centre de la tilemap et le bord de la vue.
-                if abs(x - 540 - i * 512) < 540 + 512 && abs(y - 360 - j * 512) < 360 + 512 then
-                    GameState.map_array(j)(i) match {
-                        case Some(tilemap) => tilemap.loadTexture()
-                        case None =>
-                            GameState.map_array(j)(i) = Some(new TileMap("maps/purple/purple_" +  i.toString + j.toString + ".png", i, j))
-                            GameState.map_array(j)(i).get.loadTexture()
-                    }
-                else
-                    GameState.map_array(j)(i) = None*/
-    }
-
-
 }

@@ -4,6 +4,7 @@ import ship.Ship
 
 import event.KeyboardState
 import clickable.States
+import camera.Camera
 
 import sfml.system.Vector2
 import sfml.graphics.Rect
@@ -28,7 +29,6 @@ extends Ship(teamID, initialPosition) {
                 var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
                 var bottomRight = Vector2[Float](max(firstPos.x, secondPos.x), max(firstPos.y, secondPos.y))
                 var size = bottomRight - topLeft
-                // TODO : draw the selection rectangle (to be done in the right file, not here)
                 var selectionRect = Rect(topLeft.x, topLeft.y, size.x, size.y)
 
                 if this.clickBounds.intersects(selectionRect) then
@@ -47,6 +47,9 @@ extends Ship(teamID, initialPosition) {
                     if this.state == States.HOVER then
                         this.onUnhovered(())
                         this.state = States.IDLE
+            
+            if this.clickBounds.contains(KeyboardState.mouseView) && KeyboardState.is_Press(Key.KeyLAlt) then
+                Camera.updateBind(this)
         
         this.updateRightPress = () => ()
 

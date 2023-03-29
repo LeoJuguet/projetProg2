@@ -12,12 +12,10 @@ class OnReleased extends Event[Unit]
 class OnHovered extends Event[Unit]
 class OnUnhovered extends Event[Unit]
 
-//TODO : add a color and its cases for the TARGET state
 enum States:
     case IDLE, HOVER, PRESSED, TARGET
 
 // The clickable trait is used to add clickability to any object
-// TODO : this file has to be updated to take into account the new input and event system
 trait Clickable()
 {
     var state = States.IDLE
