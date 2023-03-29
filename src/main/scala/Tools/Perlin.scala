@@ -1,6 +1,6 @@
 package perlin
 
-import scala.math.*
+import scala.math.{pow, log, round}
 
 def smooth(x : Float) : Float = x * x * (3 - 2 * x)
 

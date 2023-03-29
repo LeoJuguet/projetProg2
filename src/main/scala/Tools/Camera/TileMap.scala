@@ -1,7 +1,7 @@
 package tilemap
 
 import sfml.graphics.*
-import sfml.system.*
+import sfml.system.Vector2
 import manager.TextureManager
 
 //This structure is used to store the information about a portion of the map that is loaded in memory.

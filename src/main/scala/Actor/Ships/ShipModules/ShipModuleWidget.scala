@@ -3,10 +3,10 @@ package ShipModules
 import gui.*
 import ship.Ship
 import gui.Widget
-import shipmodule.*
+import shipmodule.ShipModule
 import manager.FontManager
 
-class ShipModuleWidget(ship: Ship) extends Widget{
+class ShipModuleWidget(ship: Ship) extends Widget {
   var size = ship.shipDimension
 
   var verticalsBox = VerticalBox(direction = E_Direction.Right)
@@ -21,7 +21,7 @@ class ShipModuleWidget(ship: Ship) extends Widget{
 }
 
 
-class ModuleCard(ship: Ship, modulePos: Int , var module : ShipModule) extends Widget{
+class ModuleCard(ship: Ship, modulePos: Int , var module : ShipModule) extends Widget {
   var cardBox = VerticalBox(direction = E_Direction.Right)
 
   var button = Button(width = 100, height = 100)

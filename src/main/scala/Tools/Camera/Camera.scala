@@ -1,15 +1,16 @@
-package camera
+package controller
 
-import sfml.graphics.*
-import sfml.system.*
-import sfml.window.Keyboard.Key
-import sfml.Immutable
 import scala.math.abs
 
-import actor.*
-import event.*
-import gamestate.*
-import tilemap.*
+import sfml.graphics.View
+import sfml.system.Vector2
+import sfml.window.Keyboard.Key
+import sfml.Immutable
+
+import actor.Actor
+import event.KeyboardState
+import gamestate.GameState
+import tilemap.TileMap
 
 enum ViewBind {
     case POINT (point : Vector2[Float])
@@ -18,7 +19,7 @@ enum ViewBind {
 
 //The camera class is used to display the game from a certain point of view.
 //This point can be fixed either on the background and dragged by the player, or follow an actor.
-object Camera{
+object Camera {
     var playerView = View(Vector2(540f, 360f), Vector2(1080, 720))
     var backgroundView = View(Vector2(270f, 180), Vector2(1080, 720))
     var guiView = View(Vector2(540f, 360f), Vector2(1080, 720))

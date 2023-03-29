@@ -1,25 +1,30 @@
 package controller
 
-import sfml.system.Vector2
-import sfml.window.Mouse
-
-import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
-import gamestate.*
-import clickable.*
-import actor.*
-import base.*
-import event.{OnMouseButtonPressed, OnMouseButtonReleased}
-import event.KeyboardState
-import event.InputManager
-import ship.{Action, Ship, Drone}
+import sfml.system.Vector2
+import sfml.window.Mouse
+
+import gamestate.GameState
+import clickable.Clickable
+import actor.Actor
+import ship.Base
+import event.{
+    KeyboardState,
+    OnMouseButtonPressed,
+    OnMouseButtonReleased
+}
+import ship.{
+    Action,
+    Ship,
+    Drone
+}
 import resource.Resource
 
 
 //This class is the brain controlling the actions of the player.
-object PlayerController {
+object IAController {
     var selectedUnits : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
     var selectedTargets : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
     var selectedPosTarget : Option[Vector2[Float]] = None

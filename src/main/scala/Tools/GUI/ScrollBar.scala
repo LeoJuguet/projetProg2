@@ -78,9 +78,9 @@ class Scrollbar(
 
       scrollbarButton.OnButtonMoved.connect((x,y) =>
       {
-        var deltaX = x - grabbedPosition;
+        var deltaX = x - grabbedPosition
         if (deltaX == 0) then
-          return;
+          return
 
         var scrollbarWidth = step * width
         var remainingWidth = width - scrollbarButton.width - scrollbarWidth
@@ -100,7 +100,7 @@ class Scrollbar(
 
       scrollbarButton.OnButtonMoved.connect((x,y) =>
       {
-        var deltaY = y - grabbedPosition;
+        var deltaY = y - grabbedPosition
         if (deltaY == 0) then
           return
 

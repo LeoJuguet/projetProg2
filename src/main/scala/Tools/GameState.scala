@@ -1,28 +1,25 @@
 package gamestate
 
-import sfml.graphics.*
-import sfml.window.*
-import sfml.system.Vector2
 import scala.collection.mutable.ListBuffer
+
+import sfml.graphics.*
+import sfml.system.Vector2
 import sfml.Immutable
 
-import actor.*
-import character.*
-import tilemap.*
+import actor.Actor
+import tilemap.TileMap
 import gui.{Widget, DemoWidget}
 import manager.FontManager
-import camera.*
-import base.*
+import controller.Camera
+import ship.{Drone, Base}
 import controller.PlayerController
-
-import ship.Drone
+import resource.*
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
  * @param window the RenderWindow
  */
-object GameState
-{
+object GameState {
     var window : RenderWindow = _
     var view : View = _
     var windowView : View = _
@@ -30,6 +27,8 @@ object GameState
 
     var player_actors_list = ListBuffer[Actor]()
     var enemy_actors_list = ListBuffer[Actor]()
+
+    var resources_list = new ListBuffer[Resource]()
 
     var delete_list = new ListBuffer[Actor]()
     var widgets = new ListBuffer[Widget]()
@@ -47,8 +46,10 @@ object GameState
     //this is for the demo. It will be removed later.
     var player = this.createDrone(0, Vector2(0, 0))
     var ennemy = this.createDrone(1, Vector2(100, 100))
+    var resource = new Resource(Vector2(300, 300))
 
     var playerBase = this.createBase(0, Vector2(500, 500))
+    var ennemyBase = this.createBase(1, Vector2(1000, 1000))
 
     var textPlayerLife = new Text()
     this.textPlayerLife.position = (50,50)
@@ -166,6 +167,33 @@ object GameState
             c3.disconnect()
         })
         base
+    }
+
+    def createResource(typ: String, position: Vector2[Float]) : Resource = {
+        var resource = typ match {
+          case "scrap" => new Scrap(position)
+          case "cooper" => new Cooper(position)
+          case "iron" => new Iron(position)
+          case "uraniun" => new Uranium(position)
+          case "ethereum" => new Ethereum(position)
+        }
+        this.actors_list += resource
+        this.resources_list += resource
+        
+        var c2 = resource.onTargeted.connect(Unit => {
+            PlayerController.selectedTargets += resource
+        })
+        var c3 = resource.onReleased.connect(Unit => {
+            PlayerController.selectedTargets -= resource
+        })
+        resource.onDestroyed.connect(Unit => {
+            this.actors_list -= resource
+            this.resources_list -= resource
+            PlayerController.selectedTargets -= resource
+            c2.disconnect()
+            c3.disconnect()
+        })
+        resource
     }
 }
 

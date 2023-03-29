@@ -9,7 +9,7 @@ import scala.collection.mutable.ArrayBuffer
  * @param event the event to connect
  * @param callback the function to call when the event is call
  * */
-class Connection[T](var event : Event[T], var callback: T => Unit){
+class Connection[T](var event : Event[T], var callback: T => Unit) {
   type Callback = T => Unit
 
 

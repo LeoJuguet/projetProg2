@@ -1,22 +1,19 @@
 package ship
 
-import ship.GameUnit
-import container.Container
-
-import actor.*
-import clickable.*
-import gamestate.*
-import shipmodule.*
-import base.*
-import resource.*
-
-import manager.TextureManager
-
+import scala.math.*
 
 import sfml.system.*
 import sfml.graphics.*
 
-import scala.math.*
+import ship.{GameUnit, Base}
+import shipmodule.ShipModule
+import container.Container
+import actor.Actor
+import clickable.Clickable
+import gamestate.GameState
+import resource.Resource
+import manager.TextureManager
+
 
 enum Action:
     case IDLE
@@ -29,24 +26,23 @@ class Ship(
     teamID : Int,
     initialPosition : Vector2[Float]
 )
-extends GameUnit with Container
-{
+extends GameUnit with Container {
     texture = TextureManager.get("ovni.png")
     this.applyTexture()
-    var maxSpeed = 100.0;
-    var speed = Vector2(0.0f, 0.0f);
+    var maxSpeed = 100.0
+    var speed = Vector2(0.0f, 0.0f)
 
-    var maxHealth = 50;
-    var _health = 50;
-    var regenerationRate = 0;
+    var maxHealth = 50
+    var _health = 50
+    var regenerationRate = 0
 
-    var attackDamage = 5;
-    var attackSpeed = 500;
-    var attackCoolDown = 10;
+    var attackDamage = 5
+    var attackSpeed = 500
+    var attackCoolDown = 10
 
-    var miningDamage = 10;
-    var miningSpeed = 200;
-    var miningCoolDown = 0;
+    var miningDamage = 10
+    var miningSpeed = 200
+    var miningCoolDown = 0
 
     this.maxLoad = 20
 

@@ -1,15 +1,15 @@
 package ship
 
-import ship.Ship
-
-import event.KeyboardState
-import clickable.States
-import camera.Camera
+import scala.math.{min, max}
 
 import sfml.system.Vector2
 import sfml.graphics.Rect
 import sfml.window.Keyboard.Key
-import scala.math.{min, max}
+
+import ship.Ship
+import event.KeyboardState
+import clickable.States
+import controller.Camera
 
 /**
  * extention of the basic ship class.

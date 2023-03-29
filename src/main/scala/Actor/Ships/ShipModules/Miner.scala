@@ -1,19 +1,17 @@
 package ShipModules
 
-import shipmodule.*
-import gamestate.*
-import controller.*
+import scala.math.max
+
+import shipmodule.ShipModule
+import gamestate.GameState
 import resource.Resource
 
-import scala.math.*
+class MinerModule extends ShipModule {
+    var targetResource: Option[Resource] = None
 
-class MinerModule extends ShipModule
-{
-    var targetResource: Option[Resource] = None;
-
-    var miningDamage = 10;
-    var miningSpeed = 200;
-    var miningCoolDown = 0;
+    var miningDamage = 10
+    var miningSpeed = 200
+    var miningCoolDown = 0
 
     def mine() : Unit ={
         //TODO: Implement mining function here and in resource
@@ -40,6 +38,4 @@ class MinerModule extends ShipModule
         }
       }
     }
-
-
 }

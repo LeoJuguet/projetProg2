@@ -20,7 +20,7 @@ class ScrollArea() extends UIComponent{
       this.isScrollBarEnabled = enable
 
       var isVisible = this.isScrollbarVisible()
-      //TODO;
+      //TODO
       //scrollBar.show(isVisible)
     }
   }

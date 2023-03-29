@@ -1,16 +1,16 @@
 package ship
 
-import actor.*
-import gamestate.*
-import sfml.system.*
+import scala.math.{atan2, Pi}
+
+import sfml.system.{Vector2, norm}
 import sfml.graphics.*
 
-import scala.math.*
+import actor.Actor
+import gamestate.GameState
 
 //This class is used to represent a game unit. It is the base class for all game units.
 //It will only be inherited by the ships, but it is a general class that could be used for other game units if the game is further meant to be expanded.
-abstract class GameUnit extends Actor
-{
+abstract class GameUnit extends Actor {
     var speed: Vector2[Float]
     var maxSpeed: Float
     var maxHealth: Int

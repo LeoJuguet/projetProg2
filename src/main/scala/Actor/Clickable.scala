@@ -1,10 +1,16 @@
 package clickable
 
-import sfml.system.*
-import sfml.graphics.*
+import sfml.graphics.Rect
 import sfml.window.Mouse
-import event.*
-import event.KeyboardState.mouseView
+
+import event.{
+    Event,
+    KeyboardState,
+    OnMouseMoved,
+    OnMouseButtonPressed,
+    OnMouseButtonReleased,
+    OnMouseButtonHold
+}
 
 class OnPressed extends Event[Unit]
 class OnTargeted extends Event[Unit]
@@ -16,8 +22,7 @@ enum States:
     case IDLE, HOVER, PRESSED, TARGET
 
 // The clickable trait is used to add clickability to any object
-trait Clickable()
-{
+trait Clickable {
     var state = States.IDLE
     var clickBounds: Rect[Float] = Rect[Float]()
 

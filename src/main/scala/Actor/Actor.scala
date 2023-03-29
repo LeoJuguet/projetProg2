@@ -1,18 +1,16 @@
 package actor
 
-
-import sfml.system.*
-import sfml.graphics.*
-import sfml.Resource
-import sfml.window.Keyboard.Key
 import scala.math.{min, max}
 
-import gamestate.*
-import clickable.*
-import manager.*
-import event.Event
-import event.KeyboardState
-import camera.Camera
+import sfml.system.Vector2
+import sfml.graphics.*
+import sfml.window.Keyboard.Key
+
+import gamestate.GameState
+import clickable.{Clickable, States}
+import manager.TextureManager
+import event.{Event, KeyboardState}
+import controller.Camera
 
 class OnDestroyed extends Event[Unit]()
 

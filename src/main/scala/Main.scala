@@ -1,16 +1,16 @@
 import scala.util.Using
 
+import scala.collection.mutable.ArrayBuffer
+
 import sfml.system.*
 import sfml.graphics.*
 import sfml.window.*
 import sfml.system.*
+
 import gamestate.*
 import actor.*
-
-import scala.collection.mutable.ArrayBuffer
 import gui.*
 import manager.*
-
 import ship.Ship
 import resource.Resource
 import gamestate.*

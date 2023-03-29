@@ -1,14 +1,14 @@
 package shipmodule
 
-import actor.*
-import gamestate.*
-import controller.*
+import sfml.graphics.{
+    Sprite,
+    RenderTarget,
+    RenderStates
+}
+import sfml.system.Vector2
 
-import sfml.system.*
+import actor.Actor
 import ship.Ship
-import sfml.graphics.Sprite
-import sfml.graphics.RenderTarget
-import sfml.graphics.RenderStates
 
 class PriceStruct(
     var scrap: Int = 0,
@@ -19,8 +19,7 @@ class PriceStruct(
 ){}
 
 //This is the base of what will be the ship modules in the final game (weapons, engines, etc.). It is an actor that can be placed on a ship.
-class ShipModule extends Actor
-{
+class ShipModule extends Actor {
     sprite = Sprite()
     var parent: Ship = _
 

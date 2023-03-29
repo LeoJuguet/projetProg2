@@ -1,9 +1,9 @@
-package base
+package ship
 
-import actor.*
-import gamestate.*
-import container.Container
 import sfml.system.Vector2
+
+import actor.Actor
+import container.Container
 import manager.TextureManager
 
 //The base is the main building of the player. It is used as end goal for the player to win the game. It can be used to store ressources but not building units.

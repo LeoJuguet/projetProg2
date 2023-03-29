@@ -1,9 +1,5 @@
 package event
 
-import event.*
-import gamestate.GameState
-import camera.Camera
-
 import sfml.graphics.RenderWindow
 import sfml.window.Event
 import sfml.window.Keyboard.Key
@@ -14,6 +10,10 @@ import sfml.window.Sensor
 import sfml.window.Keyboard
 import sfml.system.Vector2
 import sfml.window.Mouse
+
+import event.*
+import gamestate.GameState
+import controller.Camera
 
 object OnTextEntered extends event.Event[Int]
 object OnKeyPressed extends event.Event[(Key,Boolean,Boolean,Boolean,Boolean)]
