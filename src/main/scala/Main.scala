@@ -14,7 +14,7 @@ import manager.*
 import ship.Ship
 import resource.Resource
 import gamestate.*
-import controller.*
+import controller.PlayerController
 import actor.*
 import clickable.*
 import ia.*
@@ -24,14 +24,15 @@ import camera.*
 import sfml.Immutable
 
 
-def game_loop(window: RenderWindow, controller: PlayerController) : Unit =
+def game_loop(window: RenderWindow) : Unit =
     window.clear(Color(0, 0, 0))
     
     while window.isOpen() do
         InputManager.update()
-        controller.updateClick()
-        controller.updateActors()
-        controller.updateView()
+        PlayerController.updateClick()
+        PlayerController.force_order()
+        PlayerController.updateActors()
+        PlayerController.updateView()
 
         //Delete actors destroy
         GameState.actors_list --= GameState.delete_list
@@ -46,20 +47,17 @@ def game_loop(window: RenderWindow, controller: PlayerController) : Unit =
 
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
-        val controller = PlayerController()
+
         GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
 
         InputManager.init(window)
 
         var resource = Resource(Vector2(300, 300))
-        
-        resource.texture = TextureManager.get("ore.png")
-        resource.applyTexture()
 
 
         GameState.camera.updateBind(ViewBind.ACTOR(GameState.player))
 
-        game_loop(window, controller)
+        game_loop(window)
 
 
         for actor <- GameState.actors_list do actor.destroy()

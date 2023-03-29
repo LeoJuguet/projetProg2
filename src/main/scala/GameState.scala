@@ -12,8 +12,9 @@ import tilemap.*
 import gui.{Widget, DemoWidget}
 import manager.FontManager
 import camera.*
+import controller.PlayerController
 
-import ship.Ship
+import ship.Drone
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
@@ -28,7 +29,7 @@ object GameState
 
     //TODO : integrate those lists properly (ex : delete)
     var player_actors_list = ListBuffer[Actor]()
-    var ennemy_actor_list = ListBuffer[Actor]()
+    var enemy_actors_list = ListBuffer[Actor]()
 
     var delete_list = new ListBuffer[Actor]()
     var camera : Camera = new Camera
@@ -45,8 +46,10 @@ object GameState
     var font = FontManager.get("game_over.ttf")
 
     //this is for the demo. It will be removed later.
-    var player = new Ship(0, Vector2(0, 0))
-    var ennemy = new Ship(1, Vector2(300, 300))
+    print("Creating player")
+    var player = this.createDrone(0, Vector2(0, 0))
+    var ennemy = this.createDrone(1, Vector2(100, 100))
+    print("Player created")
 
     var textPlayerLife = new Text()
     this.textPlayerLife.position = (50,50)
@@ -99,5 +102,40 @@ object GameState
       drawActors()
       drawWidget()
       window.display()
+
+    def createDrone(teamID : Int, initialPosition: Vector2[Float]) : Drone = {
+        //create a new drone and add it to the right team.
+        var drone = new Drone(teamID, initialPosition)
+        this.actors_list += drone
+        if teamID == 0 then
+            this.player_actors_list += drone
+        else
+            this.enemy_actors_list += drone
+
+        //create the connections to update the selection when the drone is clicked.
+        var c1 = drone.onPressed.connect(Unit => {
+            PlayerController.selectedUnits += drone
+        })
+        var c2 = drone.onTargeted.connect(Unit => {
+            PlayerController.selectedTargets += drone
+        })
+        var c3 = drone.onReleased.connect(Unit => {
+            PlayerController.selectedUnits -= drone
+            PlayerController.selectedTargets -= drone
+        })
+        //when the drone is destroyed, we remove it from the lists and disconnect the connections.
+        //TODO : verify that removing the drone from the lists doesn't cause any problem as it can happen at any time.
+        drone.onDestroyed.connect(Unit => {
+            this.player_actors_list -= drone
+            this.enemy_actors_list -= drone
+            this.actors_list -= drone
+            PlayerController.selectedUnits -= drone
+            PlayerController.selectedTargets -= drone
+            c1.disconnect()
+            c2.disconnect()
+            c3.disconnect()
+        })
+        drone
+    }
 }
 

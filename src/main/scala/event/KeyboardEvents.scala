@@ -19,6 +19,7 @@ object OnKeyPressed extends event.Event[(Key,Boolean,Boolean,Boolean,Boolean)]
 object OnKeyReleased extends event.Event[(Key,Boolean, Boolean, Boolean, Boolean)]
 object OnMouseWheelScrolled extends event.Event[(Wheel, Float,Int,Int)]
 object OnMouseButtonPressed extends event.Event[(Button, Int, Int)]
+object OnMouseButtonHold extends event.Event[(Button, Int, Int)]
 object OnMouseButtonReleased extends event.Event[(Button, Int, Int)]
 object OnMouseMoved extends event.Event[(Int, Int)]
 object OnMouseEntered extends event.Event[Unit]
@@ -110,11 +111,11 @@ object InputManager {
             // /!\ the order is important, as some events happen the first frame that the button is pressed
             button match {
               case Button.Left =>
-                if KeyboardState.leftMouse == true && KeyboardState.holdLeft == false then
+                if KeyboardState.leftMouse && !KeyboardState.holdLeft then
                   KeyboardState.mouseHoldPos = KeyboardState.mouseView
                   KeyboardState.holdLeft = true
               case Button.Right =>
-                if KeyboardState.rightMouse == true && KeyboardState.holdRight == false then
+                if KeyboardState.rightMouse && !KeyboardState.holdRight then
                   KeyboardState.mouseHoldPos = KeyboardState.mouseView
                   KeyboardState.holdRight = true
               case _ => ()
@@ -151,6 +152,10 @@ object InputManager {
 
   def update() = {
     windows.pollEvent().foreach(this.call_events(_))
+    if KeyboardState.holdLeft then
+      OnMouseButtonHold(Button.Left, KeyboardState.mousePos.x, KeyboardState.mousePos.y)
+    if KeyboardState.holdRight then
+      OnMouseButtonHold(Button.Right, KeyboardState.mousePos.x, KeyboardState.mousePos.y)
   }
 
 }

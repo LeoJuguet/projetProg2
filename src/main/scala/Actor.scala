@@ -4,6 +4,7 @@ package actor
 import sfml.system.*
 import sfml.graphics.*
 import sfml.Resource
+import sfml.window.Keyboard.Key
 import scala.math.{min, max}
 
 import gamestate.*
@@ -26,11 +27,13 @@ class Actor extends Transformable with Drawable with Clickable {
     var idleColor: Color = Color.White()
     var hoverColor: Color = Color.Green()
     var pressedColor: Color = Color.Red()
+    var targetColor: Color = Color.Yellow()
 
-    this.onPressed = () => this.sprite.color= this.pressedColor
-    this.onHovered = () => this.sprite.color= this.hoverColor
-    this.onReleased = () => this.sprite.color= this.idleColor
-    this.onUnhovered = () => this.sprite.color= this.idleColor
+    this.onPressed.connect(Unit => this.sprite.color= this.pressedColor)
+    this.onTargeted.connect(Unit => this.sprite.color= this.targetColor)
+    this.onReleased.connect(Unit => this.sprite.color= this.idleColor)
+    this.onHovered.connect(Unit => this.sprite.color= this.hoverColor)
+    this.onUnhovered.connect(Unit => this.sprite.color= this.idleColor)
 
     /**
      * behavior of controlled drones and other actors :
@@ -55,12 +58,12 @@ class Actor extends Transformable with Drawable with Clickable {
     //       it is necessary for the end game but currently not a priority.
 
     this.updateLeftPress = () =>
-        if this.state == States.PRESSED then
-            this.onReleased()
+        if this.state == States.PRESSED || this.state == States.TARGET then
+            this.onReleased(())
             this.state = States.IDLE
     
     this.updateLeftHold = () =>
-        if KeyboardState.ctrl then
+        if KeyboardState.is_Press(Key.KeyLControl) then
             //test the intesection of the sprite and the selection rectangle
             var firstPos = KeyboardState.mouseHoldPos
             var secondPos = KeyboardState.mouseView
@@ -73,34 +76,34 @@ class Actor extends Transformable with Drawable with Clickable {
             if this.clickBounds.intersects(selectionRect) then
                 if this.state == States.IDLE then
                     this.state = States.HOVER
-                    this.onHovered()
+                    this.onHovered(())
             else
                 if this.state == States.HOVER then
-                    this.onUnhovered()
+                    this.onUnhovered(())
                     this.state = States.IDLE
         
         else
             if this.clickBounds.contains(KeyboardState.mouseView) then
                 if this.state == States.IDLE then
                     this.state = States.HOVER
-                    this.onHovered()
+                    this.onHovered(())
             else
                 if this.state == States.HOVER then
-                    this.onUnhovered()
+                    this.onUnhovered(())
                     this.state = States.IDLE
 
 
     this.updateLeftClick = () =>
         if this.state == States.HOVER then
             this.state = States.IDLE
-            this.onUnhovered()
+            this.onUnhovered(())
 
     this.updateRightPress = updateLeftPress
     
     this.updateRightHold = updateLeftHold
 
     this.updateRightClick = () =>
-        if KeyboardState.ctrl then
+        if KeyboardState.is_Press(Key.KeyLControl) then
             var firstPos = KeyboardState.mouseHoldPos
             var secondPos = KeyboardState.mouseView
             var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
@@ -111,19 +114,19 @@ class Actor extends Transformable with Drawable with Clickable {
 
             if this.clickBounds.intersects(selectionRect) then
                 this.state = States.TARGET
-                this.onPressed()
+                this.onTargeted(())
             else
                 if this.state == States.HOVER then
-                    this.onUnhovered()
+                    this.onUnhovered(())
                     this.state = States.IDLE
         
         else
             if this.clickBounds.contains(KeyboardState.mouseView) then
                 this.state = States.TARGET
-                this.onPressed()
+                this.onTargeted(())
             else
                 if this.state == States.HOVER then
-                    this.onUnhovered()
+                    this.onUnhovered(())
                     this.state = States.IDLE
 
 
@@ -155,6 +158,7 @@ class Actor extends Transformable with Drawable with Clickable {
 
         this.moveConnection.disconnect()
         this.releaseConnection.disconnect()
+        this.holdConnection.disconnect()
         this.clickConnection.disconnect()
 
         this.onDestroyed(())

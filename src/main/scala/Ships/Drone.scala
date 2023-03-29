@@ -7,6 +7,7 @@ import clickable.States
 
 import sfml.system.Vector2
 import sfml.graphics.Rect
+import sfml.window.Keyboard.Key
 import scala.math.{min, max}
 
 /**
@@ -21,7 +22,7 @@ extends Ship(teamID, initialPosition) {
     //for mor details ont the behavior of the drone, see the Actor class.
     if this.teamID == 0 then
         this.updateLeftClick = () =>
-            if KeyboardState.ctrl then
+            if KeyboardState.is_Press(Key.KeyLControl) then
                 var firstPos = KeyboardState.mouseHoldPos
                 var secondPos = KeyboardState.mouseView
                 var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
@@ -32,19 +33,19 @@ extends Ship(teamID, initialPosition) {
 
                 if this.clickBounds.intersects(selectionRect) then
                     this.state = States.PRESSED
-                    this.onPressed()
+                    this.onPressed(())
                 else
                     if this.state == States.HOVER then
-                        this.onUnhovered()
+                        this.onUnhovered(())
                         this.state = States.IDLE
             
             else
                 if this.clickBounds.contains(KeyboardState.mouseView) then
                     this.state = States.PRESSED
-                    this.onPressed()
+                    this.onPressed(())
                 else
                     if this.state == States.HOVER then
-                        this.onUnhovered()
+                        this.onUnhovered(())
                         this.state = States.IDLE
         
         this.updateRightPress = () => ()
@@ -59,6 +60,6 @@ extends Ship(teamID, initialPosition) {
         this.updateRightClick = () =>
             if this.state == States.HOVER then
                 this.state = States.IDLE
-                this.onUnhovered()
+                this.onUnhovered(())
 
 }

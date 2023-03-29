@@ -6,6 +6,11 @@ import sfml.window.Mouse
 import event.*
 import event.KeyboardState.mouseView
 
+class OnPressed extends Event[Unit]
+class OnTargeted extends Event[Unit]
+class OnReleased extends Event[Unit]
+class OnHovered extends Event[Unit]
+class OnUnhovered extends Event[Unit]
 
 //TODO : add a color and its cases for the TARGET state
 enum States:
@@ -19,10 +24,11 @@ trait Clickable()
     var clickBounds: Rect[Float] = Rect[Float]()
 
     //actions to do when a clickable is [pressed, ...]
-    var onPressed: () => Unit = () => ()
-    var onHovered: () => Unit = () => ()
-    var onReleased: () => Unit = () => ()
-    var onUnhovered: () => Unit = () => ()
+    var onPressed = OnPressed()
+    var onTargeted = OnTargeted()
+    var onReleased = OnReleased()
+    var onHovered = OnHovered()
+    var onUnhovered = OnUnhovered()
 
     //actions to do when the mouse is pressed, hold or released.
     var updateLeftPress: () => Unit = () => ()
@@ -37,11 +43,11 @@ trait Clickable()
         if this.clickBounds.contains(KeyboardState.mouseView) then
             if this.state == States.IDLE then
                 this.state = States.HOVER
-                this.onHovered()
+                this.onHovered(())
         else
             if this.state == States.HOVER then
                 this.state = States.IDLE
-                this.onUnhovered()
+                this.onUnhovered(())
     })
 
     var releaseConnection = OnMouseButtonReleased.connect((button, x, y) => {
@@ -50,17 +56,17 @@ trait Clickable()
         else if(button == Mouse.Button.Right)
             this.updateRightClick()
     })
+    var holdConnection = OnMouseButtonHold.connect((button, x, y) => {
+        if(button == Mouse.Button.Left)
+            this.updateLeftHold()
+        else if(button == Mouse.Button.Right)
+            this.updateRightHold()
+    })
     var clickConnection = OnMouseButtonPressed.connect((button, x, y) => {
         if(button == Mouse.Button.Left)
-            if KeyboardState.holdLeft then
-                this.updateLeftHold()
-            else
-                this.updateLeftPress()
+            this.updateLeftPress()
         else if(button == Mouse.Button.Right)
-            if KeyboardState.holdRight then
-                this.updateRightHold()
-            else
-                this.updateRightPress()
+            this.updateRightPress()
     })
     
     def isPressed: Boolean =

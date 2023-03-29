@@ -11,6 +11,9 @@ val rand = new scala.util.Random
 class Resource(initialPosition: Vector2[Float]) extends Actor
 {
     // Map will be considered 32768*32768 units² for now
+    this.texture = TextureManager.get("ore.png")
+    this.applyTexture()
+
     this.moveActor(initialPosition);
     var remainingQuantity = 100;
 

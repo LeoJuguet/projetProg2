@@ -63,9 +63,6 @@ extends GameUnit with Container
     var modules = Array.ofDim[Option[ShipModule]](shipDimension.x,shipDimension.y)
 
     var random_move_array : Array[Vector2[Float]] = Array(Vector2(0.0f, 0.0f))
-
-    //TODO : check if ondestroyed removes the actor from the list
-    GameState.actors_list += this
     
     def attack() : Unit =
         this.action match
@@ -109,28 +106,38 @@ extends GameUnit with Container
                     this.action = Action.IDLE
             }
             case Action.ATTACK(target) => {
-                if this.attackCoolDown == 0 then
-                    this.attack()
-                    this.attackCoolDown = this.attackSpeed
-                    //there is no need to check if the target is still alive, because the player controller will change the target if it dies
+                //if the ship is close enough to the target, it will attack it
+                if norm(this.position - target.asInstanceOf[Actor].position) < 50 then
+                    if this.attackCoolDown == 0 then
+                        this.attack()
+                        this.attackCoolDown = this.attackSpeed
+                        //there is no need to check if the target is still alive, because the player controller will change the target if it dies
+                //if the ship is not close enough, it will move towards the target
+                else
+                    this.moveUnit(target.asInstanceOf[Actor].position)
             }
             case Action.MINE(target) => {
-                //Check if cooldown is over
-                if this.miningCoolDown == 0 then
-                    //TODO: Implement gathering of resource for the team
-                    this.mine()
-                    this.miningCoolDown = this.miningSpeed
+                //if the ship is close enough to the resource, it will mine it
+                if norm(this.position - target.asInstanceOf[Actor].position) < 50 then
+                    //Check if cooldown is over
+                    if this.miningCoolDown == 0 then
+                        //TODO: Implement gathering of resource for the team
+                        this.mine()
+                        this.miningCoolDown = this.miningSpeed
 
-                    //Check if full
-                    if this.totalLoad == this.maxLoad then
-                        //start transfering
-                        this.action = Action.TRANSFER(GameState.actors_list.find(actor => actor match {
-                            case base : Base => base.team == this.team
-                            case _ => false
-                        }) match {
-                            case Some(base : Base) => base
-                            case _ => print("Error : no base found for the team\n"); null
-                        })
+                        //Check if full
+                        if this.totalLoad == this.maxLoad then
+                            //start transfering
+                            this.action = Action.TRANSFER(GameState.actors_list.find(actor => actor match {
+                                case base : Base => base.team == this.team
+                                case _ => false
+                            }) match {
+                                case Some(base : Base) => base
+                                case _ => print("Error : no base found for the team\n"); null
+                            })
+                //if the ship is not close enough, it will move towards the resource
+                else
+                    this.moveUnit(target.asInstanceOf[Actor].position)
             }
             case Action.TRANSFER(target) => {
                 //if the ship is close enough to the mase, it will transfer the resources

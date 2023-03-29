@@ -14,53 +14,27 @@ import base.*
 import event.{OnMouseButtonPressed, OnMouseButtonReleased}
 import event.KeyboardState
 import event.InputManager
-import ship.{Action, Ship}
+import ship.{Action, Ship, Drone}
 import resource.Resource
 
 
 //This class is the brain controlling the actions of the player.
-class PlayerController {
+object PlayerController {
     var selectedUnits : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
     var selectedTargets : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
-    var selectedPosTarget : Vector2[Float] = Vector2(0.0f, 0.0f)
+    var selectedPosTarget : Option[Vector2[Float]] = None
 
-    //this connection clears the selected actors.
+    var justReleased : Boolean = false
+
     OnMouseButtonPressed.connect((button, x, y) => {
-        if button == Mouse.Button.Left && KeyboardState.holdLeft == false then
-            this.selectedUnits.clear()
-            this.selectedTargets.clear()
-        if button == Mouse.Button.Right && KeyboardState.holdRight == false then
-            this.selectedTargets.clear()
+        if button == Mouse.Button.Right || button == Mouse.Button.Left then
+            this.selectedPosTarget = None
     })
-
-    //When the mouse is hold, the controller doesn't need to update anything, as the player hasn't finished his action.
-
     //this connection wait for the player to end his selection and take decisions accordingly.
     OnMouseButtonReleased.connect((button, x, y) => {
-        //this case fills the selected units list with the units that are in the selected state.
-        //player_actors_list is enought as the player can't give orders to any actor that is not under his control.
-        if button == Mouse.Button.Left then
-            GameState.player_actors_list.foreach(actor => {
-                if actor.state == States.PRESSED then
-                    this.selectedUnits += actor
-                    //TODO : disconnect this connection when the actor is removed from the selected units list ! (in the press connection above)
-                    actor.onDestroyed.connect(Unit => {
-                        this.selectedUnits -= actor
-                    })
-            })
-        //this case fills the selected targets list with the units that are in the targetted state.
-        //here we need to check all the actors, as the orders may need a reference to any actor.
         if button == Mouse.Button.Right then
-            GameState.actors_list.foreach(actor => {
-                if actor.state == States.TARGET then
-                    this.selectedTargets += actor
-                    //TODO : disconnect this connection when the actor is removed from the selected targets list ! (in the press connection above)
-                    //TODO : idle the actions of player_actors_list that are targeting this actor.
-                    actor.onDestroyed.connect(Unit => {
-                        this.selectedTargets -= actor
-                    })
-            })
-            this.selectedPosTarget = KeyboardState.mouseWindow
+            this.selectedPosTarget = Some(KeyboardState.mouseWindow)
+            this.justReleased = true
     })
     
     def updateClick() = {
@@ -84,19 +58,17 @@ class PlayerController {
 
         //otherwize, if there is a base, we attack it.
         } else if target_base.nonEmpty then {
-                unit.action = Action.ATTACK(target_base(0))
+            unit.action = Action.ATTACK(target_base(0))
         //else, if there is a resource, we mine it.
         } else if target_ressources.nonEmpty then {
-                unit.action = Action.MINE(target_ressources(Random.nextInt(target_ressources.length)).asInstanceOf[Resource])
-        } else {
+            unit.action = Action.MINE(target_ressources(Random.nextInt(target_ressources.length)).asInstanceOf[Resource])
+        }}
+         else {
             //finally, if there is no target, we move to the mouse position.
-            this.selectedUnits.foreach(actor => {
-                if actor.isInstanceOf[Ship] then {
-                    actor.asInstanceOf[Ship].action = Action.MOVE(KeyboardState.mouseWindow)
-                }
-            })
+            if this.selectedPosTarget != None then {
+                unit.action = Action.MOVE(this.selectedPosTarget.get)
+            }
         }
-        } 
     
     def clearAction(ship : Ship) =
         ship.action match {
@@ -116,6 +88,17 @@ class PlayerController {
             case _ => {}
         }
     
+    //this function gives orders to the selected units if we just released the right mouse button.
+    def force_order() = {
+        if this.justReleased then
+            this.selectedUnits.foreach(unit => {
+                if unit.isInstanceOf[Ship] then
+                    give_order(unit.asInstanceOf[Ship])
+            })
+        this.justReleased = false
+    }
+    
+    //this function updates the actions of the player's units.
     def updateActors() = {
         //at every turn, we check for unnocupied selected units and give them an action.
         this.selectedUnits.foreach(unit => {
