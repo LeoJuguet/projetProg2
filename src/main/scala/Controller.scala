@@ -33,7 +33,7 @@ object PlayerController {
     //this connection wait for the player to end his selection and take decisions accordingly.
     OnMouseButtonReleased.connect((button, x, y) => {
         if button == Mouse.Button.Right then
-            this.selectedPosTarget = Some(KeyboardState.mouseWindow)
+            this.selectedPosTarget = Some(KeyboardState.mouseView)
             this.justReleased = true
     })
     
