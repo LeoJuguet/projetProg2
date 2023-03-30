@@ -8,6 +8,7 @@ import gui.UIComponent
 import gui.Clickable
 import gui.{TextStyle, Style}
 import manager.FontManager
+import event.OnTextEntered
 
 
 class TextBox(
@@ -66,21 +67,23 @@ class TextBox(
         val transformStates = RenderStates(states.transform.combine(this.transform))
         this.text.draw(target,transformStates)
 
-    def typedOn(input: Event.TextEntered) : Unit=
+    OnTextEntered.connect(typedOn)
+
+    def typedOn(unicode: Int) : Unit=
         if(this.isFocused){
-            val charTyped = input.unicode
-            if(charTyped < 128){
-                if(charTyped == 13 || charTyped == 27){
+
+            if(unicode < 128){
+                if(unicode == 13 || unicode == 27){
                     this.isFocused = false
                     this.text.string = this.string
                     onTextCommited()
                     return
                 }
-                if((this.textLimit < 0 || this.string.length < textLimit) && charTyped != 8){
-                    this.string = this.string + charTyped.toChar
+                if((this.textLimit < 0 || this.string.length < textLimit) && unicode != 8){
+                    this.string = this.string + unicode.toChar
                     this.text.string = this.string + "_"
                     this.onTextChanged()
-                }else if(charTyped == 8){
+                }else if(unicode == 8){
                     this.string = this.string.dropRight(1)
                     this.text.string = this.string + "_"
                     this.onTextChanged()

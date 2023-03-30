@@ -21,26 +21,39 @@ class ShipModuleWidget(ship: Ship) extends Widget{
 }
 
 
-class ModuleCard(ship: Ship, modulePos: Int , var module : ShipModule) extends Widget{
+class ModuleCard(ship: Ship, modulePos: (Int,Int) , var module : ShipModule) extends Widget{
   var cardBox = VerticalBox(direction = E_Direction.Right)
 
   var button = Button(width = 100, height = 100)
   var md = ShipModule()
   button.onClickedBind = () => {
+    if ship.modules(modulePos._1)(modulePos._2).getClass() != module.getClass() &&
+      ship.scrap >= module.price.scrap &&
+      ship.cooper >= module.price.cooper &&
+      ship.iron >= module.price.iron &&
+      ship.uranium >= module.price.uranium &&
+      ship.ethereum >= module.price.ethereum
+    then {
+      ship.modules(modulePos._1)(modulePos._2) = this.module
+      ship.scrap -= module.price.scrap
+      ship.cooper -= module.price.cooper
+      ship.iron -= module.price.iron
+      ship.uranium -= module.price.uranium
+      ship.ethereum -= module.price.ethereum
+       }
   }
 
 
   var verticalInfo = VerticalBox()
 
-  var font = FontManager.get("game_over.ttf")
 
-  var label = Label("default Text", font, 20)
-  var descriptionLabel = Label("default decription text", font, 10)
-  var scrapPrice = Label("Scrap : "+ module.price.scrap.toString, font, 20)
-  var cooperPrice = Label("Cooper : "+ module.price.cooper.toString, font, 20)
-  var ironPrice = Label("Iron : "+ module.price.iron.toString, font, 20)
-  var uraniumPrice = Label("Uranium : "+ module.price.uranium.toString, font, 20)
-  var ethereumPrice = Label("Ethereum : "+ module.price.ethereum.toString, font, 20)
+  var label = Label("default Text", characterSize = 20)
+  var descriptionLabel = Label("default decription text", characterSize = 10)
+  var scrapPrice = Label("Scrap : "+ module.price.scrap.toString, characterSize = 20)
+  var cooperPrice = Label("Cooper : "+ module.price.cooper.toString, characterSize = 20)
+  var ironPrice = Label("Iron : "+ module.price.iron.toString, characterSize = 20)
+  var uraniumPrice = Label("Uranium : "+ module.price.uranium.toString, characterSize = 20)
+  var ethereumPrice = Label("Ethereum : "+ module.price.ethereum.toString, characterSize = 20)
 
   verticalInfo.addChild(label)
   verticalInfo.addChild(descriptionLabel)

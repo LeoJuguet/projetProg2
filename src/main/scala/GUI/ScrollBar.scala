@@ -80,13 +80,14 @@ class Scrollbar(
       {
         var deltaX = x - grabbedPosition;
         if (deltaX == 0) then
-          return;
+          {} // return no longer supported
+        else {
+          var scrollbarWidth = step * width
+          var remainingWidth = width - scrollbarButton.width - scrollbarWidth
+          var valueRange = maximumValue - minimumValue
 
-        var scrollbarWidth = step * width
-        var remainingWidth = width - scrollbarButton.width - scrollbarWidth
-        var valueRange = maximumValue - minimumValue
-
-        value = grabbedValue + deltaX * valueRange / remainingWidth
+          value = grabbedValue + deltaX * valueRange / remainingWidth
+        }
       })
 
     }
@@ -102,13 +103,14 @@ class Scrollbar(
       {
         var deltaY = y - grabbedPosition;
         if (deltaY == 0) then
-          return
+          {} // return no longer supported
+        else {
+          var scrollbarHeight = step * height
+          var remainingHeight = height - scrollbarButton.height - scrollbarHeight
+          var valueRange = maximumValue - minimumValue
 
-        var scrollbarHeight = step * height
-        var remainingHeight = height - scrollbarButton.height - scrollbarHeight
-        var valueRange = maximumValue - minimumValue
-
-        value = grabbedValue + deltaY * valueRange / remainingHeight
+          value = grabbedValue + deltaY * valueRange / remainingHeight
+        }
       })
     }
 
