@@ -1,19 +1,20 @@
 import scala.util.Using
 
+import scala.collection.mutable.ArrayBuffer
+
 import sfml.system.*
 import sfml.graphics.*
 import sfml.window.*
 import sfml.system.*
+
 import gamestate.*
 import actor.*
-
-import scala.collection.mutable.ArrayBuffer
 import gui.*
 import manager.*
-
-import character.*
+import ship.Ship
+import resource.Resource
 import gamestate.*
-import controller.*
+import controller.PlayerController
 import actor.*
 import clickable.*
 import ia.*
@@ -23,17 +24,19 @@ import camera.*
 import sfml.Immutable
 
 
-def game_loop(window: RenderWindow, controller: Controller) : Unit =
+def game_loop(window: RenderWindow) : Unit =
     window.clear(Color(0, 0, 0))
-
-    //TODO : la prochaine chose à faire est de centrer la vision sur le vaisseau, et de se déplacer sur l'image de fond.
     
     while window.isOpen() do
+        print("\nnew loop...\n")
         InputManager.update()
-        controller.updateEvents()
-        controller.updateClick()
-        controller.updateActors()
-        controller.updateView()
+
+        PlayerController.updateClick()
+        PlayerController.updateActors()
+
+        //IAController.updateActors()
+
+        Camera.updateView()
 
         //Delete actors destroy
         GameState.actors_list --= GameState.delete_list
@@ -48,21 +51,12 @@ def game_loop(window: RenderWindow, controller: Controller) : Unit =
 
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
-        val controller = Controller(window)
-        GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)),View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
+
+        GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
 
         InputManager.init(window)
 
-        var ennemy = Ship( 1, 1, Vector2(600, 600))
-        var ressource = Resource( 0, Vector2(300, 300))
-        
-        ressource.texture = TextureManager.get("ore.png")
-        ressource.applyTexture()
-
-
-        GameState.camera.viewBind = ViewBind.ACTOR(GameState.player)
-
-        game_loop(window, controller)
+        game_loop(window)
 
 
         for actor <- GameState.actors_list do actor.destroy()
