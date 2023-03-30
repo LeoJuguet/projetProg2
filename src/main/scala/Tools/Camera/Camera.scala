@@ -65,8 +65,9 @@ object Camera {
         GameState.window.view = Immutable(this.playerView)
         
         //gestion de l'affichage des tilemaps.
-        var x = this.playerView.center.x / 2
-        var y = this.playerView.center.y / 2
+        //due to some forgotten black magic, the coordinates have to be flipped ...
+        var x = this.playerView.center.y / 2
+        var y = this.playerView.center.x / 2
 
         for i <- 0 to 7 do
             for j <- 0 to 7 do

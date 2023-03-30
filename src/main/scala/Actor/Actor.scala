@@ -154,6 +154,7 @@ class Actor extends Transformable with Drawable with Clickable {
 
     def destroy() =
         // code pour supprimer l'actor
+        print("destroying actor")
         GameState.delete_list += this
         this.live = false
 

@@ -28,10 +28,13 @@ def game_loop(window: RenderWindow) : Unit =
     window.clear(Color(0, 0, 0))
     
     while window.isOpen() do
+        print("\nnew loop...\n")
         InputManager.update()
+
         PlayerController.updateClick()
-        PlayerController.force_order()
         PlayerController.updateActors()
+
+        //IAController.updateActors()
 
         Camera.updateView()
 
@@ -52,11 +55,6 @@ def game_loop(window: RenderWindow) : Unit =
         GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
 
         InputManager.init(window)
-
-        var resource = Resource(Vector2(300, 300))
-
-
-        //Camera.updateBind(ViewBind.ACTOR(GameState.player))
 
         game_loop(window)
 

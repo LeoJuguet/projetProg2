@@ -25,53 +25,17 @@ import resource.Resource
 
 //This class is the brain controlling the actions of the player.
 object IAController {
-    var selectedUnits : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
-    var selectedTargets : ArrayBuffer[Actor] = ArrayBuffer[Actor]()
-    var selectedPosTarget : Option[Vector2[Float]] = None
+    var selectedUnit : Option[Actor] = None
+    var selectedTarget : Option[Actor] = None
 
-    var justReleased : Boolean = false
-
-    OnMouseButtonPressed.connect((button, x, y) => {
-        if button == Mouse.Button.Right || button == Mouse.Button.Left then
-            this.selectedPosTarget = None
-    })
-    //this connection wait for the player to end his selection and take decisions accordingly.
-    OnMouseButtonReleased.connect((button, x, y) => {
-        if button == Mouse.Button.Right then
-            this.selectedPosTarget = Some(KeyboardState.mouseView)
-            this.justReleased = true
-    })
-    
-    def updateClick() = {
-        //TODO : LEO : il faut intégrer les nouveaux event à ta GUI pour que cette ligne disparaisse.
-        GameState.widgets.foreach(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse))
+    //Every frame, only one unit can be selected by the AI.
+    def select(unit : Actor) = {
+        this.selectedUnit = Some(unit)
     }
 
-    def give_order(unit : Ship) =
-        //we check if he has selected some targets.
-        if this.selectedTargets.nonEmpty then {
-        var target_ships = this.selectedTargets.filter(actor => actor.isInstanceOf[Ship])
-        var target_base = this.selectedTargets.filter(actor => actor.isInstanceOf[Base])
-        var target_ressources = this.selectedTargets.filter(actor => actor.isInstanceOf[Resource])
-
-        //if there is an ennemy ship, we attack it.
-        if target_ships.nonEmpty then {
-            var target_ship = target_ships(Random.nextInt(target_ships.length))
-            unit.action = Action.ATTACK(target_ship)
-
-        //otherwize, if there is a base, we attack it.
-        } else if target_base.nonEmpty then {
-            unit.action = Action.ATTACK(target_base(0))
-        //else, if there is a resource, we mine it.
-        } else if target_ressources.nonEmpty then {
-            unit.action = Action.MINE(target_ressources(Random.nextInt(target_ressources.length)).asInstanceOf[Resource])
-        }}
-         else {
-            //finally, if there is no target, we move to the mouse position.
-            if this.selectedPosTarget != None then {
-                unit.action = Action.MOVE(this.selectedPosTarget.get)
-            }
-        }
+    def target(unit : Actor) = {
+        this.selectedTarget = Some(unit)
+    }
     
     def clearAction(ship : Ship) =
         ship.action match {
@@ -91,32 +55,70 @@ object IAController {
             case _ => {}
         }
     
-    //this function gives orders to the selected units if we just released the right mouse button.
-    def force_order() = {
-        if this.justReleased then
-            this.selectedUnits.foreach(unit => {
-                if unit.isInstanceOf[Ship] then
-                    give_order(unit.asInstanceOf[Ship])
-            })
-        this.justReleased = false
+    def selectUnit() = {
+        //TODO : replace this random behavior by a real IA.
+        //       select only from available units.
+        //       target only ennemy units or resources.
+        //       decide the priority of the actions.
+        //       decide the number of units to send on a target unit or resource.
+        //       ...
+        //we select a random unit.
+        var unit = GameState.enemy_actors_list(Random.nextInt(GameState.enemy_actors_list.length))
+        this.select(unit)
+
+        //we select a random target.
+        // /!\ currently, the target can be a friendly unit. It can even be the self !
+        var targ = GameState.actors_list(Random.nextInt(GameState.actors_list.length))
+        this.target(targ)
+    }
+
+    def decideAction() = {
+        //If a unit is selected, we give it an action depending on the target.
+        this.selectedUnit match {
+        case Some(unit) => {
+            if unit.isInstanceOf[Ship] then {
+                var ship = unit.asInstanceOf[Ship]
+                if ship.action == Action.IDLE then {
+                print("deciding action...")
+                this.selectedTarget match {
+                case Some(target) => {
+                    if target.isInstanceOf[Ship] then {
+                        print("attacking ship\n")
+                        ship.action = Action.ATTACK(target)
+                    } else if target.isInstanceOf[Base] then {
+                        print("attacking base\n")
+                        ship.action = Action.ATTACK(target)
+                    } else if target.isInstanceOf[Resource] then {
+                        print("mining\n")
+                        ship.action = Action.MINE(target.asInstanceOf[Resource])
+                    }
+                }
+                case None => {}
+                }}
+            }
+        }
+        case None => {}
+        }
+    }
+
+    def releaseUnit() = {
+        this.selectedUnit = None
+        this.selectedTarget = None
     }
     
     //this function updates the actions of the player's units.
     def updateActors() = {
-        //at every turn, we check for unnocupied selected units and give them an action.
-        this.selectedUnits.foreach(unit => {
-            if unit.isInstanceOf[Ship] then
-                if unit.asInstanceOf[Ship].action == Action.IDLE then
-                    give_order(unit.asInstanceOf[Ship])
-        })
+        this.selectUnit()
+        this.decideAction()
+        this.releaseUnit()
 
         //update the player's units (not only the selected ones as they may have been selected in the previous turn and not finished their action)
-        GameState.player_actors_list.foreach(actor => {
+        GameState.enemy_actors_list.foreach(actor => {
             if actor.isInstanceOf[Ship] then
                 actor.asInstanceOf[Ship].updateUnit()
         })
         //clear dead actions
-        GameState.player_actors_list.foreach(actor =>
+        GameState.enemy_actors_list.foreach(actor =>
             if actor.isInstanceOf[Ship] then
                 clearAction(actor.asInstanceOf[Ship]))
     }

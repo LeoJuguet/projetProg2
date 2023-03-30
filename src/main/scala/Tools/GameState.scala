@@ -13,6 +13,7 @@ import manager.FontManager
 import controller.Camera
 import ship.{Drone, Base}
 import controller.PlayerController
+import controller.IAController
 import resource.*
 
 /** Provides an interface for generate images
@@ -46,7 +47,7 @@ object GameState {
     //this is for the demo. It will be removed later.
     var player = this.createDrone(0, Vector2(0, 0))
     var ennemy = this.createDrone(1, Vector2(100, 100))
-    var resource = new Resource(Vector2(300, 300))
+    var resource = createResource("scrap", Vector2(300, 300))
 
     var playerBase = this.createBase(0, Vector2(500, 500))
     var ennemyBase = this.createBase(1, Vector2(1000, 1000))
@@ -131,8 +132,10 @@ object GameState {
             this.player_actors_list -= drone
             this.enemy_actors_list -= drone
             this.actors_list -= drone
+
             PlayerController.selectedUnits -= drone
-            PlayerController.selectedTargets -= drone
+            PlayerController.selectedTargets -= drone            
+
             c1.disconnect()
             c2.disconnect()
             c3.disconnect()
@@ -171,6 +174,7 @@ object GameState {
 
     def createResource(typ: String, position: Vector2[Float]) : Resource = {
         var resource = typ match {
+          case "resource" => new Resource(position)
           case "scrap" => new Scrap(position)
           case "cooper" => new Cooper(position)
           case "iron" => new Iron(position)

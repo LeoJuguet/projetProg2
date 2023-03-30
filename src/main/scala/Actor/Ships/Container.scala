@@ -35,6 +35,8 @@ trait Container {
             case "ethereum" =>
                 this.ethereum += quantity
                 this.totalLoad += quantity
+            case _ =>
+                print("trying to obtain illegal products.")
         }
         this.totalLoad += quantity
         quantity
@@ -51,6 +53,7 @@ trait Container {
                 this.in("uranium", amount)
             case _ : Ethereum =>
                 this.in("ethereum", amount)
+            case _ => print("trying to obtain illegal products."); 0
         }
     
     def out(resource : String, amount : Int) : Int =
@@ -80,6 +83,9 @@ trait Container {
                 this.ethereum -= quantity
                 this.totalLoad -= quantity
                 quantity
+            case _ =>
+                print("trying to obtain illegal products.")
+                0
         }
     
     def out(resource : Resource, amount : Int) : Int =
@@ -94,6 +100,9 @@ trait Container {
                 this.out("uranium", amount)
             case _ : Ethereum =>
                 this.out("ethereum", amount)
+            case _ =>
+                print("trying to obtain illegal products.")
+                0
         }
         
     
@@ -124,6 +133,9 @@ trait Container {
                 var q2 = min(amount, target.maxLoad - target.totalLoad)
                 var quantity = min(q1, q2)
                 quantity
+            case _ =>
+                print("trying to obtain illegal products.")
+                0
         }
         this.out(resource, quantity)
         target.in(resource, quantity)

@@ -15,6 +15,7 @@ import resource.Resource
 import manager.TextureManager
 
 
+//TODO : Actions should behave as a list, so that a player can assign several of them in one input to limit redundancy in the player's actions.
 enum Action:
     case IDLE
     case MOVE(target : Vector2[Float])
@@ -93,6 +94,10 @@ extends GameUnit with Container {
         this.attackCoolDown = max(0, this.attackCoolDown - 1)
         this.miningCoolDown = max(0, this.miningCoolDown - 1)
 
+        print("\n")
+        print(this.action)
+        print(this.totalLoad, this.maxLoad)
+
         this.action match {
             case Action.IDLE => ()
             case Action.MOVE(target) => {
@@ -128,6 +133,7 @@ extends GameUnit with Container {
                                 case Some(base : Base) => base
                                 case _ => print("Error : no base found for the team\n"); null
                             })
+                            print(this.action)
                 //if the ship is not close enough, it will move towards the resource
                 else
                     this.moveUnit(target.asInstanceOf[Actor].position)

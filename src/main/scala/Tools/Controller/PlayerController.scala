@@ -96,6 +96,9 @@ object PlayerController {
     
     //this function updates the actions of the player's units.
     def updateActors() = {
+        //we check if the player has just released the right mouse button and give orders to the selected units independantly of their current action.
+        this.force_order()
+
         //at every turn, we check for unnocupied selected units and give them an action.
         this.selectedUnits.foreach(unit => {
             if unit.isInstanceOf[Ship] then

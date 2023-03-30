@@ -30,7 +30,7 @@ class Resource(initialPosition: Vector2[Float]) extends Actor {
 
 class Scrap(initialPosition: Vector2[Float]) extends Resource(initialPosition) {
     this.remainingQuantity = 300
-    this.texture = TextureManager.get("scrap.png")
+    this.texture = TextureManager.get("ore.png")//TODO : find textures ! "scrap.png")
 }
 
 class Cooper(initialPosition: Vector2[Float]) extends Resource(initialPosition) {
