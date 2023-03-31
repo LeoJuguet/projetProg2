@@ -11,7 +11,7 @@ import container.Container
 import actor.Actor
 import clickable.Clickable
 import gamestate.GameState
-import resource.Resource
+import asteroid.Asteroid
 import manager.TextureManager
 
 
@@ -20,7 +20,7 @@ enum Action:
     case IDLE
     case MOVE(target : Vector2[Float])
     case ATTACK(target : Actor)
-    case MINE(target : Resource)
+    case MINE(target : Asteroid)
     case TRANSFER(target : Container)
 
 class Ship(
@@ -67,7 +67,7 @@ extends GameUnit with Container {
         
     def mine() : Unit =
         this.action match
-        case Action.MINE(target : Resource) =>
+        case Action.MINE(target : Asteroid) =>
             var obtained = target.mined(this.miningDamage)
             this.in(target, obtained)
         case _ => print("Error : mine action not valid\n")
@@ -93,10 +93,6 @@ extends GameUnit with Container {
 
         this.attackCoolDown = max(0, this.attackCoolDown - 1)
         this.miningCoolDown = max(0, this.miningCoolDown - 1)
-
-        print("\n")
-        print(this.action)
-        print(this.totalLoad, this.maxLoad)
 
         this.action match {
             case Action.IDLE => ()
@@ -133,7 +129,6 @@ extends GameUnit with Container {
                                 case Some(base : Base) => base
                                 case _ => print("Error : no base found for the team\n"); null
                             })
-                            print(this.action)
                 //if the ship is not close enough, it will move towards the resource
                 else
                     this.moveUnit(target.asInstanceOf[Actor].position)

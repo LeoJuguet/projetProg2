@@ -20,7 +20,7 @@ import ship.{
     Ship,
     Drone
 }
-import resource.Resource
+import asteroid.Asteroid
 
 
 //This class is the brain controlling the actions of the player.
@@ -88,9 +88,9 @@ object IAController {
                     } else if target.isInstanceOf[Base] then {
                         print("attacking base\n")
                         ship.action = Action.ATTACK(target)
-                    } else if target.isInstanceOf[Resource] then {
+                    } else if target.isInstanceOf[Asteroid] then {
                         print("mining\n")
-                        ship.action = Action.MINE(target.asInstanceOf[Resource])
+                        ship.action = Action.MINE(target.asInstanceOf[Asteroid])
                     }
                 }
                 case None => {}

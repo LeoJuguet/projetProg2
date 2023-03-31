@@ -12,6 +12,14 @@ import manager.TextureManager
 import event.{Event, KeyboardState}
 import controller.Camera
 
+//TODO : add an animation state that will load a different texture for each frame of the animation
+//       and an animation time
+//       example of animation : small dust arround an asteroid
+//                              explosion animation
+//                              ship engine
+//                              ship shield
+//                              ...
+
 class OnDestroyed extends Event[Unit]()
 
 /** Actor class
@@ -22,6 +30,8 @@ class Actor extends Transformable with Drawable with Clickable {
     var live: Boolean = false
 
     var sprite: Sprite = Sprite(texture)
+    //collision box are arbitrarily defined as a circle with radius equal to half the smallest dimension of the sprite
+    var collisionRadius: Float = min(this.sprite.globalBounds.height, this.sprite.globalBounds.width) / 2
     
     var idleColor: Color = Color.White()
     var hoverColor: Color = Color.Green()

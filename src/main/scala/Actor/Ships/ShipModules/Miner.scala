@@ -4,10 +4,10 @@ import scala.math.max
 
 import shipmodule.ShipModule
 import gamestate.GameState
-import resource.Resource
+import asteroid.Asteroid
 
 class MinerModule extends ShipModule {
-    var targetResource: Option[Resource] = None
+    var targetResource: Option[Asteroid] = None
 
     var miningDamage = 10
     var miningSpeed = 200

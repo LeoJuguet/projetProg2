@@ -13,7 +13,7 @@ import ship.Base
 import event.{OnMouseButtonPressed, OnMouseButtonReleased}
 import event.KeyboardState
 import ship.{Action, Ship, Drone}
-import resource.Resource
+import asteroid.Asteroid
 
 
 //This class is the brain controlling the actions of the player.
@@ -45,7 +45,7 @@ object PlayerController {
         if this.selectedTargets.nonEmpty then {
         var target_ships = this.selectedTargets.filter(actor => actor.isInstanceOf[Ship])
         var target_base = this.selectedTargets.filter(actor => actor.isInstanceOf[Base])
-        var target_ressources = this.selectedTargets.filter(actor => actor.isInstanceOf[Resource])
+        var target_ressources = this.selectedTargets.filter(actor => actor.isInstanceOf[Asteroid])
 
         //if there is an ennemy ship, we attack it.
         if target_ships.nonEmpty then {
@@ -57,7 +57,7 @@ object PlayerController {
             unit.action = Action.ATTACK(target_base(0))
         //else, if there is a resource, we mine it.
         } else if target_ressources.nonEmpty then {
-            unit.action = Action.MINE(target_ressources(Random.nextInt(target_ressources.length)).asInstanceOf[Resource])
+            unit.action = Action.MINE(target_ressources(Random.nextInt(target_ressources.length)).asInstanceOf[Asteroid])
         }}
          else {
             //finally, if there is no target, we move to the mouse position.

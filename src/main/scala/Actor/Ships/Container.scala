@@ -2,7 +2,7 @@ package container
 
 import scala.math.min
 
-import resource.*
+import asteroid.*
 
 trait Container {
     var team = 0
@@ -20,6 +20,8 @@ trait Container {
     def in(resource : String, amount : Int) : Int =
         var quantity = min(amount, this.maxLoad - this.totalLoad)
         resource match {
+            case "asteroid" =>
+                ()
             case "scrap" =>
                 this.scrap += quantity
                 this.totalLoad += quantity
@@ -41,7 +43,7 @@ trait Container {
         this.totalLoad += quantity
         quantity
     
-    def in(resource : Resource, amount : Int) : Int =
+    def in(resource : Asteroid, amount : Int) : Int =
         resource match {
             case _ : Scrap =>
                 this.in("scrap", amount)
@@ -53,11 +55,14 @@ trait Container {
                 this.in("uranium", amount)
             case _ : Ethereum =>
                 this.in("ethereum", amount)
-            case _ => print("trying to obtain illegal products."); 0
+            case _ : Asteroid =>
+                this.in("asteroid", amount)
         }
     
     def out(resource : String, amount : Int) : Int =
         resource match{
+            case "asteroid" =>
+                0
             case "scrap" =>
                 var quantity = min(amount, this.scrap)
                 this.scrap -= quantity
@@ -88,7 +93,7 @@ trait Container {
                 0
         }
     
-    def out(resource : Resource, amount : Int) : Int =
+    def out(resource : Asteroid, amount : Int) : Int =
         resource match {
             case _ : Scrap =>
                 this.out("scrap", amount)
@@ -100,14 +105,15 @@ trait Container {
                 this.out("uranium", amount)
             case _ : Ethereum =>
                 this.out("ethereum", amount)
-            case _ =>
-                print("trying to obtain illegal products.")
-                0
+            case _ : Asteroid =>
+                this.out("asteroid", amount)
         }
         
     
     def transfer(target : Container, resource : String, amount : Int) : Int =
         var quantity = resource match {
+            case "asteroid" =>
+                0
             case "scrap" =>
                 var q1 = min(amount, this.scrap)
                 var q2 = min(amount, target.maxLoad - target.totalLoad)

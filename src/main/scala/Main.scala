@@ -12,7 +12,6 @@ import actor.*
 import gui.*
 import manager.*
 import ship.Ship
-import resource.Resource
 import gamestate.*
 import controller.PlayerController
 import actor.*
@@ -28,7 +27,6 @@ def game_loop(window: RenderWindow) : Unit =
     window.clear(Color(0, 0, 0))
     
     while window.isOpen() do
-        print("\nnew loop...\n")
         InputManager.update()
 
         PlayerController.updateClick()
@@ -38,7 +36,7 @@ def game_loop(window: RenderWindow) : Unit =
 
         Camera.updateView()
 
-        //Delete actors destroy
+        //Delete destroyed actors
         GameState.actors_list --= GameState.delete_list
         GameState.delete_list.clear()
 
@@ -52,7 +50,11 @@ def game_loop(window: RenderWindow) : Unit =
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
 
+        print(GameState.actors_list.size)
+
         GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
+
+        print(GameState.actors_list.size)
 
         InputManager.init(window)
 

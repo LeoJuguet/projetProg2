@@ -1,6 +1,7 @@
 package gamestate
 
 import scala.collection.mutable.ListBuffer
+import scala.util.Random
 
 import sfml.graphics.*
 import sfml.system.Vector2
@@ -14,7 +15,8 @@ import controller.Camera
 import ship.{Drone, Base}
 import controller.PlayerController
 import controller.IAController
-import resource.*
+import asteroid.*
+import perlin.perlin2D
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
@@ -29,7 +31,13 @@ object GameState {
     var player_actors_list = ListBuffer[Actor]()
     var enemy_actors_list = ListBuffer[Actor]()
 
-    var resources_list = new ListBuffer[Resource]()
+    var resources_list = new ListBuffer[Asteroid]()
+
+    //those lists are used to check collisions between actors
+    var asteroids_list = new ListBuffer[Asteroid]()
+    var bases_list = new ListBuffer[Base]()
+    var drones_list = new ListBuffer[Drone]()
+    var capital_ships_list = new ListBuffer[Unit]()
 
     var delete_list = new ListBuffer[Actor]()
     var widgets = new ListBuffer[Widget]()
@@ -37,9 +45,35 @@ object GameState {
     this.widgets += DemoWidget(window)
 
     def init(window: RenderWindow, view: View, windowView : View)={
-      this.window = window
-      this.view = view
-      this.windowView = windowView
+        //initialise the window
+        this.window = window
+        this.view = view
+        this.windowView = windowView
+
+        //initialise the actors with a random position
+        //TODO : dark spots in perlin noise => ennemy, light spots => player, middle => resources & asteroids
+        //       base in the brightest and darkest spots, units around the base
+        //       Resources are randomly generated in the asteroids using another perlin noise to create lodes like distributions.
+        var nb_starting_drone = 2
+        var nb_asteroid = 10
+        var map_size = 1024 //32384
+
+        var noise = perlin2D(256, 256)
+
+        for i <- 0 to nb_starting_drone do
+            var x = Random.nextFloat() * map_size
+            var y = Random.nextFloat() * map_size
+            this.createDrone(0, Vector2(x, y))
+        
+        for i <- 0 to nb_starting_drone do
+            var x = Random.nextFloat() * map_size
+            var y = Random.nextFloat() * map_size
+            this.createDrone(1, Vector2(x, y))
+        
+        for i <- 0 to nb_asteroid do
+            var x = Random.nextFloat() * map_size
+            var y = Random.nextFloat() * map_size
+            this.createAsteroid(Vector2(x, y))
     }
 
     var font = FontManager.get("game_over.ttf")
@@ -47,7 +81,7 @@ object GameState {
     //this is for the demo. It will be removed later.
     var player = this.createDrone(0, Vector2(0, 0))
     var ennemy = this.createDrone(1, Vector2(100, 100))
-    var resource = createResource("scrap", Vector2(300, 300))
+    var resource = this.createResource("scrap", Vector2(300, 300))
 
     var playerBase = this.createBase(0, Vector2(500, 500))
     var ennemyBase = this.createBase(1, Vector2(1000, 1000))
@@ -110,6 +144,7 @@ object GameState {
         //create a new drone and add it to the right team.
         var drone = new Drone(teamID, initialPosition)
         this.actors_list += drone
+        this.drones_list += drone
         if teamID == 0 then
             this.player_actors_list += drone
         else
@@ -132,6 +167,7 @@ object GameState {
             this.player_actors_list -= drone
             this.enemy_actors_list -= drone
             this.actors_list -= drone
+            this.drones_list -= drone
 
             PlayerController.selectedUnits -= drone
             PlayerController.selectedTargets -= drone            
@@ -147,6 +183,7 @@ object GameState {
         //create a new base and add it to the right team.
         var base = new Base(teamID, position)
         this.actors_list += base
+        this.bases_list += base
         if teamID == 0 then
             this.player_actors_list += base
         else
@@ -164,6 +201,7 @@ object GameState {
             this.player_actors_list -= base
             this.enemy_actors_list -= base
             this.actors_list -= base
+            this.bases_list -= base
             PlayerController.selectedUnits -= base
             PlayerController.selectedTargets -= base
             c2.disconnect()
@@ -172,9 +210,9 @@ object GameState {
         base
     }
 
-    def createResource(typ: String, position: Vector2[Float]) : Resource = {
+    def createResource(typ: String, position: Vector2[Float]) : Asteroid = {
         var resource = typ match {
-          case "resource" => new Resource(position)
+          case "resource" => new Asteroid(position)
           case "scrap" => new Scrap(position)
           case "cooper" => new Cooper(position)
           case "iron" => new Iron(position)
@@ -183,6 +221,7 @@ object GameState {
         }
         this.actors_list += resource
         this.resources_list += resource
+        this.asteroids_list += resource
         
         var c2 = resource.onTargeted.connect(Unit => {
             PlayerController.selectedTargets += resource
@@ -193,11 +232,23 @@ object GameState {
         resource.onDestroyed.connect(Unit => {
             this.actors_list -= resource
             this.resources_list -= resource
+            this.asteroids_list -= resource
             PlayerController.selectedTargets -= resource
             c2.disconnect()
             c3.disconnect()
         })
         resource
+    }
+
+    def createAsteroid(position: Vector2[Float]) : Asteroid = {
+        var asteroid = new Asteroid(position)
+        this.actors_list += asteroid
+        this.asteroids_list += asteroid
+        asteroid.onDestroyed.connect(Unit => {
+            this.actors_list -= asteroid
+            this.asteroids_list -= asteroid
+        })
+        asteroid
     }
 }
 
