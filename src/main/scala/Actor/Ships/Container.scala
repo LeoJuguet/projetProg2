@@ -3,21 +3,20 @@ package container
 import scala.math.min
 
 import asteroid.*
+import ship.Price
 
 trait Container {
-    var team = 0
+    var scrap : Float = 0
+    var copper : Float = 0
+    var iron : Float = 0
+    var uranium : Float = 0
 
-    var scrap = 0
-    var copper = 0
-    var iron = 0
-    var uranium = 0
+    var ethereum : Float = 0
 
-    var ethereum = 0
+    var totalLoad : Float = 0
+    var maxLoad : Float = 1000
 
-    var totalLoad = 0
-    var maxLoad = 1000
-
-    def in(resource : String, amount : Int) : Int =
+    def in(resource : String, amount : Float) : Float =
         var quantity = min(amount, this.maxLoad - this.totalLoad)
         resource match {
             case "asteroid" =>
@@ -43,7 +42,15 @@ trait Container {
         this.totalLoad += quantity
         quantity
     
-    def in(resource : Asteroid, amount : Int) : Int =
+    //TODO : this function serves only for capital ships, it should be moved to a different class
+    def in(price : Price) : Unit =
+        this.in("scrap", price.scrap)
+        this.in("copper", price.copper)
+        this.in("iron", price.iron)
+        this.in("uranium", price.uranium)
+        this.in("ethereum", price.ethereum)
+    
+    def in(resource : Asteroid, amount : Float) : Float =
         resource match {
             case _ : Scrap =>
                 this.in("scrap", amount)
@@ -59,7 +66,7 @@ trait Container {
                 this.in("asteroid", amount)
         }
     
-    def out(resource : String, amount : Int) : Int =
+    def out(resource : String, amount : Float) : Float =
         resource match{
             case "asteroid" =>
                 0
@@ -93,7 +100,15 @@ trait Container {
                 0
         }
     
-    def out(resource : Asteroid, amount : Int) : Int =
+    //TODO : same as in
+    def out(price : Price) : Unit =
+        this.out("scrap", price.scrap)
+        this.out("copper", price.copper)
+        this.out("iron", price.iron)
+        this.out("uranium", price.uranium)
+        this.out("ethereum", price.ethereum)
+    
+    def out(resource : Asteroid, amount : Float) : Float =
         resource match {
             case _ : Scrap =>
                 this.out("scrap", amount)
@@ -110,7 +125,7 @@ trait Container {
         }
         
     
-    def transfer(target : Container, resource : String, amount : Int) : Int =
+    def transfer(target : Container, resource : String, amount : Float) : Float =
         var quantity = resource match {
             case "asteroid" =>
                 0

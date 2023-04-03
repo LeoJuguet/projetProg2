@@ -12,7 +12,7 @@ import tilemap.TileMap
 import gui.{Widget, DemoWidget}
 import manager.FontManager
 import controller.Camera
-import ship.{Drone, Base}
+import ship.{Drone, Base, DroneStats}
 import controller.PlayerController
 import controller.IAController
 import asteroid.*
@@ -140,9 +140,9 @@ object GameState {
       drawWidget()
       window.display()
 
-    def createDrone(teamID : Int, initialPosition: Vector2[Float]) : Drone = {
+    def createDrone(teamID : Int, initialPosition: Vector2[Float], stats : DroneStats = DroneStats()) : Drone = {
         //create a new drone and add it to the right team.
-        var drone = new Drone(teamID, initialPosition)
+        var drone = new Drone(teamID, initialPosition, stats)
         this.actors_list += drone
         this.drones_list += drone
         if teamID == 0 then

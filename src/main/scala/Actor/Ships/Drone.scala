@@ -11,15 +11,44 @@ import event.KeyboardState
 import clickable.States
 import controller.Camera
 
+class DroneStats(
+    var maxHealth : Int = 50,
+    var regenerationRate : Int = 0,
+    
+    var attackDamage : Int = 5,
+    var attackSpeed : Int = 500,
+    var attackCoolDown : Int = 10,
+
+    var miningDamage : Int = 10,
+    var miningSpeed : Int = 200,
+
+    var maxLoad : Int = 20
+) {}
+
 /**
  * extention of the basic ship class.
  * It has no additional features, but its click behavior is different.
 */
 class Drone(
     teamID: Int,
-    initialPosition: Vector2[Float]
+    initialPosition: Vector2[Float],
+    stats : DroneStats
 )
 extends Ship(teamID, initialPosition) {
+    this.maxHealth = stats.maxHealth
+    this.health = this.maxHealth
+    this.regenerationRate = stats.regenerationRate
+
+    this.attackDamage = stats.attackDamage
+    this.attackSpeed = stats.attackSpeed
+    this.attackCoolDown = stats.attackCoolDown
+
+    this.miningDamage = stats.miningDamage
+    this.miningSpeed = stats.miningSpeed
+    this.miningCoolDown = 0
+
+    this.maxLoad = stats.maxLoad
+
     //for mor details ont the behavior of the drone, see the Actor class.
     if this.teamID == 0 then
         this.updateLeftClick = () =>

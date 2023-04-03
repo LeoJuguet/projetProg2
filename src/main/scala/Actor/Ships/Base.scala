@@ -14,7 +14,7 @@ class Base(teamID : Int, initialPosition: Vector2[Float]) extends Actor with Con
 
     var regenerationRate = 10
 
-    this.team = teamID
+    var team = teamID
     this.maxLoad = 1000
 
     this.texture = TextureManager.get("base.png")

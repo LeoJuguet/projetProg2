@@ -5,7 +5,6 @@ import scala.math.*
 import sfml.system.*
 import sfml.graphics.*
 
-import ship.{GameUnit, Base}
 import shipmodule.ShipModule
 import container.Container
 import actor.Actor
@@ -30,11 +29,10 @@ class Ship(
 extends GameUnit with Container {
     texture = TextureManager.get("ovni.png")
     this.applyTexture()
-    var maxSpeed = 100.0
     var speed = Vector2(0.0f, 0.0f)
 
     var maxHealth = 50
-    var _health = 50
+    var health = 50
     var regenerationRate = 0
 
     var attackDamage = 5
@@ -43,7 +41,7 @@ extends GameUnit with Container {
 
     var miningDamage = 10
     var miningSpeed = 200
-    var miningCoolDown = 0
+    var miningCoolDown = 10
 
     this.maxLoad = 20
 
@@ -51,7 +49,7 @@ extends GameUnit with Container {
 
     var action = Action.IDLE
 
-    this.team = teamID
+    var team = teamID
 
 
     var shipDimension = Vector2(5,5)
@@ -88,7 +86,20 @@ extends GameUnit with Container {
         case _ => print("Error : transfer action not valid\n")
         }
     
+    def enough(price : Price) : Boolean =
+        this.ethereum >= price.ethereum && this.uranium >= price.uranium && this.iron >= price.iron && this.copper >= price.copper && this.scrap >= price.scrap
+    
+    def spend(price : Price) : Unit =
+        this.ethereum -= price.ethereum
+        this.uranium -= price.uranium
+        this.iron -= price.iron
+        this.copper -= price.copper
+        this.scrap -= price.scrap
+    
     def updateUnit() =
+        //TODO : capital ships should have a different update function
+        //TODO : all behaviors only the drones will have should be in the drone class
+        //TODO : merge gameunit and ship
         this.regenerate()
 
         this.attackCoolDown = max(0, this.attackCoolDown - 1)
@@ -102,18 +113,18 @@ extends GameUnit with Container {
             }
             case Action.ATTACK(target) => {
                 //if the ship is close enough to the target, it will attack it
-                if norm(this.position - target.asInstanceOf[Actor].position) < 50 then
+                if norm(this.position - target.position) < 50 then
                     if this.attackCoolDown == 0 then
                         this.attack()
                         this.attackCoolDown = this.attackSpeed
                         //there is no need to check if the target is still alive, because the player controller will change the target if it dies
                 //if the ship is not close enough, it will move towards the target
                 else
-                    this.moveUnit(target.asInstanceOf[Actor].position)
+                    this.moveUnit(target.position)
             }
             case Action.MINE(target) => {
                 //if the ship is close enough to the resource, it will mine it
-                if norm(this.position - target.asInstanceOf[Actor].position) < 50 then
+                if norm(this.position - target.position) < 50 then
                     //Check if cooldown is over
                     if this.miningCoolDown == 0 then
                         this.mine()
@@ -131,7 +142,7 @@ extends GameUnit with Container {
                             })
                 //if the ship is not close enough, it will move towards the resource
                 else
-                    this.moveUnit(target.asInstanceOf[Actor].position)
+                    this.moveUnit(target.position)
             }
             case Action.TRANSFER(target) => {
                 //if the ship is close enough to the mase, it will transfer the resources

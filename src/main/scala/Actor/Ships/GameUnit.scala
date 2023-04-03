@@ -12,9 +12,8 @@ import gamestate.GameState
 //It will only be inherited by the ships, but it is a general class that could be used for other game units if the game is further meant to be expanded.
 abstract class GameUnit extends Actor {
     var speed: Vector2[Float]
-    var maxSpeed: Float
     var maxHealth: Int
-    var _health: Int
+    var health: Int
     var regenerationRate: Int
     var attackDamage: Int
 
@@ -23,18 +22,22 @@ abstract class GameUnit extends Actor {
         this.destroy()
         this.live = false
 
-    def health = _health
-
-    def health_=(newHealth: Int) : Unit =
+    def updateHealth(newHealth: Int) : Unit =
         if newHealth > this.maxHealth then
-            this._health = this.maxHealth
+            this.health = this.maxHealth
         else if newHealth <= 0 then
             this.kill()
         else
-            this._health = newHealth
+            this.health = newHealth
     
     def regenerate() : Unit =
         this.health = this.maxHealth.min(this.health + regenerationRate)
+    
+    def heal(healAmount: Int) : Unit =
+        if this.health + healAmount > this.maxHealth then
+            this.health = this.maxHealth
+        else
+            this.health = this.health + healAmount
 
     def takeDamage(damageTaken: Int) : Unit =
         this.health = this.health - damageTaken
@@ -136,6 +139,13 @@ abstract class GameUnit extends Actor {
                 //then move the unit back to its original position
                 this.moveActor(oldPosition)
                 this.sprite.rotation = oldRotation
+                //move the collided actor in the opposite direction. If it is a ship, update its speed too.
+                actor.moveActor(actor.position - this.speed)
+                actor match
+                case ship: Ship =>
+                    //TODO : this may cause explosions of speed values. Maybe add a linear interpolation to avoid this.
+                    ship.speed = ship.speed * 0.5f - this.speed * 0.5f
+                case _ => ()
             case None => ()
 
         //returns true if the unit is close enough to the target
