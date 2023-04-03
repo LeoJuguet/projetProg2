@@ -8,11 +8,9 @@ import math.*
 
 class ScrollbarButton() extends UIComponent{
 
-  object OnButtonGrabbed extends Event[(Int /*x*/,Int /*y*/)]
-
-  object OnButtonMoved extends Event[(Int /*x*/,Int /*y*/)]
-
-  object OnButtonReleased extends Event[Unit]
+  val OnButtonGrabbed = Event[(Int /*x*/,Int /*y*/)]
+  val OnButtonMoved = Event[(Int /*x*/,Int /*y*/)]
+  val OnButtonReleased = Event[Unit]
 
   private var isGrabbed = false
 
@@ -124,13 +122,6 @@ class Scrollbar(
     _value = min(maximumValue,max(minimumValue,newValue))
     OnScrollbarValueUpdate(_value)
   }
-
-
-
-
-
-
-
 
 
 }

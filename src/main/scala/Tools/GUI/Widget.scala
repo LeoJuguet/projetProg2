@@ -27,7 +27,10 @@ class DemoWidget(var window : RenderWindow) extends Widget{
 
   var textBox = TextBox("textBox")
 
+  var hpBar = ProgressBar(x = 400, y = 25, width = 200, height = 50)
+
   this.childs += verticalBox
   this.childs += selectBox
   this.childs += textBox
+  this.childs += hpBar
 }

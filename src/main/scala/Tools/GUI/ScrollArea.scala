@@ -3,10 +3,15 @@ package gui
 import gui.*
 
 
+
+
 class ScrollArea() extends UIComponent{
 
   //TODO: scrolbar
-  var scrollBar = false
+  var scrollBar = Scrollbar()
+
+  //var viewArea = View(10,10)
+
 
   var isScrollBarEnabled: Boolean = _
   var hasScrollBar: Boolean = _

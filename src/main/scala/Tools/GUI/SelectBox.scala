@@ -18,7 +18,7 @@ class SelectBox(
   var onSelectedBind: Int => Unit = (i: Int) => {print(i)}
 ) extends UIComponent(width, height){
 
-  private var principalButton = Button(x = x, y = y, width = width, height = height, string = items(0))
+  private var principalButton = Button(x = x, y = y, width = width, height = height, string = items(selected))
   private var verticalBox = this.initVerticalBox()
   this.verticalBox.direction = this.direction
   private var isChanged = false

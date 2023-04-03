@@ -29,14 +29,14 @@ class ModuleCard(ship: Ship, modulePos: (Int,Int) , var module : ShipModule) ext
   button.onClickedBind = () => {
     if ship.modules(modulePos._1)(modulePos._2).getClass() != module.getClass() &&
       ship.scrap >= module.price.scrap &&
-      ship.cooper >= module.price.cooper &&
+      ship.copper >= module.price.copper &&
       ship.iron >= module.price.iron &&
       ship.uranium >= module.price.uranium &&
       ship.ethereum >= module.price.ethereum
     then {
-      ship.modules(modulePos._1)(modulePos._2) = this.module
+      ship.modules(modulePos._1)(modulePos._2) = Some(this.module)
       ship.scrap -= module.price.scrap
-      ship.cooper -= module.price.cooper
+      ship.copper -= module.price.copper
       ship.iron -= module.price.iron
       ship.uranium -= module.price.uranium
       ship.ethereum -= module.price.ethereum
@@ -50,7 +50,7 @@ class ModuleCard(ship: Ship, modulePos: (Int,Int) , var module : ShipModule) ext
   var label = Label("default Text", characterSize = 20)
   var descriptionLabel = Label("default decription text", characterSize = 10)
   var scrapPrice = Label("Scrap : "+ module.price.scrap.toString, characterSize = 20)
-  var cooperPrice = Label("Cooper : "+ module.price.cooper.toString, characterSize = 20)
+  var copperPrice = Label("Cooper : "+ module.price.copper.toString, characterSize = 20)
   var ironPrice = Label("Iron : "+ module.price.iron.toString, characterSize = 20)
   var uraniumPrice = Label("Uranium : "+ module.price.uranium.toString, characterSize = 20)
   var ethereumPrice = Label("Ethereum : "+ module.price.ethereum.toString, characterSize = 20)
@@ -58,7 +58,7 @@ class ModuleCard(ship: Ship, modulePos: (Int,Int) , var module : ShipModule) ext
   verticalInfo.addChild(label)
   verticalInfo.addChild(descriptionLabel)
   verticalInfo.addChild(scrapPrice)
-  verticalInfo.addChild(cooperPrice)
+  verticalInfo.addChild(copperPrice)
   verticalInfo.addChild(ironPrice)
   verticalInfo.addChild(uraniumPrice)
   verticalInfo.addChild(ethereumPrice)
@@ -75,9 +75,24 @@ class ModuleCard(ship: Ship, modulePos: (Int,Int) , var module : ShipModule) ext
 
 
 
-class SelectModuleWidget(ship: Ship) extends Widget {
+
+
+
+class SelectModuleWidget(ship: Ship, var modulePos : (Int, Int)) extends Widget {
   //TODO: create a ScrollBox
+  var moduleBuyable = List[ShipModule](MinerModule())
+
+
   var moduleList = VerticalBox()
+
+
   this.childs += moduleList
 
+  def showModules(i : Int, j : Int)=
+    for module <- moduleBuyable do {
+      moduleList.addChild(ModuleCard(ship,(i,j), module))
+    }
+
+  def hide()=
+    moduleList.removeAllChilds()
 }

@@ -28,7 +28,6 @@ def game_loop(window: RenderWindow) : Unit =
     window.clear(Color(0, 0, 0))
     
     while window.isOpen() do
-        print("\nnew loop...\n")
         InputManager.update()
 
         PlayerController.updateClick()
