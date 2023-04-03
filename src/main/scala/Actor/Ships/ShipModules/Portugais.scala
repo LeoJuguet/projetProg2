@@ -28,7 +28,7 @@ class BuilderModule(parent : Ship, stats : BuildingStats) extends ShipModule(par
 
   var action = BuilderAction.IDLE
 
-  def updateModule()={
+  override def updateModule()={
     this.action match
       case BuilderAction.IDLE => {}
       case BuilderAction.BUILDING => {

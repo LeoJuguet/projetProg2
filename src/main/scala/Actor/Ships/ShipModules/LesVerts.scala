@@ -7,45 +7,45 @@ import sfml.system.norm
 import ship.{Ship, Price}
 import container.Wreck
 
-enum ScraperAction:
+enum SalvageAction:
   case IDLE
-  case RECYCLING(target: Wreck)
+  case SALVAGING(target: Wreck)
 
-class RecyclingStats (
-//between 0 and 1, the efficiency of the scraper
+class SalvagingStats (
+//between 0 and 1, the efficiency of the scalvage
   var efficiency: Float,
-  var scraperSpeed: Int,
-  var scraperRange: Int
+  var scalvageSpeed: Int,
+  var scalvageRange: Int
 ) {}
 
-class ScraperModule(parent : Ship, stat : RecyclingStats) extends ShipModule(parent) {
-    var action = ScraperAction.IDLE
+class SalvageModule(parent : Ship, stat : SalvagingStats) extends ShipModule(parent) {
+    var action = SalvageAction.IDLE
 
     var efficiency = stat.efficiency
 
-    var scrapSpeed = stat.scraperSpeed
-    var scrapCoolDown = 0
+    var salvageSpeed = stat.scalvageSpeed
+    var salvageCoolDown = 0
 
-    var scrapRange = stat.scraperRange
+    var salvageRange = stat.scalvageRange
 
-    def updateModule()={
-        this.scrapCoolDown = max(0, this.scrapCoolDown - 1)
+    override def updateModule()={
+        this.salvageCoolDown = max(0, this.salvageCoolDown - 1)
 
         this.action match
-        case ScraperAction.IDLE => {}
-        case ScraperAction.RECYCLING(target) => {
-            if norm(this.position - target.position) < this.scrapRange then
-                if this.scrapCoolDown == 0 then
-                    this.scrapCoolDown = this.scrapSpeed
+        case SalvageAction.IDLE => {}
+        case SalvageAction.SALVAGING(target) => {
+            if norm(this.position - target.position) < this.salvageRange then
+                if this.salvageCoolDown == 0 then
+                    this.salvageCoolDown = this.salvageSpeed
                     
-                    val obtained = target.scraped() * this.efficiency
+                    val obtained = target.salvaged() * this.efficiency
                     this.parent.in(obtained)
                     
                     if this.parent.maxLoad == this.parent.totalLoad then
-                        this.action = ScraperAction.IDLE
+                        this.action = SalvageAction.IDLE
                     
                     if target.totalLoad == 0 then
-                        this.action = ScraperAction.IDLE            
+                        this.action = SalvageAction.IDLE            
         }
     }
 }

@@ -33,7 +33,7 @@ class RecyclerModule(parent : Ship, stat : RecyclerStat) extends ShipModule(pare
 
     var droneStats = stat.droneStats
 
-    def updateModule()={
+    override def updateModule()={
         this.recycleCoolDown = max(0, this.recycleCoolDown - 1)
 
         this.action match

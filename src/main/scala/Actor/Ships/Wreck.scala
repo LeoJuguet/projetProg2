@@ -12,7 +12,7 @@ class Wreck(initialPosition : Vector2[Float]) extends Actor with Container {
 
     this.moveActor(initialPosition)
 
-    def scraped() : Price = {
+    def salvaged() : Price = {
         val out = Price(0, 0, 0, 0, 0)
         out.scrap = this.out("scrap", 10)
         out.copper = this.out("copper", 10)

@@ -17,7 +17,9 @@ enum MinerAction:
 class MiningStats (
   var miningDamage: Int,
   var miningSpeed: Int,
-  var miningRange: Int
+  var miningRange: Int,
+  //higher than 1. It has better results than the basic drone
+  var efficiency: Float
 ) {}
 
 class MinerModule(parent : Ship, stats : MiningStats) extends ShipModule(parent) {
@@ -25,7 +27,8 @@ class MinerModule(parent : Ship, stats : MiningStats) extends ShipModule(parent)
     var miningSpeed = stats.miningSpeed
     var miningCoolDown = 0
     var miningRange = stats.miningRange
-
+    var efficiency = stats.efficiency
+    
     var action = MinerAction.IDLE
 
     //difference between basic drone and miner module is that the miner module gives the resources to its parent
@@ -33,11 +36,11 @@ class MinerModule(parent : Ship, stats : MiningStats) extends ShipModule(parent)
         this.action match
         case MinerAction.MINE(target : Asteroid) =>
             var obtained = target.mined(this.miningDamage)
-            this.parent.in(target, obtained)
+            this.parent.in(target, obtained * this.efficiency)
         case _ => print("Error : mine action not valid\n")
 
     //this function doesn't trigger the transfer action upon full load, nor does the parent. The player has to control entirely the capital ships.
-    def updateModule()={
+    override def updateModule()={
       this.miningCoolDown = max(0, this.miningCoolDown - 1)
 
       this.action match

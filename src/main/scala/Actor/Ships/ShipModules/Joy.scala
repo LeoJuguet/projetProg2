@@ -29,7 +29,7 @@ class NurseModule(parent : Ship, stat : NurseStat) extends ShipModule(parent) {
   var maxBurst = stat.maxBurst
   var totalHeal = stat.totalHeal
 
-  def updateModule()={
+  override def updateModule()={
     this.healingCoolDown = max(0, this.healingCoolDown - 1)
 
     this.action match
