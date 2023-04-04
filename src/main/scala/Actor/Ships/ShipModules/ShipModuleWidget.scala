@@ -1,12 +1,12 @@
 package ShipModules
 
 import gui.*
-import ship.Ship
+import ship.CapitalShip
 import gui.Widget
 import shipmodule.ShipModule
 import manager.FontManager
 
-class ShipModuleWidget(ship: Ship) extends Widget {
+class ShipModuleWidget(ship: CapitalShip) extends Widget {
   var size = ship.shipDimension
 
   var verticalsBox = VerticalBox(direction = E_Direction.Right)
@@ -21,7 +21,7 @@ class ShipModuleWidget(ship: Ship) extends Widget {
 }
 
 
-class ModuleCard(ship: Ship, modulePos: Int , var module : ShipModule) extends Widget {
+class ModuleCard(ship: CapitalShip, modulePos: Int , var module : ShipModule) extends Widget {
   var cardBox = VerticalBox(direction = E_Direction.Right)
 
   var button = Button(width = 100, height = 100)
@@ -62,7 +62,7 @@ class ModuleCard(ship: Ship, modulePos: Int , var module : ShipModule) extends W
 
 
 
-class SelectModuleWidget(ship: Ship) extends Widget {
+class SelectModuleWidget(ship: CapitalShip) extends Widget {
   //TODO: create a ScrollBox
   var moduleList = VerticalBox()
   this.childs += moduleList

@@ -5,7 +5,7 @@ import scala.math.{max, min}
 import sfml.system.norm
 
 import container.Wreck
-import ship.{Ship, DroneStats}
+import ship.{CapitalShip, DroneStats}
 import gamestate.GameState
 
 enum RecyclerAction:
@@ -22,7 +22,7 @@ class RecyclerStat(
     var droneStats : DroneStats
 ) {}
 
-class RecyclerModule(parent : Ship, stat : RecyclerStat) extends ShipModule(parent) {
+class RecyclerModule(parent : CapitalShip, stat : RecyclerStat) extends ShipModule(parent) {
     var action = RecyclerAction.IDLE
 
     var recycleSpeed = stat.recyclerSpeed

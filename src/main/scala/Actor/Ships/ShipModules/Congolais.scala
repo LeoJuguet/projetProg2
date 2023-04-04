@@ -7,7 +7,7 @@ import sfml.system.norm
 import shipmodule.ShipModule
 import gamestate.GameState
 import asteroid.Asteroid
-import ship.Ship
+import ship.CapitalShip
 import actor.Actor
 
 enum MinerAction:
@@ -22,7 +22,7 @@ class MiningStats (
   var efficiency: Float
 ) {}
 
-class MinerModule(parent : Ship, stats : MiningStats) extends ShipModule(parent) {
+class MinerModule(parent : CapitalShip, stats : MiningStats) extends ShipModule(parent) {
     var miningDamage = stats.miningDamage
     var miningSpeed = stats.miningSpeed
     var miningCoolDown = 0

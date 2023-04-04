@@ -4,7 +4,7 @@ import scala.math.max
 
 import sfml.system.norm
 
-import ship.{Ship, Price}
+import ship.{CapitalShip, Price}
 import container.Wreck
 
 enum SalvageAction:
@@ -18,7 +18,7 @@ class SalvagingStats (
   var scalvageRange: Int
 ) {}
 
-class SalvageModule(parent : Ship, stat : SalvagingStats) extends ShipModule(parent) {
+class SalvageModule(parent : CapitalShip, stat : SalvagingStats) extends ShipModule(parent) {
     var action = SalvageAction.IDLE
 
     var efficiency = stat.efficiency

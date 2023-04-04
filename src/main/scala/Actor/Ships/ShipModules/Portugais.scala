@@ -6,7 +6,7 @@ import scala.math.{cos, sin, max}
 import sfml.system.Vector2
 
 import ship.DroneStats
-import ship.{Ship, Price}
+import ship.{CapitalShip, Price}
 import gamestate.GameState
 
 enum BuilderAction:
@@ -19,7 +19,7 @@ class BuildingStats (
   var dronePrice : Price
 ) {}
 
-class BuilderModule(parent : Ship, stats : BuildingStats) extends ShipModule(parent) {
+class BuilderModule(parent : CapitalShip, stats : BuildingStats) extends ShipModule(parent) {
   var buildSpeed = stats.buildSpeed
   var buildCoolDown = 0
 

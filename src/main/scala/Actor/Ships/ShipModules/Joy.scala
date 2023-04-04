@@ -5,7 +5,7 @@ import scala.math.{max, min}
 
 import sfml.system.norm
 
-import ship.Ship
+import ship.{Ship, CapitalShip}
 
 enum NurseAction:
   case IDLE
@@ -18,7 +18,7 @@ class NurseStat (
   var totalHeal : Int
 ) {}
 
-class NurseModule(parent : Ship, stat : NurseStat) extends ShipModule(parent) {
+class NurseModule(parent : CapitalShip, stat : NurseStat) extends ShipModule(parent) {
   var action = NurseAction.IDLE
 
   var healingSpeed = stat.healingSpeed

@@ -2,7 +2,7 @@ package ship
 
 import scala.math.{min, max}
 
-import sfml.system.Vector2
+import sfml.system.{Vector2, norm}
 import sfml.graphics.Rect
 import sfml.window.Keyboard.Key
 
@@ -10,6 +10,11 @@ import ship.Ship
 import event.KeyboardState
 import clickable.States
 import controller.Camera
+import asteroid.Asteroid
+import container.Container
+import gamestate.GameState
+import actor.Actor
+import manager.TextureManager
 
 class DroneStats(
     var maxHealth : Int = 50,
@@ -34,20 +39,115 @@ class Drone(
     initialPosition: Vector2[Float],
     stats : DroneStats
 )
-extends Ship(teamID, initialPosition) {
+extends Ship(teamID) {
+    texture = TextureManager.get("ovni.png")
+    this.applyTexture()
+    this.moveActor(initialPosition)
+    
     this.maxHealth = stats.maxHealth
     this.health = this.maxHealth
     this.regenerationRate = stats.regenerationRate
 
-    this.attackDamage = stats.attackDamage
-    this.attackSpeed = stats.attackSpeed
-    this.attackCoolDown = stats.attackCoolDown
+    var attackDamage = stats.attackDamage
+    var attackSpeed = stats.attackSpeed
+    var attackCoolDown = stats.attackCoolDown
 
-    this.miningDamage = stats.miningDamage
-    this.miningSpeed = stats.miningSpeed
-    this.miningCoolDown = 0
+    var miningDamage = stats.miningDamage
+    var miningSpeed = stats.miningSpeed
+    var miningCoolDown = 0
 
     this.maxLoad = stats.maxLoad
+    
+    def attack() : Unit =
+        this.action match
+        case Action.ATTACK(target : Ship) => target.takeDamage(this.attackDamage)
+        case Action.ATTACK(target : Base) => target.takeDamage(this.attackDamage)
+        case _ => print("Error : attack action not valid\n")
+    
+    def mine() : Unit =
+        this.action match
+        case Action.MINE(target : Asteroid) =>
+            var obtained = target.mined(this.miningDamage)
+            this.in(target, obtained)
+        case _ => print("Error : mine action not valid\n")
+    
+    def transfer() : Unit =
+        //TODO : implement transfer rate (here it is 10)
+        this.action match { case Action.TRANSFER(target : Container) =>
+            if this.ethereum > 0 then
+                this.transfer(target, "etherum", 10)
+            else if this.uranium > 0 then
+                this.transfer(target, "uranium", 10)
+            else if this.iron > 0 then
+                this.transfer(target, "iron", 10)
+            else if this.copper > 0 then
+                this.transfer(target, "copper", 10)
+            if this.scrap > 0 then
+                this.transfer(target, "scrap", 10)
+        case _ => print("Error : transfer action not valid\n")
+        }
+    
+    //This function is the drone self controller, it decides what to do based on the current state of the drone.
+    //It serves to perform the actions decided in the controller.
+    override def updateUnit() =
+        this.heal(this.regenerationRate)
+
+        this.attackCoolDown = max(0, this.attackCoolDown - 1)
+        this.miningCoolDown = max(0, this.miningCoolDown - 1)
+
+        this.action match {
+            case Action.IDLE => ()
+            case Action.MOVE(target) => {
+                if this.moveUnit(target) then
+                    this.action = Action.IDLE
+            }
+            case Action.ATTACK(target) => {
+                //if the ship is close enough to the target, it will attack it
+                if norm(this.position - target.position) < 50 then
+                    if this.attackCoolDown == 0 then
+                        this.attack()
+                        this.attackCoolDown = this.attackSpeed
+                        //there is no need to check if the target is still alive, because the player controller will change the target if it dies
+                //if the ship is not close enough, it will move towards the target
+                else
+                    this.moveUnit(target.position)
+            }
+            case Action.MINE(target) => {
+                //if the ship is close enough to the resource, it will mine it
+                if norm(this.position - target.position) < 50 then
+                    //Check if cooldown is over
+                    if this.miningCoolDown == 0 then
+                        this.mine()
+                        this.miningCoolDown = this.miningSpeed
+
+                        //Check if full
+                        if this.totalLoad == this.maxLoad then
+                            //start transfering
+                            this.action = Action.TRANSFER(GameState.actors_list.find(actor => actor match {
+                                case base : Base => base.team == this.team
+                                case _ => false
+                            }) match {
+                                case Some(base : Base) => base
+                                case _ => print("Error : no base found for the team\n"); null
+                            })
+                //if the ship is not close enough, it will move towards the resource
+                else
+                    this.moveUnit(target.position)
+            }
+            case Action.TRANSFER(target) => {
+                //if the ship is close enough to the mase, it will transfer the resources
+                if norm(this.position - target.asInstanceOf[Actor].position) < 50 then
+                    this.transfer()
+
+                    //Check if empty
+                    if this.totalLoad == 0 then
+                        this.action = Action.IDLE
+                
+                //if the ship is not close enough, it will move towards the base
+                else
+                    this.moveUnit(target.asInstanceOf[Actor].position)
+            }
+        }
 
     //for mor details ont the behavior of the drone, see the Actor class.
     if this.teamID == 0 then
@@ -83,7 +183,7 @@ extends Ship(teamID, initialPosition) {
         this.updateRightPress = () => ()
 
         //this is necessary to ensure that selectioning targets do not release the actors selected by the player.
-        var general_right_hold = this.updateRightHold
+        val general_right_hold = this.updateRightHold
 
         this.updateRightHold = () =>
             if this.state != States.PRESSED then

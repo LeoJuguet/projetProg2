@@ -4,7 +4,7 @@ import scala.math.{max, min}
 
 import sfml.system.norm
 
-import ship.Ship
+import ship.{Ship, CapitalShip}
 
 //TODO : here and for drones
 //       add projectiles, projectile speed, ...
@@ -22,7 +22,7 @@ class WeaponStat (
     var accuracy: Float = 1f
 ) {}
 
-class WeaponModule(parent : Ship, stat : WeaponStat) extends ShipModule(parent) {
+class WeaponModule(parent : CapitalShip, stat : WeaponStat) extends ShipModule(parent) {
     var action = WeaponAction.IDLE
 
     var fireSpeed = stat.fireSpeed
