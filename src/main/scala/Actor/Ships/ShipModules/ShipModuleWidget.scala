@@ -1,7 +1,7 @@
 package ShipModules
 
 import gui.*
-import ship.Ship
+import ship.*
 import gui.Widget
 import shipmodule.*
 import manager.FontManager
@@ -9,7 +9,7 @@ import gamestate.*
 
 import sfml.system.*
 
-class ShipModuleWidget(ship: Ship) extends Widget {
+class ShipModuleWidget(ship: CapitalShip) extends Widget {
   var size = ship.shipDimension
 
   var buyList = SelectModuleWidget(this,ship)
@@ -44,10 +44,11 @@ class ShipModuleWidget(ship: Ship) extends Widget {
 }
 
 
-class ModuleCard(parent: SelectModuleWidget,ship: Ship, modulePos: (Int,Int) , var module : ShopModuleStruct) extends UIComponent{
+class ModuleCard(parent: SelectModuleWidget,ship: CapitalShip, modulePos: (Int,Int) , var module : ShopModuleStruct) extends UIComponent{
   var cardBox = VerticalBox(direction = E_Direction.Right)
 
   var button = Button(width = 100, height = 100)
+
   button.onClickedBind = () => {
     if ship.modules(modulePos._1)(modulePos._2).getClass() != module.getClass() &&
       ship.scrap >= module.price.scrap &&
@@ -56,7 +57,7 @@ class ModuleCard(parent: SelectModuleWidget,ship: Ship, modulePos: (Int,Int) , v
       ship.uranium >= module.price.uranium &&
       ship.ethereum >= module.price.ethereum
     then {
-      ship.modules(modulePos._1)(modulePos._2) = Some(MinerModule())
+      ship.modules(modulePos._1)(modulePos._2) = Some(MinerModule(ship))
       ship.scrap -= module.price.scrap
       ship.copper -= module.price.copper
       ship.iron -= module.price.iron
@@ -109,12 +110,10 @@ class ShopModuleStruct(
   var name : String = "Default Name",
   var description : String = "Default description",
   var image : String = "/src/ressources/sfml-logo.png",
-  var price : PriceStruct = PriceStruct()
+  var price : Price = Price()
 )
 
-
-
-class SelectModuleWidget(parent: ShipModuleWidget,ship: Ship) extends UIComponent {
+class SelectModuleWidget(parent: ShipModuleWidget,ship: CapitalShip) extends UIComponent {
   //TODO: create a ScrollBox
   var moduleBuyable = Array[ShopModuleStruct](ShopModuleStruct(),
   ShopModuleStruct(name = "Test2"))

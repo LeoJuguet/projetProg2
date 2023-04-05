@@ -20,7 +20,8 @@ import ship.{
     Ship,
     Drone
 }
-import resource.Resource
+import asteroid.Asteroid
+import sfml.system.distance
 
 
 //This class is the brain controlling the actions of the player.
@@ -82,17 +83,18 @@ object IAController {
                 print("deciding action...")
                 this.selectedTarget match {
                 case Some(target) => {
+                    if distance(unit.position, target.position) < 300 then {
                     if target.isInstanceOf[Ship] then {
                         print("attacking ship\n")
                         ship.action = Action.ATTACK(target)
                     } else if target.isInstanceOf[Base] then {
                         print("attacking base\n")
                         ship.action = Action.ATTACK(target)
-                    } else if target.isInstanceOf[Resource] then {
+                    } else if target.isInstanceOf[Asteroid] then {
                         print("mining\n")
-                        ship.action = Action.MINE(target.asInstanceOf[Resource])
+                        ship.action = Action.MINE(target.asInstanceOf[Asteroid])
                     }
-                }
+                }}
                 case None => {}
                 }}
             }
