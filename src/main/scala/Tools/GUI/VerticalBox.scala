@@ -4,7 +4,7 @@ import scala.collection.mutable.ArrayBuffer
 import sfml.graphics.{RenderTarget, RenderStates, Rect}
 import sfml.system.*
 import gui.UIComponent
-
+import scala.math.*
 
 enum E_Direction:
   case Top, Bottom, Right, Left
@@ -25,20 +25,29 @@ class VerticalBox(
 
   def updateChildPosition() =
     var pos = this.position
+    var bounds = Vector2(0f,0f)
     for child <- childs do {
       child.position = pos
       this.direction match {
-        case E_Direction.Bottom => pos = pos + Vector2(0f, child.globalBounds.height + this.spacing)
-        case E_Direction.Top => pos = pos - Vector2(0f, child.globalBounds.height + this.spacing)
-        case E_Direction.Right => pos = pos + Vector2(child.globalBounds.width + this.spacing,0f)
-        case E_Direction.Left => pos = pos - Vector2(child.globalBounds.width + this.spacing,0f)
+        case E_Direction.Bottom =>
+          pos = pos + Vector2(0f, + child.globalBounds.height + this.spacing)
+          bounds = Vector2(max(bounds.x,child.globalBounds.width), pos.y - position.y)
+        case E_Direction.Top =>
+          pos = pos - Vector2(0f, child.globalBounds.height + this.spacing)
+          bounds = Vector2(max(bounds.x,child.globalBounds.width), pos.y - position.y)
+        case E_Direction.Right =>
+          pos = pos + Vector2( child.globalBounds.width + this.spacing, 0f)
+          bounds = Vector2(pos.x - position.y, max(bounds.y,child.globalBounds.height))
+        case E_Direction.Left =>
+          pos = pos - Vector2(child.globalBounds.width + this.spacing,0f)
+          bounds = Vector2(pos.x - position.y, max(bounds.y,child.globalBounds.height))
       }
     }
     this.globalBounds = Rect(
       this.position.x,
       this.position.y,
-      pos.x - this.position.x,
-      pos.y - this.position.y
+      bounds.x,
+      bounds.y
     )
 
   override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean): Unit =

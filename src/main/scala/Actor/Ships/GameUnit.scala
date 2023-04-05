@@ -19,7 +19,6 @@ abstract class GameUnit extends Actor {
     var attackDamage: Int
 
     def kill() : Unit =
-        print("killing game unit\n")
         this.destroy()
         this.live = false
 

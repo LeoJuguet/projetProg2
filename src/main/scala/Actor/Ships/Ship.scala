@@ -13,6 +13,7 @@ import clickable.Clickable
 import gamestate.GameState
 import resource.Resource
 import manager.TextureManager
+import ShipModules.*
 
 
 //TODO : Actions should behave as a list, so that a player can assign several of them in one input to limit redundancy in the player's actions.
@@ -94,9 +95,6 @@ extends GameUnit with Container {
         this.attackCoolDown = max(0, this.attackCoolDown - 1)
         this.miningCoolDown = max(0, this.miningCoolDown - 1)
 
-        print("\n")
-        print(this.action)
-        print(this.totalLoad, this.maxLoad)
 
         this.action match {
             case Action.IDLE => ()
@@ -152,5 +150,12 @@ extends GameUnit with Container {
                     this.moveUnit(target.asInstanceOf[Actor].position) //TODO : not exactly the center of the base. Same for other targets, not exactly ther center.
             }
         }
+
+
+    onPressed.connect( (_) =>
+        {
+            var shopWidget = ShipModuleWidget(this)
+            GameState.widgets += shopWidget
+    })
 }
 
