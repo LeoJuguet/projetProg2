@@ -134,6 +134,8 @@ extends Actor with Container {
                 val newActorPosition = Vector2(actorPosition.x * (this.collisionRadius + actor.collisionRadius + 10) / distance,
                                                actorPosition.y * (this.collisionRadius + actor.collisionRadius + 10) / distance)
                 this.moveActor(this.position + actorPosition - newActorPosition)
+                //and bump the actor away from the ship
+                actor.moveActor(actor.position + (-actorPosition + newActorPosition) * 0.5f)
                 //then rotate the reference frame so that the actor normalized position is (0, 1)
                 val angle = atan2(newActorPosition.y, newActorPosition.x)
                 //then rotate the speed to match this new reference frame
@@ -146,13 +148,12 @@ extends Actor with Container {
                                        flippedSpeed.x * sin(-angle) + flippedSpeed.y * cos(-angle))
                 //then set the new speed
                 this.speed = Vector2(newSpeed.x.toFloat, newSpeed.y.toFloat)
-                //and add a little bump as a portion of the actorPosition vector to avoid getting stuck and to ... well, bump
-                this.speed = this.speed + Vector2(actorPosition.x * 0.1f, actorPosition.y * 0.1f)
+                //and add a little bump as the actorPosition vector normalized to avoid getting stuck and to ... well, bump
+                this.speed = this.speed + Vector2(actorPosition.x / norm(actorPosition), actorPosition.y / norm(actorPosition)) * 0.1f
                 //then move the unit back to its original position
                 this.moveActor(oldPosition)
                 this.sprite.rotation = oldRotation
-                //move the collided actor in the opposite direction. If it is a ship, update its speed too.
-                actor.moveActor(actor.position - this.speed)
+                //If we collide a ship, update its speed too.
                 actor match
                 case ship: Ship =>
                     //TODO : this may cause explosions of speed values. Maybe add a linear interpolation to avoid this.
