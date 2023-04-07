@@ -20,6 +20,8 @@ class Asteroid(initialPosition: Vector2[Float]) extends Actor {
         this.remainingQuantity -= lost
         if this.remainingQuantity <= 0 then
             this.kill()
+        print(remainingQuantity)
+        print("\n")
         lost
     
     def kill() : Unit =

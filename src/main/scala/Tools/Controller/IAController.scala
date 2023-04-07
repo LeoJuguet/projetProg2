@@ -94,6 +94,11 @@ object IAController {
                         print("mining\n")
                         ship.action = Action.MINE(target.asInstanceOf[Asteroid])
                     }
+                } else {
+                    print("moving\n")
+                    //move the ship to a random position
+                    var targetPos = Vector2(Random.nextFloat() * 100, Random.nextFloat() * 100)
+                    ship.action = Action.MOVE(ship.position + targetPos)
                 }}
                 case None => {}
                 }}

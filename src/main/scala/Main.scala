@@ -27,7 +27,7 @@ def game_loop(window: RenderWindow) : Unit =
         PlayerController.updateClick()
         PlayerController.updateActors()
 
-        //IAController.updateActors()
+        IAController.updateActors()
 
         Camera.updateView()
 
