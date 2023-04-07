@@ -19,7 +19,7 @@ class BuildingStats (
   var dronePrice : Price
 ) {}
 
-class BuilderModule(parent : CapitalShip, stats : BuildingStats) extends ShipModule(parent) {
+class BuilderModule(parent : CapitalShip, stats : BuildingStats) extends ShipModule(parent, "Builder") {
   var buildSpeed = stats.buildSpeed
   var buildCoolDown = 0
 

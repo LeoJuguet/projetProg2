@@ -9,8 +9,8 @@ import sfml.graphics.RenderWindow
 
 class Widget extends UIComponent{
 
-  override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean): Unit =
-    this.childs.foreach(_.updateClick(mousePos,leftMouse))
+  override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean): Boolean =
+    this.childs.exists(_.updateClick(mousePos,leftMouse))
 }
 
 

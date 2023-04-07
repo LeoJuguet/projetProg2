@@ -37,10 +37,10 @@ class VerticalBox(
           bounds = Vector2(max(bounds.x,child.globalBounds.width), pos.y - position.y)
         case E_Direction.Right =>
           pos = pos + Vector2( child.globalBounds.width + this.spacing, 0f)
-          bounds = Vector2(pos.x - position.y, max(bounds.y,child.globalBounds.height))
+          bounds = Vector2(pos.x - position.x, max(bounds.y,child.globalBounds.height))
         case E_Direction.Left =>
           pos = pos - Vector2(child.globalBounds.width + this.spacing,0f)
-          bounds = Vector2(pos.x - position.y, max(bounds.y,child.globalBounds.height))
+          bounds = Vector2(pos.x - position.x, max(bounds.y,child.globalBounds.height))
       }
     }
     this.globalBounds = Rect(
@@ -50,8 +50,8 @@ class VerticalBox(
       bounds.y
     )
 
-  override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean): Unit =
-    this.childs.foreach(_.updateClick(mousePos,leftMouse))
+  override def updateClick(mousePos: Vector2[Float], leftMouse: Boolean): Boolean =
+    this.childs.exists(_.updateClick(mousePos,leftMouse))
 
   override def addChild(component: UIComponent) =
     this.childs += component

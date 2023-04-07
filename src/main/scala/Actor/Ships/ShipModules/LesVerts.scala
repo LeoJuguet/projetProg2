@@ -18,7 +18,7 @@ class SalvagingStats (
   var scalvageRange: Int
 ) {}
 
-class SalvageModule(parent : CapitalShip, stat : SalvagingStats) extends ShipModule(parent) {
+class SalvageModule(parent : CapitalShip, stat : SalvagingStats) extends ShipModule(parent, "Salvage") {
     var action = SalvageAction.IDLE
 
     var efficiency = stat.efficiency

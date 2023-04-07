@@ -28,7 +28,14 @@ class CapitalShip(
     
     var shipDimension = Vector2(5,5)
     var modules = Array.ofDim[Option[ShipModule]](shipDimension.x,shipDimension.y)
-    
+
+    for x <- 0 until shipDimension.x do {
+        for y <- 0 until shipDimension.y do {
+            modules(x)(y) = None
+        }
+    }
+
+
     def enough(price : Price) : Boolean =
         this.ethereum >= price.ethereum && this.uranium >= price.uranium && this.iron >= price.iron && this.copper >= price.copper && this.scrap >= price.scrap
     
@@ -39,11 +46,20 @@ class CapitalShip(
         this.copper -= price.copper
         this.scrap -= price.scrap
 
+
+    var shopWidget : ShipModuleWidget = _
     onPressed.connect( (_) =>
         {
-            var shopWidget = ShipModuleWidget(this)
+            shopWidget = ShipModuleWidget(this)
             GameState.widgets += shopWidget
     })
+    /*
+    onReleased.connect( (_) =>
+        {
+            GameState.widgets -= shopWidget
+
+        })
+     */
     //This function is the capital ship self controller, same as for the drones.
     override def updateUnit() : Unit =
         this.heal(this.regenerationRate)

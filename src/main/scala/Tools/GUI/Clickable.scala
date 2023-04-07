@@ -38,11 +38,12 @@ trait Clickable:
 
   def unFocused() = {}
 
-  def updateClick(mousePos: Vector2[Float], leftMouse: Boolean) =
+  def updateClick(mousePos: Vector2[Float], leftMouse: Boolean): Boolean =
     if (this.clickBounds.contains(mousePos.x, mousePos.y)) {
       if (leftMouse) {
         this.clickState = ClickStates.CLICK_PRESSED
         this.onPressed()
+        return true
       } else {
         if (this.clickState == ClickStates.CLICK_PRESSED){
           this.onClicked()
@@ -58,3 +59,4 @@ trait Clickable:
         this.onUnhovered()
       }
     }
+    return false

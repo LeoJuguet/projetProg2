@@ -25,7 +25,7 @@ class MiningStats (
 class MinerModule(
     parent : CapitalShip,
     stats : MiningStats = MiningStats()
-) extends ShipModule(parent) {
+) extends ShipModule(parent, "Miner") {
 
     var miningDamage = stats.miningDamage
     var miningSpeed = stats.miningSpeed

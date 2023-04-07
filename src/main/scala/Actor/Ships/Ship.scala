@@ -25,6 +25,7 @@ enum Action:
 
 class Ship(
     teamID : Int,
+    var name : String = "Ship"
 )
 extends Actor with Container {
     var speed = Vector2(0.0f, 0.0f)

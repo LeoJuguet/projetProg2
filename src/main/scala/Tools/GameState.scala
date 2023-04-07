@@ -17,6 +17,7 @@ import controller.PlayerController
 import controller.IAController
 import asteroid.*
 import perlin.perlin2D
+import ship.CapitalShip
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
@@ -37,7 +38,7 @@ object GameState {
     var asteroids_list = new ListBuffer[Asteroid]()
     var bases_list = new ListBuffer[Base]()
     var drones_list = new ListBuffer[Drone]()
-    var capital_ships_list = new ListBuffer[Unit]()
+    var capital_ships_list = new ListBuffer[CapitalShip]()
 
     var delete_list = new ListBuffer[Actor]()
     var widgets = new ListBuffer[Widget]()
@@ -60,6 +61,10 @@ object GameState {
 
         var noise = perlin2D(256, 256)
 
+
+        capital_ships_list += CapitalShip(0, Vector2(100,100))
+
+/*
         for i <- 0 to nb_starting_drone do
             var x = Random.nextFloat() * map_size
             var y = Random.nextFloat() * map_size
@@ -74,6 +79,7 @@ object GameState {
             var x = Random.nextFloat() * map_size
             var y = Random.nextFloat() * map_size
             this.createAsteroid(Vector2(x, y))
+*/
     }
 
     var font = FontManager.get("game_over.ttf")

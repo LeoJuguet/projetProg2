@@ -18,7 +18,7 @@ class NurseStat (
   var totalHeal : Int
 ) {}
 
-class NurseModule(parent : CapitalShip, stat : NurseStat) extends ShipModule(parent) {
+class NurseModule(parent : CapitalShip, stat : NurseStat) extends ShipModule(parent, "Nurse") {
   var action = NurseAction.IDLE
 
   var healingSpeed = stat.healingSpeed

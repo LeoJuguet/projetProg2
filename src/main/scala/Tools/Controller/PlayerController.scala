@@ -12,9 +12,8 @@ import actor.Actor
 import ship.Base
 import event.{OnMouseButtonPressed, OnMouseButtonReleased}
 import event.KeyboardState
-import ship.{Action, Ship, Drone}
+import ship.{Action, Ship, Drone, ShipInfoWidget}
 import asteroid.Asteroid
-
 
 //This class is the brain controlling the actions of the player.
 object PlayerController {
@@ -93,7 +92,9 @@ object PlayerController {
             })
         this.justReleased = false
     }
-    
+
+    private var shipWidgetInfo: ShipInfoWidget = _
+
     //this function updates the actions of the player's units.
     def updateActors() = {
         //we check if the player has just released the right mouse button and give orders to the selected units independantly of their current action.
@@ -111,9 +112,20 @@ object PlayerController {
             if actor.isInstanceOf[Ship] then
                 actor.asInstanceOf[Ship].updateUnit()
         })
+
         //clear dead actions
         GameState.player_actors_list.foreach(actor =>
             if actor.isInstanceOf[Ship] then
                 clearAction(actor.asInstanceOf[Ship]))
+
+        if selectedUnits.length == 1 then
+            if selectedUnits(0).isInstanceOf[Ship] then
+                GameState.widgets -= shipWidgetInfo
+                shipWidgetInfo = ShipInfoWidget(selectedUnits(0).asInstanceOf[Ship])
+                GameState.widgets += shipWidgetInfo
+            else
+                GameState.widgets -= shipWidgetInfo
+        else
+            GameState.widgets -= shipWidgetInfo
     }
 }

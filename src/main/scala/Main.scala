@@ -11,16 +11,11 @@ import gamestate.*
 import actor.*
 import gui.*
 import manager.*
-import ship.Ship
 import gamestate.*
-import controller.PlayerController
 import actor.*
 import clickable.*
-import ia.*
-import event.*
 import controller.*
-import camera.*
-import sfml.Immutable
+import event.InputManager
 
 
 def game_loop(window: RenderWindow) : Unit =

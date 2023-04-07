@@ -71,6 +71,7 @@ class SelectBox(
         child.updateClick(mousePos,leftMouse)
     }
     if this.isChanged then onSelected()
+    return this.isChanged
 
   override def draw(target: RenderTarget, states: RenderStates)=
     this.principalButton.draw(target,states)

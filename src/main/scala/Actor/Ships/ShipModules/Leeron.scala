@@ -22,7 +22,7 @@ class RecyclerStat(
     var droneStats : DroneStats
 ) {}
 
-class RecyclerModule(parent : CapitalShip, stat : RecyclerStat) extends ShipModule(parent) {
+class RecyclerModule(parent : CapitalShip, stat : RecyclerStat) extends ShipModule(parent, "Recycler") {
     var action = RecyclerAction.IDLE
 
     var recycleSpeed = stat.recyclerSpeed
