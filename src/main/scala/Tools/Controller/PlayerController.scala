@@ -36,7 +36,7 @@ object PlayerController {
     
     def updateClick() = {
         //TODO : LEO : il faut intégrer les nouveaux event à ta GUI pour que cette ligne disparaisse.
-        GameState.widgets.foreach(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse))
+       // GameState.widgets.foreach(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse))
     }
 
     def give_order(unit : Ship) =

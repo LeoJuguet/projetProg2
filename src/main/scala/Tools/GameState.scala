@@ -62,7 +62,7 @@ object GameState {
         var noise = perlin2D(256, 256)
 
 
-        capital_ships_list += CapitalShip(0, Vector2(100,100))
+        createMotherShip(0, Vector2(100,100))
 
 /*
         for i <- 0 to nb_starting_drone do
@@ -82,8 +82,6 @@ object GameState {
 */
     }
 
-    var font = FontManager.get("game_over.ttf")
-
     //this is for the demo. It will be removed later.
     var player = this.createDrone(0, Vector2(0, 0))
     var ennemy = this.createDrone(1, Vector2(100, 100))
@@ -91,19 +89,6 @@ object GameState {
 
     var playerBase = this.createBase(0, Vector2(500, 500))
     var ennemyBase = this.createBase(1, Vector2(1000, 1000))
-
-    var textPlayerLife = new Text()
-    this.textPlayerLife.position = (50,50)
-    this.textPlayerLife.characterSize = 50
-    this.textPlayerLife.font = this.font
-    this.textPlayerLife.string = this.player.health.toString
-
-
-    var textPlayerResources = new Text()
-    this.textPlayerResources.position = (50,100)
-    this.textPlayerResources.characterSize = 50
-    this.textPlayerResources.font = this.font
-    this.textPlayerResources.string = this.player.scrap.toString
 
     //Création d'une table vide qui contiendra les TileMap, des bouts de la map chargés dynamiquement en fonction de la position de la vue.
     var map_array = Array.ofDim[Option[TileMap]](8,8)
@@ -129,10 +114,6 @@ object GameState {
 
     private def drawWidget()=
       window.view = Immutable(Camera.guiView)
-      this.textPlayerResources.string = this.player.scrap.toString
-      this.textPlayerLife.string = this.player.health.toString
-      window.draw(this.textPlayerResources)
-      window.draw(this.textPlayerLife)
       widgets.foreach(window.draw(_))
       window.view = Immutable(Camera.playerView)
 
@@ -185,6 +166,44 @@ object GameState {
         drone
     }
 
+    def createMotherShip(teamID : Int, initialPosition: Vector2[Float]) : CapitalShip = {
+        //create a new drone and add it to the right team.
+        var motherShip = new CapitalShip(teamID, initialPosition)
+        this.actors_list += motherShip
+        this.capital_ships_list += motherShip
+        if teamID == 0 then
+            this.player_actors_list += motherShip
+        else
+            this.enemy_actors_list += motherShip
+
+        //create the connections to update the selection when the drone is clicked.
+        var c1 = motherShip.onPressed.connect(Unit => {
+            PlayerController.selectedUnits += motherShip
+        })
+        var c2 = motherShip.onTargeted.connect(Unit => {
+            PlayerController.selectedTargets += motherShip
+        })
+        var c3 = motherShip.onReleased.connect(Unit => {
+            PlayerController.selectedUnits -= motherShip
+            PlayerController.selectedTargets -= motherShip
+        })
+        //when the drone is destroyed, we remove it from the lists and disconnect the connections.
+        //TODO : verify that removing the drone from the lists doesn't cause any problem as it can happen at any time.
+        motherShip.onDestroyed.connect(Unit => {
+            this.player_actors_list -= motherShip
+            this.enemy_actors_list -= motherShip
+            this.actors_list -= motherShip
+            this.capital_ships_list -= motherShip
+
+            PlayerController.selectedUnits -= motherShip
+            PlayerController.selectedTargets -= motherShip
+
+            c1.disconnect()
+            c2.disconnect()
+            c3.disconnect()
+        })
+        motherShip
+    }
     def createBase(teamID : Int, position: Vector2[Float]) : Base = {
         //create a new base and add it to the right team.
         var base = new Base(teamID, position)

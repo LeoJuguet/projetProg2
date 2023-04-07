@@ -25,7 +25,7 @@ class ShipInfoWidget(ship : Ship) extends Widget {
 
   verticalInfo.position = Vector2(
     Camera.guiView.size.x - 200,
-    Camera.guiView.size.y - verticalInfo.globalBounds.height - 20
+    Camera.guiView.size.y - verticalInfo.globalBounds.height - 45
   )
 
 

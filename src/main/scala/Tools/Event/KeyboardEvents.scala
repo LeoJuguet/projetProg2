@@ -108,7 +108,8 @@ object InputManager {
                 KeyboardState.rightMouse = true
               case _ =>
             }
-            OnMouseButtonPressed(button, x, y)
+            if !GameState.widgets.exists(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse)) then
+              OnMouseButtonPressed(button, x, y)
             // /!\ the order is important, as some events happen the first frame that the button is pressed
             button match {
               case Button.Left =>
@@ -131,12 +132,14 @@ object InputManager {
                 KeyboardState.rightMouse = false
               case _ =>
             }
-            OnMouseButtonReleased(button, x, y)
+            if !GameState.widgets.exists(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse)) then
+              OnMouseButtonReleased(button, x, y)
           case Event.MouseMoved(x, y) =>
             KeyboardState.mousePos = Vector2(x,y)
             KeyboardState.mouseView = windows.mapPixelToCoords(KeyboardState.mousePos)
             KeyboardState.mouseWindow = windows.mapPixelToCoords(KeyboardState.mousePos, Camera.guiView)
-            OnMouseMoved(x, y)
+            if  !GameState.widgets.exists(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse)) then
+              OnMouseMoved(x, y)
           case Event.MouseEntered() => OnMouseEntered(())
           case Event.MouseLeft() => OnMouseLeft(())
           case Event.JoystickButtonPressed(joystickId, button) => OnJoystickButtonPressed(joystickId, button)

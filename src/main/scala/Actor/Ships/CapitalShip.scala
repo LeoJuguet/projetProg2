@@ -50,16 +50,16 @@ class CapitalShip(
     var shopWidget : ShipModuleWidget = _
     onPressed.connect( (_) =>
         {
+            GameState.widgets -= shopWidget
             shopWidget = ShipModuleWidget(this)
             GameState.widgets += shopWidget
     })
-    /*
     onReleased.connect( (_) =>
         {
             GameState.widgets -= shopWidget
 
         })
-     */
+
     //This function is the capital ship self controller, same as for the drones.
     override def updateUnit() : Unit =
         this.heal(this.regenerationRate)
