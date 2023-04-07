@@ -14,7 +14,11 @@ import gamestate.GameState
 //TODO : in all the types of modules, create precise variants.
 
 //This is the base of what will be the ship modules in the final game (weapons, engines, etc.). It is an actor that can be placed on a ship.
-class ShipModule(var parent : CapitalShip, var name : String) extends Actor {
+class ShipModule(
+    var parent : CapitalShip,
+    var name : String,
+    textureFile : String = "Textures/Module/PNGs/Mining_module.png"
+) extends Actor(textureFile) {
     sprite = Sprite()
 
 

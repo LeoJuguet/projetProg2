@@ -7,9 +7,12 @@ import scala.math.min
 
 val rand = new scala.util.Random
 
-class Asteroid(initialPosition: Vector2[Float]) extends Actor {
+class Asteroid(
+    initialPosition: Vector2[Float],
+    textureFile : String = "asteroid.png",
+) extends Actor {
     // Map will be considered 32768*32768 units² for now
-    this.texture = TextureManager.get("asteroid.png")
+    this.texture = TextureManager.get(textureFile)
     this.applyTexture()
 
     this.moveActor(initialPosition)
@@ -32,25 +35,20 @@ class Asteroid(initialPosition: Vector2[Float]) extends Actor {
 
 class Scrap(initialPosition: Vector2[Float]) extends Asteroid(initialPosition) {
     this.remainingQuantity = 300
-    this.texture = TextureManager.get("ore.png")//TODO : find textures ! "scrap.png")
 }
 
-class Cooper(initialPosition: Vector2[Float]) extends Asteroid(initialPosition) {
+class Cooper(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Copper/Average_density/copper_average_density_00.png") {
     this.remainingQuantity = 100
-    this.texture = TextureManager.get("copper.png")
 }
 
-class Iron(initialPosition: Vector2[Float]) extends Asteroid(initialPosition) {
+class Iron(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Iron/Average_density/iron_average_density_00.png") {
     this.remainingQuantity = 50
-    this.texture = TextureManager.get("iron.png")
 }
 
-class Uranium(initialPosition: Vector2[Float]) extends Asteroid(initialPosition) {
+class Uranium(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Uranium/Average_density/uranium_average_density_00.png") {
     this.remainingQuantity = 10
-    this.texture = TextureManager.get("uranium.png")
 }
 
-class Ethereum(initialPosition: Vector2[Float]) extends Asteroid(initialPosition) {
+class Ethereum(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Ethereum/Average_density/ethereum_average_density_00.png") {
     this.remainingQuantity = 1000
-    this.texture = TextureManager.get("ethereum.png")
 }

@@ -13,6 +13,8 @@ import controller.Camera
 import manager.TextureManager
 import sfml.graphics.Texture
 
+
+// Widget for buy modules with grid
 class ShipModuleWidget(ship: CapitalShip) extends Widget {
   var size = ship.shipDimension
 
@@ -24,27 +26,32 @@ class ShipModuleWidget(ship: CapitalShip) extends Widget {
 
   // Module Grid
   var moduleGrid = VerticalBox(direction = E_Direction.Right)
-  for i <- 0 to (size.x - 1) do {
-    var v = VerticalBox()
-    for j <- 0 to (size.y - 1) do {
-      var buttonStyle = ButtonStyle()
-      var buttonTexture = ship.modules(i)(j) match
-      case None => Texture()
-      case Some(value) => value.texture
 
-      buttonStyle.idleStyle.shapeStyle.texture = buttonTexture
-      buttonStyle.hoverStyle.shapeStyle.texture = buttonTexture
-      buttonStyle.pressedStyle.shapeStyle.texture = buttonTexture
-      var moduleButton = Button(width = 50, height = 50, buttonStyle = buttonStyle)
-      val (x,y) = (i,j)
-      moduleButton.onClickedBind = () => {
-        buyList.showModules(x,y)
+  def updateGrid()=
+    moduleGrid.removeAllChilds()
+    for i <- 0 to (size.x - 1) do {
+      var v = VerticalBox()
+      for j <- 0 to (size.y - 1) do {
+        var buttonStyle = ButtonStyle()
+        var buttonTexture = ship.modules(i)(j) match
+        case None => Texture()
+        case Some(value) => value.texture
+
+        buttonStyle.idleStyle.shapeStyle.texture = buttonTexture
+        buttonStyle.hoverStyle.shapeStyle.texture = buttonTexture
+        buttonStyle.pressedStyle.shapeStyle.texture = buttonTexture
+        var moduleButton = Button(width = 50, height = 50, buttonStyle = buttonStyle)
+        val (x,y) = (i,j)
+        moduleButton.onClickedBind = () => {
+          buyList.showModules(x,y)
+        }
+
+        v.addChild(moduleButton)
       }
-
-      v.addChild(moduleButton)
+      moduleGrid.addChild(v)
     }
-    moduleGrid.addChild(v)
-  }
+
+  updateGrid()
 
   horizontalBox.addChild(moduleGrid)
 
@@ -59,6 +66,8 @@ class ShipModuleWidget(ship: CapitalShip) extends Widget {
 }
 
 
+
+// Compononent to display information about purchasable modules
 class ModuleCard(
   parent: SelectModuleWidget,
   ship: CapitalShip,
@@ -91,6 +100,7 @@ class ModuleCard(
           ship.iron -= module.price.iron
           ship.uranium -= module.price.uranium
           ship.ethereum -= module.price.ethereum
+          parent.parent.updateGrid()
         }
         case Some(value) => {
           if value.name != module.name then {
@@ -100,6 +110,7 @@ class ModuleCard(
             ship.iron -= module.price.iron
             ship.uranium -= module.price.uranium
             ship.ethereum -= module.price.ethereum
+            parent.parent.updateGrid()
           }
         }
       }
@@ -148,15 +159,20 @@ class ModuleCard(
 class ShopModuleStruct(
   var name : String = "Default Name",
   var description : String = "Default description",
-  var image : String = "sfml-logo.png",
+  var image : String = "Textures/Module/PNGs/Mining_module.png",
   var price : Price = Price()
 )
 
-class SelectModuleWidget(parent: ShipModuleWidget,ship: CapitalShip) extends UIComponent {
+
+// Widget to choose which module to buy
+class SelectModuleWidget(var parent: ShipModuleWidget,ship: CapitalShip) extends UIComponent {
   //TODO: create a ScrollBox
+
+
+  // purchasable modules
   var moduleBuyable = Array[ShopModuleStruct](
     ShopModuleStruct(),
-    ShopModuleStruct(name = "Test2")
+    ShopModuleStruct(name = "Test2", image = "Textures/Module/PNGs/Weapon_module.png")
   )
 
   private var selectedModule = 0

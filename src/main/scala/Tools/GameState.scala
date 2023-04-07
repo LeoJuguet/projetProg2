@@ -43,7 +43,9 @@ object GameState {
     var delete_list = new ListBuffer[Actor]()
     var widgets = new ListBuffer[Widget]()
 
-    this.widgets += DemoWidget(window)
+
+    //Uncomment this for show WidgetDemo
+    //this.widgets += DemoWidget(window)
 
     def init(window: RenderWindow, view: View, windowView : View)={
         //initialise the window
@@ -56,7 +58,13 @@ object GameState {
         //       base in the brightest and darkest spots, units around the base
         //       Resources are randomly generated in the asteroids using another perlin noise to create lodes like distributions.
         var nb_starting_drone = 5
-        var nb_asteroid = 10
+        var nb_asteroid = 5
+        var nb_scrap = 5
+        var nb_iron = 5
+        var nb_cooper = 5
+        var nb_uranium = 5
+        var nb_ethereum = 5
+
         var map_size = 512 //32384
 
         var noise = perlin2D(256, 256)
@@ -64,25 +72,40 @@ object GameState {
 
         createMotherShip(0, Vector2(100,100))
 
-
-        //Ceci est juste pour la démo !!!
+        //adding some resources and ships for the demo only
+        //player ships
         for i <- 0 to nb_starting_drone do
-            var offset = Vector2(-1000, -1000)
-            var x = Random.nextFloat() * map_size + offset.x
-            var y = Random.nextFloat() * map_size + offset.y
+            var offset = Vector2(0, 0)
+            var x = Random.nextFloat() * map_size * 4 + offset.x
+            var y = Random.nextFloat() * map_size * 4 + offset.y
             this.createDrone(0, Vector2(x, y))
-        
+
+        //enemy
         for i <- 0 to nb_starting_drone do
-            var offset = Vector2(-1000, 1000)
-            var x = Random.nextFloat() * map_size + offset.x
-            var y = Random.nextFloat() * map_size + offset.y
+            var offset = Vector2(1000, 1000)
+            var x = Random.nextFloat() * map_size * 4+ offset.x
+            var y = Random.nextFloat() * map_size * 4+ offset.y
             this.createDrone(1, Vector2(x, y))
-        
+
         for i <- 0 to nb_asteroid do
-            var offset = Vector2(-1000, 0)
-            var x = Random.nextFloat() * map_size + offset.x
-            var y = Random.nextFloat() * map_size + offset.y
+            var x = Random.nextFloat() * map_size * 4
+            var y = Random.nextFloat() * map_size * 4
             this.createAsteroid(Vector2(x, y))
+
+        for i <- 0 to nb_scrap do
+            var x = Random.nextFloat() * map_size * 4
+            var y = Random.nextFloat() * map_size * 4
+            this.createResource("scrap",Vector2(x, y))
+
+        for i <- 0 to nb_cooper do
+            var x = Random.nextFloat() * map_size * 4
+            var y = Random.nextFloat() * map_size * 4
+            this.createResource("cooper",Vector2(x, y))
+
+        for i <- 0 to nb_iron do
+            var x = Random.nextFloat() * map_size * 4
+            var y = Random.nextFloat() * map_size * 4
+            this.createResource("iron",Vector2(x, y))
 
     }
 
@@ -208,6 +231,8 @@ object GameState {
         })
         motherShip
     }
+
+
     def createBase(teamID : Int, position: Vector2[Float]) : Base = {
         //create a new base and add it to the right team.
         var base = new Base(teamID, position)
@@ -239,6 +264,7 @@ object GameState {
         base
     }
 
+
     def createResource(typ: String, position: Vector2[Float]) : Asteroid = {
         var resource = typ match {
           case "resource" => new Asteroid(position)
@@ -269,6 +295,7 @@ object GameState {
         resource
     }
 
+
     def createAsteroid(position: Vector2[Float]) : Asteroid = {
         var asteroid = new Asteroid(position)
         this.actors_list += asteroid
@@ -287,5 +314,7 @@ object GameState {
         })
         asteroid
     }
+
+
 }
 

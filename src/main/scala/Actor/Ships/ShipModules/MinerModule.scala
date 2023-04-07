@@ -25,7 +25,7 @@ class MiningStats (
 class MinerModule(
     parent : CapitalShip,
     stats : MiningStats = MiningStats()
-) extends ShipModule(parent, "Miner") {
+) extends ShipModule(parent, "Miner", "Textures/Module/PNGs/Mining_module.png") {
 
     var miningDamage = stats.miningDamage
     var miningSpeed = stats.miningSpeed

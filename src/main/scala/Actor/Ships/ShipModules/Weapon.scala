@@ -22,7 +22,8 @@ class WeaponStat (
     var accuracy: Float = 1f
 ) {}
 
-class WeaponModule(parent : CapitalShip, stat : WeaponStat) extends ShipModule(parent, "Weapon") {
+class WeaponModule(parent : CapitalShip, stat : WeaponStat)
+extends ShipModule(parent, "Weapon", "Textures/Module/PNGs/Weapon_module.png") {
     var action = WeaponAction.IDLE
 
     var fireSpeed = stat.fireSpeed

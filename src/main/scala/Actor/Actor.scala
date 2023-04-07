@@ -25,8 +25,9 @@ class OnDestroyed extends Event[Unit]()
 /** Actor class
  * @constructor crate a new Actor
  */
-class Actor extends Transformable with Drawable with Clickable {
-    var texture: Texture = TextureManager.get("sfml-logo.png")
+class Actor(textureFile : String = "sfml-logo.png")
+extends Transformable with Drawable with Clickable {
+    var texture: Texture = TextureManager.get(textureFile)
     var live: Boolean = false
 
     var sprite: Sprite = Sprite(texture)
