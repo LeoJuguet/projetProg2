@@ -46,7 +46,7 @@ class CapitalShip(
         this.copper -= price.copper
         this.scrap -= price.scrap
 
-
+    // show widget for create module on Click
     var shopWidget : ShipModuleWidget = _
     onPressed.connect( (_) =>
         {

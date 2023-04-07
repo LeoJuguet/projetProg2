@@ -108,6 +108,7 @@ object InputManager {
                 KeyboardState.rightMouse = true
               case _ =>
             }
+            // if the widget doesn't catch the click, it is transmitted to the actor
             if !GameState.widgets.exists(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse)) then
               OnMouseButtonPressed(button, x, y)
             // /!\ the order is important, as some events happen the first frame that the button is pressed
@@ -132,12 +133,14 @@ object InputManager {
                 KeyboardState.rightMouse = false
               case _ =>
             }
+            // if the widget doesn't catch the click, it is transmitted to the actor
             if !GameState.widgets.exists(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse)) then
               OnMouseButtonReleased(button, x, y)
           case Event.MouseMoved(x, y) =>
             KeyboardState.mousePos = Vector2(x,y)
             KeyboardState.mouseView = windows.mapPixelToCoords(KeyboardState.mousePos)
             KeyboardState.mouseWindow = windows.mapPixelToCoords(KeyboardState.mousePos, Camera.guiView)
+            // if the widget doesn't catch the click, it is transmitted to the actor
             if  !GameState.widgets.exists(_.updateClick(KeyboardState.mouseWindow, KeyboardState.leftMouse)) then
               OnMouseMoved(x, y)
           case Event.MouseEntered() => OnMouseEntered(())
