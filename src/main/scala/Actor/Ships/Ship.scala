@@ -151,7 +151,7 @@ extends Actor with Container {
                 this.speed = Vector2(newSpeed.x.toFloat, newSpeed.y.toFloat)
                 //and add a little bump as the actorPosition vector normalized to avoid getting stuck and to ... well, bump
                 this.speed = this.speed + Vector2(actorPosition.x / norm(actorPosition), actorPosition.y / norm(actorPosition)) * 0.1f
-                //then move the unit back to its original position
+                
                 this.moveActor(oldPosition)
                 this.sprite.rotation = oldRotation
                 //If we collide a ship, update its speed too.

@@ -103,7 +103,7 @@ extends Ship(teamID) {
             }
             case Action.ATTACK(target) => {
                 //if the ship is close enough to the target, it will attack it
-                if norm(this.position - target.position) < 50 then
+                if norm(this.position - target.position) < 20 + this.collisionRadius + target.collisionRadius then
                     if this.attackCoolDown == 0 then
                         this.attack()
                         this.attackCoolDown = this.attackSpeed
@@ -114,7 +114,7 @@ extends Ship(teamID) {
             }
             case Action.MINE(target) => {
                 //if the ship is close enough to the resource, it will mine it
-                if norm(this.position - target.position) < 50 then
+                if norm(this.position - target.position) < 20 + this.collisionRadius + target.collisionRadius then
                     //Check if cooldown is over
                     if this.miningCoolDown == 0 then
                         this.mine()
@@ -136,7 +136,7 @@ extends Ship(teamID) {
             }
             case Action.TRANSFER(target) => {
                 //if the ship is close enough to the mase, it will transfer the resources
-                if norm(this.position - target.asInstanceOf[Actor].position) < 50 then
+                if norm(this.position - target.asInstanceOf[Actor].position) < 20 + this.collisionRadius + target.asInstanceOf[Actor].collisionRadius then
                     this.transfer()
 
                     //Check if empty

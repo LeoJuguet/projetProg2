@@ -55,31 +55,35 @@ object GameState {
         //TODO : dark spots in perlin noise => ennemy, light spots => player, middle => resources & asteroids
         //       base in the brightest and darkest spots, units around the base
         //       Resources are randomly generated in the asteroids using another perlin noise to create lodes like distributions.
-        var nb_starting_drone = 2
+        var nb_starting_drone = 5
         var nb_asteroid = 10
-        var map_size = 1024 //32384
+        var map_size = 512 //32384
 
         var noise = perlin2D(256, 256)
 
 
         capital_ships_list += CapitalShip(0, Vector2(100,100))
 
-/*
+
+        //Ceci est juste pour la démo !!!
         for i <- 0 to nb_starting_drone do
-            var x = Random.nextFloat() * map_size
-            var y = Random.nextFloat() * map_size
+            var offset = Vector2(-1000, -1000)
+            var x = Random.nextFloat() * map_size + offset.x
+            var y = Random.nextFloat() * map_size + offset.y
             this.createDrone(0, Vector2(x, y))
         
         for i <- 0 to nb_starting_drone do
-            var x = Random.nextFloat() * map_size
-            var y = Random.nextFloat() * map_size
+            var offset = Vector2(-1000, 1000)
+            var x = Random.nextFloat() * map_size + offset.x
+            var y = Random.nextFloat() * map_size + offset.y
             this.createDrone(1, Vector2(x, y))
         
         for i <- 0 to nb_asteroid do
-            var x = Random.nextFloat() * map_size
-            var y = Random.nextFloat() * map_size
+            var offset = Vector2(-1000, 0)
+            var x = Random.nextFloat() * map_size + offset.x
+            var y = Random.nextFloat() * map_size + offset.y
             this.createAsteroid(Vector2(x, y))
-*/
+
     }
 
     var font = FontManager.get("game_over.ttf")
@@ -250,6 +254,14 @@ object GameState {
         var asteroid = new Asteroid(position)
         this.actors_list += asteroid
         this.asteroids_list += asteroid
+        
+        var c2 = asteroid.onTargeted.connect(Unit => {
+            PlayerController.selectedTargets += asteroid
+        })
+        var c3 = asteroid.onReleased.connect(Unit => {
+            PlayerController.selectedTargets -= asteroid
+        })
+
         asteroid.onDestroyed.connect(Unit => {
             this.actors_list -= asteroid
             this.asteroids_list -= asteroid
