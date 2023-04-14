@@ -7,6 +7,9 @@ version := "0.1.0"
 
 enablePlugins(ScalaNativePlugin)
 
+// Package images
+nativeLinkStubs := true
+
 githubSuppressPublicationWarning := true
 githubTokenSource := TokenSource.GitConfig("github.token") || TokenSource.Environment("GITHUB_TOKEN")
 resolvers += Resolver.githubPackages("lafeychine")
