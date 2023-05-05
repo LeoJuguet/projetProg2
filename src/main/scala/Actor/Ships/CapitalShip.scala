@@ -65,9 +65,11 @@ class CapitalShip(
         this.heal(this.regenerationRate)
 
         this.action match {
-            case Action.IDLE => ()
+            case Action.IDLE => {
+                //this.moveUnit(None)
+            }
             case Action.MOVE(target) =>
-                if this.moveUnit(target) then
+                if this.moveUnit(Some(target)) then
                     this.action = Action.IDLE
             case _ => print("Action not valid for capital ship\n")
         }

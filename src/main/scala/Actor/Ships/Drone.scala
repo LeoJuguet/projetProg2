@@ -40,7 +40,7 @@ class Drone(
     stats : DroneStats
 )
 extends Ship(teamID) {
-    texture = TextureManager.get("ovni.png")
+    texture = TextureManager.get("drone.png")
     this.applyTexture()
     this.moveActor(initialPosition)
     
@@ -96,25 +96,32 @@ extends Ship(teamID) {
         this.miningCoolDown = max(0, this.miningCoolDown - 1)
 
         this.action match {
-            case Action.IDLE => ()
+            case Action.IDLE => {
+                //the drone allways follows the mururation fly, and if it has a target it will also fly towards it.
+                //this.moveUnit(None)
+            }
             case Action.MOVE(target) => {
-                if this.moveUnit(target) then
+                if this.moveUnit(Some(target)) then
                     this.action = Action.IDLE
             }
             case Action.ATTACK(target) => {
                 //if the ship is close enough to the target, it will attack it
                 if norm(this.position - target.position) < 20 + this.collisionRadius + target.collisionRadius then
+                    this.moveUnit(None)
+
                     if this.attackCoolDown == 0 then
                         this.attack()
                         this.attackCoolDown = this.attackSpeed
                         //there is no need to check if the target is still alive, because the player controller will change the target if it dies
                 //if the ship is not close enough, it will move towards the target
                 else
-                    this.moveUnit(target.position)
+                    this.moveUnit(Some(target.position))
             }
             case Action.MINE(target) => {
                 //if the ship is close enough to the resource, it will mine it
                 if norm(this.position - target.position) < 20 + this.collisionRadius + target.collisionRadius then
+                    this.moveUnit(None)
+
                     //Check if cooldown is over
                     if this.miningCoolDown == 0 then
                         this.mine()
@@ -132,11 +139,13 @@ extends Ship(teamID) {
                             })
                 //if the ship is not close enough, it will move towards the resource
                 else
-                    this.moveUnit(target.position)
+                    this.moveUnit(Some(target.position))
             }
             case Action.TRANSFER(target) => {
                 //if the ship is close enough to the mase, it will transfer the resources
                 if norm(this.position - target.asInstanceOf[Actor].position) < 20 + this.collisionRadius + target.asInstanceOf[Actor].collisionRadius then
+                    this.moveUnit(None)
+
                     this.transfer()
 
                     //Check if empty
@@ -145,7 +154,7 @@ extends Ship(teamID) {
                 
                 //if the ship is not close enough, it will move towards the base
                 else
-                    this.moveUnit(target.asInstanceOf[Actor].position)
+                    this.moveUnit(Some(target.asInstanceOf[Actor].position))
             }
         }
 

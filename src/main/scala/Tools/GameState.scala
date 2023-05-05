@@ -35,10 +35,8 @@ object GameState {
     var resources_list = new ListBuffer[Asteroid]()
 
     //those lists are used to check collisions between actors
-    var asteroids_list = new ListBuffer[Asteroid]()
-    var bases_list = new ListBuffer[Base]()
-    var drones_list = new ListBuffer[Drone]()
-    var capital_ships_list = new ListBuffer[CapitalShip]()
+    var playerCollisionList = new ListBuffer[Actor]()
+    var enemyCollisionList = new ListBuffer[Actor]()
 
     var delete_list = new ListBuffer[Actor]()
     var widgets = new ListBuffer[Widget]()
@@ -74,37 +72,38 @@ object GameState {
 
         //adding some resources and ships for the demo only
         //player ships
-        for i <- 0 to nb_starting_drone do
-            var offset = Vector2(0, 0)
-            var x = Random.nextFloat() * map_size * 4 + offset.x
-            var y = Random.nextFloat() * map_size * 4 + offset.y
+        for i <- 0 to nb_starting_drone * 4 do
+            var offset = Vector2(-600, -600)
+            var x = Random.nextFloat() * map_size + offset.x
+            var y = Random.nextFloat() * map_size + offset.y
             this.createDrone(0, Vector2(x, y))
 
         //enemy
         for i <- 0 to nb_starting_drone do
-            var offset = Vector2(1000, 1000)
-            var x = Random.nextFloat() * map_size * 4+ offset.x
-            var y = Random.nextFloat() * map_size * 4+ offset.y
+            var offset = Vector2(-600, 600)
+            var x = Random.nextFloat() * map_size + offset.x
+            var y = Random.nextFloat() * map_size + offset.y
             this.createDrone(1, Vector2(x, y))
 
         for i <- 0 to nb_asteroid do
-            var x = Random.nextFloat() * map_size * 4
-            var y = Random.nextFloat() * map_size * 4
+            var offset = Vector2(-600, 0)
+            var x = Random.nextFloat() * map_size + offset.x
+            var y = Random.nextFloat() * map_size + offset.y
             this.createAsteroid(Vector2(x, y))
 
         for i <- 0 to nb_scrap do
-            var x = Random.nextFloat() * map_size * 4
-            var y = Random.nextFloat() * map_size * 4
+            var x = Random.nextFloat() * map_size
+            var y = Random.nextFloat() * map_size
             this.createResource("scrap",Vector2(x, y))
 
         for i <- 0 to nb_cooper do
-            var x = Random.nextFloat() * map_size * 4
-            var y = Random.nextFloat() * map_size * 4
+            var x = Random.nextFloat() * map_size
+            var y = Random.nextFloat() * map_size
             this.createResource("cooper",Vector2(x, y))
 
         for i <- 0 to nb_iron do
-            var x = Random.nextFloat() * map_size * 4
-            var y = Random.nextFloat() * map_size * 4
+            var x = Random.nextFloat() * map_size
+            var y = Random.nextFloat() * map_size
             this.createResource("iron",Vector2(x, y))
 
     }
@@ -158,11 +157,12 @@ object GameState {
         //create a new drone and add it to the right team.
         var drone = new Drone(teamID, initialPosition, stats)
         this.actors_list += drone
-        this.drones_list += drone
         if teamID == 0 then
             this.player_actors_list += drone
+            this.playerCollisionList += drone
         else
             this.enemy_actors_list += drone
+            this.enemyCollisionList += drone
 
         //create the connections to update the selection when the drone is clicked.
         var c1 = drone.onPressed.connect(Unit => {
@@ -181,7 +181,8 @@ object GameState {
             this.player_actors_list -= drone
             this.enemy_actors_list -= drone
             this.actors_list -= drone
-            this.drones_list -= drone
+            this.playerCollisionList -= drone
+            this.enemyCollisionList -= drone
 
             PlayerController.selectedUnits -= drone
             PlayerController.selectedTargets -= drone            
@@ -197,11 +198,12 @@ object GameState {
         //create a new drone and add it to the right team.
         var motherShip = new CapitalShip(teamID, initialPosition)
         this.actors_list += motherShip
-        this.capital_ships_list += motherShip
         if teamID == 0 then
             this.player_actors_list += motherShip
+            this.playerCollisionList += motherShip
         else
             this.enemy_actors_list += motherShip
+            this.enemyCollisionList += motherShip
 
         //create the connections to update the selection when the drone is clicked.
         var c1 = motherShip.onPressed.connect(Unit => {
@@ -220,7 +222,8 @@ object GameState {
             this.player_actors_list -= motherShip
             this.enemy_actors_list -= motherShip
             this.actors_list -= motherShip
-            this.capital_ships_list -= motherShip
+            this.playerCollisionList -= motherShip
+            this.enemyCollisionList -= motherShip
 
             PlayerController.selectedUnits -= motherShip
             PlayerController.selectedTargets -= motherShip
@@ -237,7 +240,6 @@ object GameState {
         //create a new base and add it to the right team.
         var base = new Base(teamID, position)
         this.actors_list += base
-        this.bases_list += base
         if teamID == 0 then
             this.player_actors_list += base
         else
@@ -255,7 +257,6 @@ object GameState {
             this.player_actors_list -= base
             this.enemy_actors_list -= base
             this.actors_list -= base
-            this.bases_list -= base
             PlayerController.selectedUnits -= base
             PlayerController.selectedTargets -= base
             c2.disconnect()
@@ -276,7 +277,8 @@ object GameState {
         }
         this.actors_list += resource
         this.resources_list += resource
-        this.asteroids_list += resource
+        this.playerCollisionList += resource
+        this.enemyCollisionList += resource
         
         var c2 = resource.onTargeted.connect(Unit => {
             PlayerController.selectedTargets += resource
@@ -287,7 +289,8 @@ object GameState {
         resource.onDestroyed.connect(Unit => {
             this.actors_list -= resource
             this.resources_list -= resource
-            this.asteroids_list -= resource
+            this.playerCollisionList -= resource
+            this.enemyCollisionList -= resource
             PlayerController.selectedTargets -= resource
             c2.disconnect()
             c3.disconnect()
@@ -299,7 +302,8 @@ object GameState {
     def createAsteroid(position: Vector2[Float]) : Asteroid = {
         var asteroid = new Asteroid(position)
         this.actors_list += asteroid
-        this.asteroids_list += asteroid
+        this.playerCollisionList += asteroid
+        this.enemyCollisionList += asteroid
         
         var c2 = asteroid.onTargeted.connect(Unit => {
             PlayerController.selectedTargets += asteroid
@@ -310,11 +314,10 @@ object GameState {
 
         asteroid.onDestroyed.connect(Unit => {
             this.actors_list -= asteroid
-            this.asteroids_list -= asteroid
+            this.playerCollisionList -= asteroid
+            this.enemyCollisionList -= asteroid
         })
         asteroid
     }
-
-
 }
 

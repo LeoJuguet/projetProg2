@@ -97,7 +97,7 @@ object IAController {
                 } else {
                     print("moving\n")
                     //move the ship to a random position
-                    var targetPos = Vector2(Random.nextFloat() * 100, Random.nextFloat() * 100)
+                    var targetPos = Vector2(Random.nextFloat() * 500, Random.nextFloat() * 500)
                     ship.action = Action.MOVE(ship.position + targetPos)
                 }}
                 case None => {}

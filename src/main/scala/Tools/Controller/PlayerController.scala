@@ -60,7 +60,7 @@ object PlayerController {
         }}
          else {
             //finally, if there is no target, we move to the mouse position.
-            if this.selectedPosTarget != None then {
+            if this.selectedPosTarget != None && !unit.closeEnough(this.selectedPosTarget.get) then {
                 unit.action = Action.MOVE(this.selectedPosTarget.get)
             }
         }
@@ -116,7 +116,10 @@ object PlayerController {
         //clear dead actions
         GameState.player_actors_list.foreach(actor =>
             if actor.isInstanceOf[Ship] then
-                clearAction(actor.asInstanceOf[Ship]))
+                print(actor.asInstanceOf[Ship].action)
+                clearAction(actor.asInstanceOf[Ship])
+                print(actor.asInstanceOf[Ship].action)
+        )
 
         if selectedUnits.length == 1 then
             if selectedUnits(0).isInstanceOf[Ship] then

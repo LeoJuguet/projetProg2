@@ -55,6 +55,5 @@ def game_loop(window: RenderWindow) : Unit =
 
         game_loop(window)
 
-
         for actor <- GameState.actors_list do actor.destroy()
-    }
+    }.get
