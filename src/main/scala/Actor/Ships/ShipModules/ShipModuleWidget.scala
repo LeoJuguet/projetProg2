@@ -1,4 +1,4 @@
-package ShipModules
+package shipmodule
 
 import gui.*
 import ship.*

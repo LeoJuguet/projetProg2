@@ -5,11 +5,11 @@ import sfml.system.Vector2
 import shipmodule.ShipModule
 import manager.TextureManager
 import gamestate.*
-import ShipModules.*
 import event.KeyboardState
 import sfml.window.Keyboard.Key
 import clickable.States
 import controller.Camera
+import shipmodule.{ModuleHexGraph, ShipModuleWidget}
 
 //this is the capital ship class. They are large ship able to hold a lot of cargo and house a lot of modules.
 //Their behavior is similar to the drone, except their action can only be IDLE or MOVE, the modules they are controlling will do the rest.
@@ -17,7 +17,7 @@ import controller.Camera
 class CapitalShip(
     teamID : Int,
     initialPosition : Vector2[Float]
-) extends Ship(teamID) {
+) extends Ship(teamID) with ModuleHexGraph {
     texture = TextureManager.get("ovni.png")
     this.applyTexture()
     this.moveActor(initialPosition)
@@ -26,6 +26,7 @@ class CapitalShip(
     this.health = this.maxHealth
     this.regenerationRate = 10
     
+    // TODO : remove that !!! Now we have a graph !
     var shipDimension = Vector2(5,5)
     var modules = Array.ofDim[Option[ShipModule]](shipDimension.x,shipDimension.y)
 

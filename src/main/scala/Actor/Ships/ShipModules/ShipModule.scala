@@ -10,6 +10,7 @@ import sfml.system.Vector2
 import actor.Actor
 import ship.{CapitalShip, Price}
 import gamestate.GameState
+import shipmodule.ModuleHexGraph
 
 //TODO : in all the types of modules, create precise variants.
 
@@ -18,7 +19,7 @@ class ShipModule(
     var parent : CapitalShip,
     var name : String,
     textureFile : String = "Textures/Module/PNGs/Mining_module.png"
-) extends Actor(textureFile) {
+) extends Actor(textureFile) with ModuleHexGraph {
     sprite = Sprite()
 
 
