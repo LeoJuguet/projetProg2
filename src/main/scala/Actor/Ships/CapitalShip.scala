@@ -1,6 +1,7 @@
 package ship
 
 import sfml.system.Vector2
+import sfml.graphics.*
 
 import shipmodule.ShipModule
 import manager.TextureManager
@@ -17,8 +18,8 @@ import shipmodule.{ModuleHexGraph, ShipModuleWidget}
 class CapitalShip(
     teamID : Int,
     initialPosition : Vector2[Float]
-) extends Ship(teamID) with ModuleHexGraph {
-    texture = TextureManager.get("ovni.png")
+) extends Ship(teamID,"CapitalShip") {
+    //texture = Texture()
     this.applyTexture()
     this.moveActor(initialPosition)
     
@@ -26,6 +27,8 @@ class CapitalShip(
     this.health = this.maxHealth
     this.regenerationRate = 10
     
+    var capitalShipModule = ShipModule(this,"CapitalShipModule")
+
     // TODO : remove that !!! Now we have a graph !
     var shipDimension = Vector2(5,5)
     var modules = Array.ofDim[Option[ShipModule]](shipDimension.x,shipDimension.y)
@@ -35,6 +38,7 @@ class CapitalShip(
             modules(x)(y) = None
         }
     }
+
 
 
     def enough(price : Price) : Boolean =
@@ -47,19 +51,10 @@ class CapitalShip(
         this.copper -= price.copper
         this.scrap -= price.scrap
 
-    // show widget for create module on Click
-    var shopWidget : ShipModuleWidget = _
-    onPressed.connect( (_) =>
-        {
-            GameState.widgets -= shopWidget
-            shopWidget = ShipModuleWidget(this)
-            GameState.widgets += shopWidget
-    })
-    onReleased.connect( (_) =>
-        {
-            GameState.widgets -= shopWidget
 
-        })
+    override def draw(target: RenderTarget, states: RenderStates) =
+        val render_states = RenderStates(this.transform.combine(states.transform))
+        target.draw(capitalShipModule, render_states)
 
     //This function is the capital ship self controller, same as for the drones.
     override def updateUnit() : Unit =

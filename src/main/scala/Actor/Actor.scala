@@ -30,7 +30,8 @@ extends Transformable with Drawable with Clickable {
     var texture: Texture = TextureManager.get(textureFile)
     var live: Boolean = false
 
-    var sprite: Sprite = Sprite(texture)
+    var sprite: Sprite = _
+    applyTexture()
     //collision box are arbitrarily defined as a circle with radius equal to half the smallest dimension of the sprite
     var collisionRadius: Float = min(this.sprite.globalBounds.height, this.sprite.globalBounds.width) / 2
     
@@ -165,7 +166,6 @@ extends Transformable with Drawable with Clickable {
 
     def destroy() =
         // code pour supprimer l'actor
-        println("destroying actor")
         GameState.delete_list += this
         this.live = false
 

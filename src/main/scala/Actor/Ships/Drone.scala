@@ -39,7 +39,7 @@ class Drone(
     initialPosition: Vector2[Float],
     stats : DroneStats
 )
-extends Ship(teamID) {
+extends Ship(teamID,"Drone") {
     texture = TextureManager.get("drone.png")
     this.applyTexture()
     this.moveActor(initialPosition)

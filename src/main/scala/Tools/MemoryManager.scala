@@ -25,7 +25,8 @@ abstract class Manager[T](var path : String = "src/main/resources/") {
 object TextureManager extends Manager[Texture] {
     def loadResource(name: String): Texture =
         var texture = Texture()
-        texture.loadFromFile(this.path + name)
+        if(!texture.loadFromFile(this.path + name))
+          println("texture not found"+ this.path + name)
         texture
 }
 

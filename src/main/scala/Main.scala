@@ -45,11 +45,10 @@ def game_loop(window: RenderWindow) : Unit =
     Using.Manager { use =>
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
 
-        print(GameState.actors_list.size)
+
 
         GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
 
-        print(GameState.actors_list.size)
 
         InputManager.init(window)
 

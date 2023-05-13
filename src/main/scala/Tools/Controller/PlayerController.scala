@@ -116,9 +116,7 @@ object PlayerController {
         //clear dead actions
         GameState.player_actors_list.foreach(actor =>
             if actor.isInstanceOf[Ship] then
-                print(actor.asInstanceOf[Ship].action)
                 clearAction(actor.asInstanceOf[Ship])
-                print(actor.asInstanceOf[Ship].action)
         )
 
         if selectedUnits.length == 1 then

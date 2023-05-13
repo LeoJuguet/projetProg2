@@ -89,13 +89,13 @@ trait SquareModuleGraph {
     }
 }
 
-trait ModuleHexGraph {
+trait ModuleTriangleGraph {
     // Con1 points to the top. It is the reference connection, and connected to the other 1st connection.
     // Con2 points to the bottom left with an angle of 60 degrees wrt con1. It is connected to the other 3rd connection.
     // Con3 points to the bottom right with an angle of -60 degrees wrt con1. It is connected to the other 2nd connection.
-    var con1 : Option[ModuleHexGraph] = None
-    var con2 : Option[ModuleHexGraph] = None
-    var con3 : Option[ModuleHexGraph] = None
+    var con1 : Option[ModuleTriangleGraph] = None
+    var con2 : Option[ModuleTriangleGraph] = None
+    var con3 : Option[ModuleTriangleGraph] = None
 
     // A module will be flipped wrt its neighbors to implement the hexagonal grid.
     var flip : Boolean = false
@@ -105,7 +105,7 @@ trait ModuleHexGraph {
     //TODO : calibrate the radius with the sprites !!!
     var radius : Float = 1
 
-    def setConnection(connection : Int, module : ModuleHexGraph) : Unit = {
+    def setConnection(connection : Int, module : ModuleTriangleGraph) : Unit = {
         // connection is an integer between 1 and 3
         connection match {
             case 1 =>
@@ -132,10 +132,10 @@ trait ModuleHexGraph {
     def checkOtherNeighoors() = {
         //Performs a search in the module graph to see if any other module is close enough to be set as a neighbor.
 
-        var seen = ListBuffer[ModuleHexGraph](this)
-        var stack = ListBuffer[ModuleHexGraph]()
+        var seen = ListBuffer[ModuleTriangleGraph](this)
+        var stack = ListBuffer[ModuleTriangleGraph]()
 
-        def checkPosition(module : ModuleHexGraph) = {
+        def checkPosition(module : ModuleTriangleGraph) = {
             val angle = Math.atan2(module.localPosition.y - this.localPosition.y, module.localPosition.x - this.localPosition.x)
             val dist = distance(module.localPosition, this.localPosition)
 
@@ -157,13 +157,81 @@ trait ModuleHexGraph {
                 }
         }
 
-        def addNeighboorsToToDo(module : ModuleHexGraph) = {
+        def addNeighboorsToToDo(module : ModuleTriangleGraph) = {
             if module.con1.isDefined && !seen.contains(module.con1.get) then
                 stack += module.con1.get
             if module.con2.isDefined && !seen.contains(module.con2.get) then
                 stack += module.con2.get
             if module.con3.isDefined && !seen.contains(module.con3.get) then
                 stack += module.con3.get
+        }
+
+        addNeighboorsToToDo(this)
+
+        while !stack.isEmpty do
+            val currentModule = stack.head
+            stack.remove(0)
+            seen += currentModule
+
+            checkPosition(currentModule)
+            addNeighboorsToToDo(currentModule)
+        end while
+    }
+}
+
+
+trait ModuleHexGraph(var number : Int = 6) {
+    // connections_points different point all arrounds.
+    var connections_points : Array[Option[ModuleHexGraph]] = new Array[Option[ModuleHexGraph]](6)
+
+    // A module will be flipped wrt its neighbors to implement the hexagonal grid.
+    var flip : Boolean = false
+
+    var localPosition : Vector2[Float] = Vector2(0, 0)
+
+    //TODO : calibrate the radius with the sprites !!!
+    var radius : Float = 1
+
+    def setConnection(connection : Int, module : ModuleHexGraph) : Unit = {
+        // connection is an integer between 1 and 3
+        this.connections_points(connection) = Some(module)
+        module.connections_points((connection + number/2) % number)
+        
+        var angle : Float = 0
+        if this.flip then angle = Pi.toFloat
+        angle = (angle + (connection - 1) * Pi / number).toFloat
+
+        module.localPosition = Vector2(this.localPosition.x + 2 * this.radius * Math.cos(angle).toFloat, this.localPosition.y + 2 * this.radius * Math.sin(angle).toFloat)
+        module.checkOtherNeighoors()
+    }
+
+    def checkOtherNeighoors() = {
+        //Performs a search in the module graph to see if any other module is close enough to be set as a neighbor.
+
+        var seen = ListBuffer[ModuleHexGraph](this)
+        var stack = ListBuffer[ModuleHexGraph]()
+
+        def checkPosition(module : ModuleHexGraph) = {
+            val angle = Math.atan2(module.localPosition.y - this.localPosition.y, module.localPosition.x - this.localPosition.x)
+            val dist = distance(module.localPosition, this.localPosition)
+
+            //if we are exactly at the right distance, as we constructed a grid, then we know there is a connection.
+            //Thus if the angle is strictly between 0 and Pi then we know this is a second connection, regardless of the flip state.
+            //If the angle is strictly between 0 and -Pi then we know this is a third connection, regardless of the flip state.
+            //Else, we know this is a first connection, regardless of the flip state.
+
+            //We make the comparison with epsilon to avoid floating point errors.
+            val epsilon = 0.01 // as the distance is in pixel, 0.01 should be largely enough.
+            if dist > 2 * this.radius - epsilon && dist < 2 * this.radius + epsilon then
+                val connection_number = ((number * angle / (2 * Pi)).round.toInt + number) % number
+                this.setConnection( connection_number , module)
+        }
+
+        def addNeighboorsToToDo(module : ModuleHexGraph) = {
+            for i <- 0 to number -1 do {
+                if module.connections_points(i).isDefined && !seen.contains(module.connections_points(i).get) then
+                    stack += module.connections_points(i).get
+            }
         }
 
         addNeighboorsToToDo(this)

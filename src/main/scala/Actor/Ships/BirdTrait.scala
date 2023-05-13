@@ -14,12 +14,12 @@ val visionRadius = 100f
 val collisionDistance = 50f
 
 val centeringFactor = 0.01f
-val targetFactor = 0.02f
+val targetFactor = 0.2f
 val avoidFactor = 0.2f
 val matchingFactor = 0.05f
 val chaosFactor = 0.02f
 
-val maxSpeed = 0.5f
+val maxSpeed = 2f
 val k_nearest = 3
 
 trait Bird extends Transformable {
@@ -45,13 +45,11 @@ trait Bird extends Transformable {
 
         val normalized = (center - this.position) * (1 / distance(center, this.position))
 
-        print("center : " + distance(center, this.position) + "\n")
 
         this.speed = this.speed + (center - this.position) * centeringFactor
 
     def flyTowardsTarget(target_position : Vector2[Float]) =
         val normalized = (target_position - this.position) * (1 / norm(target_position - this.position))
-        print("target : " + distance(target_position, this.position) + "\n")
         this.speed = this.speed + normalized * targetFactor
     
     def avoidCollision(birds : ListBuffer[Actor]) =
@@ -63,7 +61,6 @@ trait Bird extends Transformable {
                 correction = correction + (this.position - b.position) * (1 / (dist * dist) + 0.05f / dist)
         })
 
-        print("correction : " + norm(correction) + "\n")
 
         this.speed += correction * avoidFactor
 
@@ -73,8 +70,6 @@ trait Bird extends Transformable {
         birds.foreach(b => if b.isInstanceOf[Bird] then avgSpeed += b.asInstanceOf[Bird].speed)
 
         avgSpeed = avgSpeed * (1 / max(birds.length, 1))
-
-        print("avgSpeed : " + norm(avgSpeed) + "\n")
 
         this.speed += avgSpeed * matchingFactor
 
@@ -86,7 +81,6 @@ trait Bird extends Transformable {
         val kClosestBirds = kclosest(birds, k_nearest)
         val birdsInRadius = findInRadius(kClosestBirds)
 
-        print("\n" + "kClosestBirds : " + kClosestBirds.length + "\n")
 
         if target_position.isDefined then
             flyTowardsTarget(target_position.get)

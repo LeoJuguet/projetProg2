@@ -12,8 +12,6 @@ import clickable.Clickable
 import gamestate.GameState
 import asteroid.Asteroid
 import manager.TextureManager
-import ShipModules.*
-import ship.Bird
 
 
 //TODO : Actions should behave as a list, so that a player can assign several of them in one input to limit redundancy in the player's actions.

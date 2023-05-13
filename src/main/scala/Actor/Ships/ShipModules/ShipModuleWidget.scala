@@ -15,41 +15,47 @@ import sfml.graphics.Texture
 
 
 // Widget for buy modules with grid
-class ShipModuleWidget(ship: CapitalShip) extends Widget {
-  var size = ship.shipDimension
+class ShipModuleWidget(shipModule: ShipModule) extends Widget {
 
-  var buyList = SelectModuleWidget(this,ship)
+  var buyList = SelectModuleWidget(this,shipModule)
 
-  var posHorizontalBox = Camera.guiView.size.y - size.y * (50 + 5)
+  var posHorizontalBox = Camera.guiView.size.y - 3 * (50 + 5)
 
   var horizontalBox = VerticalBox(5,posHorizontalBox,direction = E_Direction.Right)
 
   // Module Grid
   var moduleGrid = VerticalBox(direction = E_Direction.Right)
 
+  private def createSpecialButton(i : Int) :  Button = 
+    var buttonStyle = ButtonStyle()
+    var buttonTexture = shipModule.connections_points(i) match
+      case None => Texture()
+      case Some(value) => value.texture
+
+    buttonStyle.idleStyle.shapeStyle.texture = buttonTexture
+    buttonStyle.hoverStyle.shapeStyle.texture = buttonTexture
+    buttonStyle.pressedStyle.shapeStyle.texture = buttonTexture
+    var moduleButton = Button(width = 50, height = 50, buttonStyle = buttonStyle)
+    val pi = i                                     // copie the number i and avoid problems with the reference i
+    moduleButton.onClickedBind = () => {
+      buyList.showModules(i)
+    }
+    moduleButton
+
   def updateGrid()=
     moduleGrid.removeAllChilds()
-    for i <- 0 to (size.x - 1) do {
-      var v = VerticalBox()
-      for j <- 0 to (size.y - 1) do {
-        var buttonStyle = ButtonStyle()
-        var buttonTexture = ship.modules(i)(j) match
-        case None => Texture()
-        case Some(value) => value.texture
-
-        buttonStyle.idleStyle.shapeStyle.texture = buttonTexture
-        buttonStyle.hoverStyle.shapeStyle.texture = buttonTexture
-        buttonStyle.pressedStyle.shapeStyle.texture = buttonTexture
-        var moduleButton = Button(width = 50, height = 50, buttonStyle = buttonStyle)
-        val (x,y) = (i,j)
-        moduleButton.onClickedBind = () => {
-          buyList.showModules(x,y)
-        }
-
-        v.addChild(moduleButton)
-      }
-      moduleGrid.addChild(v)
-    }
+    var h1 = VerticalBox(direction = E_Direction.Right)
+    var h2 = VerticalBox(direction = E_Direction.Right)
+    var h3 = VerticalBox(direction = E_Direction.Right)
+    h1.addChild(createSpecialButton(3))
+    h1.addChild(createSpecialButton(2))
+    h1.addChild(createSpecialButton(1))
+    moduleGrid.addChild(h1)
+    moduleGrid.addChild(h2)
+    h3.addChild(createSpecialButton(4))
+    h3.addChild(createSpecialButton(5))
+    h3.addChild(createSpecialButton(6))
+    moduleGrid.addChild(h3)
 
   updateGrid()
 
@@ -63,6 +69,8 @@ class ShipModuleWidget(ship: CapitalShip) extends Widget {
     super.close()
     GameState.widgets -= this
 
+  print("oui")
+
 }
 
 
@@ -70,12 +78,11 @@ class ShipModuleWidget(ship: CapitalShip) extends Widget {
 // Compononent to display information about purchasable modules
 class ModuleCard(
   parent: SelectModuleWidget,
-  ship: CapitalShip,
-  modulePos: (Int,Int) ,
+  shipModule: ShipModule,
+  modulePos: Int ,
   var module : ShopModuleStruct
 ) extends UIComponent{
   var cardBox = VerticalBox(direction = E_Direction.Right)
-
 
   var buttonStyle = ButtonStyle()
   var buttonTexture = TextureManager.get(module.image)
@@ -86,30 +93,30 @@ class ModuleCard(
 
   button.onClickedBind = () =>
   {
-    if ship.scrap >= module.price.scrap &&
-    ship.copper >= module.price.copper &&
-    ship.iron >= module.price.iron &&
-    ship.uranium >= module.price.uranium &&
-    ship.ethereum >= module.price.ethereum then {
-      var (x1,x2) = modulePos
-      ship.modules(x1)(x2) match{
+    if shipModule.parent.scrap >= module.price.scrap &&
+    shipModule.parent.copper >= module.price.copper &&
+    shipModule.parent.iron >= module.price.iron &&
+    shipModule.parent.uranium >= module.price.uranium &&
+    shipModule.parent.ethereum >= module.price.ethereum then {
+      var xi = modulePos
+      shipModule.connections_points(xi) match{
         case None => {
-          ship.modules(modulePos._1)(modulePos._2) = Some(MinerModule(ship))
-          ship.scrap -= module.price.scrap
-          ship.copper -= module.price.copper
-          ship.iron -= module.price.iron
-          ship.uranium -= module.price.uranium
-          ship.ethereum -= module.price.ethereum
+          shipModule.connections_points(modulePos) = Some(MinerModule(shipModule.parent))
+          shipModule.parent.scrap -= module.price.scrap
+          shipModule.parent.copper -= module.price.copper
+          shipModule.parent.iron -= module.price.iron
+          shipModule.parent.uranium -= module.price.uranium
+          shipModule.parent.ethereum -= module.price.ethereum
           parent.parent.updateGrid()
         }
         case Some(value) => {
           if value.name != module.name then {
-            ship.modules(modulePos._1)(modulePos._2) = Some(MinerModule(ship))
-            ship.scrap -= module.price.scrap
-            ship.copper -= module.price.copper
-            ship.iron -= module.price.iron
-            ship.uranium -= module.price.uranium
-            ship.ethereum -= module.price.ethereum
+            shipModule.connections_points(modulePos) = Some(MinerModule(shipModule.parent))
+            shipModule.parent.scrap -= module.price.scrap
+            shipModule.parent.copper -= module.price.copper
+            shipModule.parent.iron -= module.price.iron
+            shipModule.parent.uranium -= module.price.uranium
+            shipModule.parent.ethereum -= module.price.ethereum
             parent.parent.updateGrid()
           }
         }
@@ -165,7 +172,7 @@ class ShopModuleStruct(
 
 
 // Widget to choose which module to buy
-class SelectModuleWidget(var parent: ShipModuleWidget,ship: CapitalShip) extends UIComponent {
+class SelectModuleWidget(var parent: ShipModuleWidget, shipModule: ShipModule) extends UIComponent {
   //TODO: create a ScrollBox
 
 
@@ -176,7 +183,7 @@ class SelectModuleWidget(var parent: ShipModuleWidget,ship: CapitalShip) extends
   )
 
   private var selectedModule = 0
-  private var selectedModulePos = (0,0)
+  private var selectedModulePos = 0
 
   var moduleWidget = VerticalBox()
   var moduleList = VerticalBox()
@@ -186,11 +193,11 @@ class SelectModuleWidget(var parent: ShipModuleWidget,ship: CapitalShip) extends
 
   buttonPrev.onClickedBind = () => {
     selectedModule = (moduleBuyable.length + selectedModule - 1) % moduleBuyable.length
-    showModules(selectedModulePos._1, selectedModulePos._2)
+    showModules(selectedModulePos)
   }
   buttonNext.onClickedBind = () => {
     selectedModule = (selectedModule + 1) % moduleBuyable.length
-    showModules(selectedModulePos._1, selectedModulePos._2)
+    showModules(selectedModulePos)
   }
 
   var controlModule = VerticalBox(direction = E_Direction.Right)
@@ -203,10 +210,10 @@ class SelectModuleWidget(var parent: ShipModuleWidget,ship: CapitalShip) extends
 
 
 
-  def showModules(i : Int, j : Int)=
+  def showModules(i: Int)=
     hide()
-    selectedModulePos = (i,j)
-    moduleList.addChild(ModuleCard(this, ship,(i,j), moduleBuyable(selectedModule)))
+    selectedModulePos = i
+    moduleList.addChild(ModuleCard(this, shipModule,i, moduleBuyable(selectedModule)))
     this.globalBounds = moduleList.globalBounds
 
   override def close()=
