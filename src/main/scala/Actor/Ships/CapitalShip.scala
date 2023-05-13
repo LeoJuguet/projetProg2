@@ -19,7 +19,7 @@ class CapitalShip(
     teamID : Int,
     initialPosition : Vector2[Float]
 ) extends Ship(teamID,"CapitalShip") {
-    //texture = Texture()
+    texture = Texture()
     this.applyTexture()
     this.moveActor(initialPosition)
     
