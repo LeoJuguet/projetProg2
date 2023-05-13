@@ -16,7 +16,7 @@ import shipmodule.{ModuleHexGraph, ShipModuleWidget}
 //Their behavior is similar to the drone, except their action can only be IDLE or MOVE, the modules they are controlling will do the rest.
 //They do not move based on actions, as opposed to the drone, the player have to put them in range of the module they want to use.
 class CapitalShip(
-    teamID : Int,
+    val teamID : Int,
     initialPosition : Vector2[Float]
 ) extends Ship(teamID,"CapitalShip") {
     texture = Texture()

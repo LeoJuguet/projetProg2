@@ -7,6 +7,13 @@ import sfml.graphics.{
 }
 import sfml.system.{Vector2, distance}
 
+
+import event.KeyboardState
+import sfml.window.Keyboard.Key
+import clickable.States
+import controller.Camera
+
+
 import actor.Actor
 import ship.{CapitalShip, Price}
 import gamestate.GameState
@@ -63,7 +70,7 @@ class ShipModule(
     // number of connection arround the module
     var connection_number = 6
     // connections_points different point all arrounds.
-    var connections_points : Array[Option[ShipModule]] = new Array[Option[ShipModule]](connection_number)
+    var connections_points : Array[Option[ShipModule]] = Array.fill(connection_number) { None }
 
     var localPosition : Vector2[Float] = Vector2(0, 0)
 
@@ -124,6 +131,41 @@ class ShipModule(
     }
 
 
+
+
+
+    if this.parent.teamID == 0 then
+        this.updateLeftClick = () =>
+            if KeyboardState.is_Press(Key.KeyLControl) then
+                if this.state == States.HOVER then
+                    this.onUnhovered(())
+                    this.state = States.IDLE
+            
+            else
+                if this.clickBounds.contains(KeyboardState.mouseView) then
+                    this.state = States.PRESSED
+                    this.onPressed(())
+                else
+                    if this.state == States.HOVER then
+                        this.onUnhovered(())
+                        this.state = States.IDLE
+            
+            if this.clickBounds.contains(KeyboardState.mouseView) && KeyboardState.is_Press(Key.KeyLAlt) then
+                Camera.updateBind(this)
+        
+        this.updateRightPress = () => ()
+
+        //this is necessary to ensure that selectioning targets do not release the actors selected by the player.
+        val general_right_hold = this.updateRightHold
+
+        this.updateRightHold = () =>
+            if this.state != States.PRESSED then
+                general_right_hold()
+        
+        this.updateRightClick = () =>
+            if this.state == States.HOVER then
+                this.state = States.IDLE
+                this.onUnhovered(())
 
 
 }

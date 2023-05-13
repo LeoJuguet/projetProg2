@@ -24,10 +24,12 @@ class ShipModuleWidget(shipModule: ShipModule) extends Widget {
   var horizontalBox = VerticalBox(5,posHorizontalBox,direction = E_Direction.Right)
 
   // Module Grid
-  var moduleGrid = VerticalBox(direction = E_Direction.Right)
+  var moduleGrid = VerticalBox()
 
   private def createSpecialButton(i : Int) :  Button = 
     var buttonStyle = ButtonStyle()
+    println(shipModule)
+    println(shipModule.connections_points(i))
     var buttonTexture = shipModule.connections_points(i) match
       case None => Texture()
       case Some(value) => value.texture
@@ -38,7 +40,7 @@ class ShipModuleWidget(shipModule: ShipModule) extends Widget {
     var moduleButton = Button(width = 50, height = 50, buttonStyle = buttonStyle)
     val pi = i                                     // copie the number i and avoid problems with the reference i
     moduleButton.onClickedBind = () => {
-      buyList.showModules(i)
+      buyList.showModules(pi)
     }
     moduleButton
 
@@ -47,20 +49,21 @@ class ShipModuleWidget(shipModule: ShipModule) extends Widget {
     var h1 = VerticalBox(direction = E_Direction.Right)
     var h2 = VerticalBox(direction = E_Direction.Right)
     var h3 = VerticalBox(direction = E_Direction.Right)
-    h1.addChild(createSpecialButton(3))
-    h1.addChild(createSpecialButton(2))
+    var b3 = createSpecialButton(2)
+    h1.addChild(b3)
     h1.addChild(createSpecialButton(1))
+    h1.addChild(createSpecialButton(0))
     moduleGrid.addChild(h1)
     moduleGrid.addChild(h2)
+    h3.addChild(createSpecialButton(3))
     h3.addChild(createSpecialButton(4))
     h3.addChild(createSpecialButton(5))
-    h3.addChild(createSpecialButton(6))
+
     moduleGrid.addChild(h3)
 
   updateGrid()
 
   horizontalBox.addChild(moduleGrid)
-
   horizontalBox.addChild(buyList)
   childs += horizontalBox
 
@@ -68,8 +71,6 @@ class ShipModuleWidget(shipModule: ShipModule) extends Widget {
   override def close()=
     super.close()
     GameState.widgets -= this
-
-  print("oui")
 
 }
 
