@@ -80,24 +80,19 @@ object IAController {
             if unit.isInstanceOf[Ship] then {
                 var ship = unit.asInstanceOf[Ship]
                 if ship.action == Action.IDLE then {
-                print("deciding action...")
                 this.selectedTarget match {
                 case Some(target) => {
                     if distance(unit.position, target.position) < 300 then {
                     if target.isInstanceOf[Ship] then {
-                        print("attacking ship\n")
                         ship.action = Action.ATTACK(target)
                     } else if target.isInstanceOf[Base] then {
-                        print("attacking base\n")
                         ship.action = Action.ATTACK(target)
                     } else if target.isInstanceOf[Asteroid] then {
-                        print("mining\n")
                         ship.action = Action.MINE(target.asInstanceOf[Asteroid])
                     }
                 } else {
-                    print("moving\n")
                     //move the ship to a random position
-                    var targetPos = Vector2(Random.nextFloat() * 500, Random.nextFloat() * 500)
+                    var targetPos = Vector2(Random.nextFloat() * 200, Random.nextFloat() * 200)
                     ship.action = Action.MOVE(ship.position + targetPos)
                 }}
                 case None => {}

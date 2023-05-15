@@ -23,12 +23,9 @@ class Asteroid(
         this.remainingQuantity -= lost
         if this.remainingQuantity <= 0 then
             this.kill()
-        print(remainingQuantity)
-        print("\n")
         lost
     
     def kill() : Unit =
-        print("killing resource\n")
         this.destroy()
         this.live = false
 }
