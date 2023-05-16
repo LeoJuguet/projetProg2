@@ -1,6 +1,6 @@
 package ship
 
-import scala.math.{min, max}
+import scala.math.{min, max, sqrt}
 
 import scala.util.Random
 import sfml.system.{Vector2, distance, norm}
@@ -14,12 +14,14 @@ val visionRadius = 100f
 val collisionDistance = 50f
 
 val centeringFactor = 0.01f
-val targetFactor = 0.2f
-val avoidFactor = 0.2f
+
+val targetFactor = 0.05f
+val avoidFactor = 0.03f / 0.15f
 val matchingFactor = 0.05f
 val chaosFactor = 0.02f
 
-val maxSpeed = 2f
+val maxSpeed = 1f
+
 val k_nearest = 3
 
 trait Bird extends Transformable {
@@ -34,7 +36,7 @@ trait Bird extends Transformable {
             sortedBirds
     
     def findInRadius(birds : ListBuffer[Actor]) : ListBuffer[Actor] =
-        birds.filter(b => distance(b.position, this.position) < visionRadius)
+        birds.filter(b => distance(b.position, this.position) - b.collisionRadius < visionRadius)
 
     def flyTowardsCenter(birds : ListBuffer[Actor]) =
         var center = Vector2(0.0f, 0.0f)
@@ -43,9 +45,12 @@ trait Bird extends Transformable {
 
         center = center * (1 / max(birds.length, 1))
 
+<<<<<<< HEAD
         val normalized = (center - this.position) * (1 / distance(center, this.position))
 
 
+=======
+>>>>>>> origin/crashes
         this.speed = this.speed + (center - this.position) * centeringFactor
 
     def flyTowardsTarget(target_position : Vector2[Float]) =
@@ -54,15 +59,23 @@ trait Bird extends Transformable {
     
     def avoidCollision(birds : ListBuffer[Actor]) =
         var correction = Vector2(0f, 0f)
+        var n = max(birds.length, 1)
 
         birds.foreach(b => {
-            val dist = distance(b.position, this.position)
+            val dist = max(distance(b.position, this.position) - b.collisionRadius, 10)
             if dist < collisionDistance then
-                correction = correction + (this.position - b.position) * (1 / (dist * dist) + 0.05f / dist)
+                correction = correction + (this.position - b.position) * (1 / distance(this.position, b.position)) * (1 / dist + 0.05f)
         })
 
+<<<<<<< HEAD
+=======
+        correction = correction * (avoidFactor)// / (norm(correction) + 1))
 
-        this.speed += correction * avoidFactor
+        val nor = min(norm(correction), avoidFactor)
+>>>>>>> origin/crashes
+
+        if correction != Vector2(0f, 0f) then
+            this.speed += correction * (nor / norm(correction))
 
     def matchVelocity(birds : ListBuffer[Actor]) =
         var avgSpeed = Vector2(0f, 0f)
@@ -76,12 +89,15 @@ trait Bird extends Transformable {
     def addChaos() =
         this.speed = this.speed + (Vector2(Random.nextFloat, Random.nextFloat) * 2 - Vector2(1f, 1f)) * chaosFactor
     
-    def updateBird(target_position : Option[Vector2[Float]], birds : ListBuffer[Actor]) = {
+    def updateBird(target_position : Option[Vector2[Float]], birds : ListBuffer[Actor], speedFactor : Float) = {
         //if the target is defined, the bird will fly towards it. Else, it simply flies according to the murmuration rules.
         val kClosestBirds = kclosest(birds, k_nearest)
         val birdsInRadius = findInRadius(kClosestBirds)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/crashes
         if target_position.isDefined then
             flyTowardsTarget(target_position.get)
         else
@@ -95,6 +111,6 @@ trait Bird extends Transformable {
         if speedNorm > maxSpeed then
             this.speed = this.speed * (maxSpeed / speedNorm)
 
-        this.position = this.position + this.speed
+        this.position = this.position + this.speed * speedFactor
     }
    }

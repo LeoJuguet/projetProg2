@@ -81,7 +81,6 @@ extends Transformable with Drawable with Clickable {
             var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
             var bottomRight = Vector2[Float](max(firstPos.x, secondPos.x), max(firstPos.y, secondPos.y))
             var size = bottomRight - topLeft
-            // TODO : draw the selection rectangle (to be done in the right file, not here)
             var selectionRect = Rect(topLeft.x, topLeft.y, size.x, size.y)
 
             if this.clickBounds.intersects(selectionRect) then

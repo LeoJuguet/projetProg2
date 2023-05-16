@@ -6,7 +6,7 @@ import sfml.system.*
 import sfml.graphics.*
 
 import shipmodule.ShipModule
-import container.Container
+import container.{Container, Wreck}
 import actor.Actor
 import clickable.Clickable
 import gamestate.GameState
@@ -63,7 +63,12 @@ extends Actor with Container with Bird {
             case 0 => GameState.playerCollisionList
             case 1 => GameState.enemyCollisionList
         }
-        this.updateBird(targetPosition, birdList)
+        val speedFactor = this.team match {
+            case 0 => 1f
+            case 1 => 0.5f
+        }
+        if targetPosition.isDefined then
+            this.updateBird(targetPosition, birdList, speedFactor)
 
         //match the sprite orientation with the speed vector
         val angle = atan2(this.speed.y, this.speed.x) * 180 / Pi + 90
@@ -76,4 +81,8 @@ extends Actor with Container with Bird {
             false
 
     def updateUnit() = {}
+
+    def createWreckage() : Unit = {
+        var wreck = new Wreck(this.position, this.rotation)
+    }
 }
