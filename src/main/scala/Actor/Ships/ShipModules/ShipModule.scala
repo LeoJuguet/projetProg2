@@ -64,7 +64,7 @@ class ShipModule(
         target.draw(sprite, states)
 
     this.parent.drawModule.connect( (target,states) => {draw(target, states)})
-    this.parent.updateModule.connect( - => {updateModule()})
+    this.parent.updateModule.connect( _ => {updateModule()})
 
     //
     // Gestion of Module connections
