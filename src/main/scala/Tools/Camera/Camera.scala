@@ -51,9 +51,6 @@ object Camera {
             case ViewBind.ACTOR(actor) => ViewBind.POINT(actor.position + delta)
         }
 
-
-
-    //TODO : account for potential zoom
     def updatePlayerView() = {
         if KeyboardState.is_Press(Key.KeyUp) then
             this.moveViewBind(Vector2(0, -10))
@@ -93,15 +90,16 @@ object Camera {
         for i <- 0 to 7 do
             for j <- 0 to 7 do
                 //On ne veut pas la distance entre le centre de la tilemap et le centre de la vue, mais la distance entre le centre de la tilemap et le bord de la vue.
-                if abs(x - 540 - i * 512) < 540 + 512 && abs(y - 360 - j * 512) < 360 + 512 then
+                // Account for the zoom
+                var x_size = this.playerView.size.x / 1.5
+                var y_size = this.playerView.size.y / 1.5
+
+                if abs(x - 540 - i * 512) < x_size + 512 && abs(y - 360 - j * 512) < y_size + 512 then
                     GameState.map_array(j)(i) match {
                         case Some(tilemap) => tilemap.loadTexture()
                         case None =>
                             GameState.map_array(j)(i) = Some(new TileMap("maps/purple/purple_" +  i.toString + j.toString + ".png", i, j))
                             GameState.map_array(j)(i).get.loadTexture()
                     }
-                //TODO : ça marche pas
-                //else
-                //    GameState.map_array(j)(i) = None
     }
 }

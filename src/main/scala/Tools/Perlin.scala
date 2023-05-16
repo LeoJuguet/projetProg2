@@ -5,18 +5,19 @@ import scala.util.Random
 
 def smooth(x : Float) : Float = x * x * (3 - 2 * x)
 
-def seed_array(n : Int) : Array[Float] =
+def seed_array(n : Int) : Array[Float] = {
     var seed = Array.fill(n)(0f)
     for i <- 0 to n - 1 do
         seed(i) = Random.nextFloat()
     seed
+}
 
 //this is only a one-dimensional perlin noise
-def perlinNoise(size : Int, decay : Float) : Array[Float] =
+def perlinNoise(size : Int, decay : Float, startingFreq : Int) : Array[Float] = {
     var noise = Array.fill(size)(0f)
 
     //for every frequency
-    for f <- 0 to round((log(size)/log(2)).toFloat) do
+    for f <- startingFreq to round((log(size)/log(2)).toFloat) do
         var n = pow(2, f).toInt
         var scale = pow(decay, f).toFloat
         var seed = seed_array(n)
@@ -37,13 +38,15 @@ def perlinNoise(size : Int, decay : Float) : Array[Float] =
     noise = noise.map(x => x / M)
 
     noise
+}
 
 //2D perlin noise in scala
-def perlin2D(size : Int, decay : Float) : Array[Array[Float]] =
+//This is generalizable to any dimension, but I don't need that right now so I stick to 2D
+def perlin2D(size : Int, decay : Float, startingFreq : Int) : Array[Array[Float]] = {
     var noise = Array.fill(size, size)(0f)
 
     //for every frequency
-    for f <- 0 to round((log(size)/log(2)).toFloat) do
+    for f <- startingFreq to round((log(size)/log(2)).toFloat) do
         var n = pow(2, f).toInt
         var scale = pow(decay, f).toFloat
         var seed = Array.fill(n, n)(0f)
@@ -72,3 +75,13 @@ def perlin2D(size : Int, decay : Float) : Array[Array[Float]] =
     noise = noise.map(x => x.map(y => y / M))
 
     noise
+}
+
+def generateField(size : Int, decay : Float, startingFreq : Int, epsilon : Float) : (Array[Array[Float]], Array[Array[Boolean]]) = {
+    var noise = perlin2D(size, decay, startingFreq)
+    var field = Array.fill(size, size)(false)
+
+    field = noise.map(x => x.map(y => (y < 0.5 + epsilon) && (y > 0.5 - epsilon)))
+
+    (noise, field)
+}

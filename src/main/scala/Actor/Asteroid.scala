@@ -9,7 +9,7 @@ val rand = new scala.util.Random
 
 class Asteroid(
     initialPosition: Vector2[Float],
-    textureFile : String = "asteroid.png",
+    textureFile : String = "Textures/Asteroids/blank_asteroid.png",
 ) extends Actor {
     // Map will be considered 32768*32768 units² for now
     this.texture = TextureManager.get(textureFile)
@@ -23,12 +23,9 @@ class Asteroid(
         this.remainingQuantity -= lost
         if this.remainingQuantity <= 0 then
             this.kill()
-        print(remainingQuantity)
-        print("\n")
         lost
     
     def kill() : Unit =
-        print("killing resource\n")
         this.destroy()
         this.live = false
 }
@@ -37,18 +34,18 @@ class Scrap(initialPosition: Vector2[Float]) extends Asteroid(initialPosition) {
     this.remainingQuantity = 300
 }
 
-class Cooper(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Copper/Average_density/copper_average_density_00.png") {
+class Cooper(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Asteroids/Copper/copper_medium_density.png") {
     this.remainingQuantity = 100
 }
 
-class Iron(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Iron/Average_density/iron_average_density_00.png") {
+class Iron(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Asteroids/Iron/iron_medium_density.png") {
     this.remainingQuantity = 50
 }
 
-class Uranium(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Uranium/Average_density/uranium_average_density_00.png") {
+class Uranium(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Asteroids/Uranium/uranium_medium_density.png") {
     this.remainingQuantity = 10
 }
 
-class Ethereum(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Ore/Ethereum/Average_density/ethereum_average_density_00.png") {
+class Ethereum(initialPosition: Vector2[Float]) extends Asteroid(initialPosition, "Textures/Asteroids/Ethereum/ethereum_medium_density.png") {
     this.remainingQuantity = 1000
 }

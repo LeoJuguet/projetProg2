@@ -16,3 +16,5 @@ project/target/
 target/
 
 .vscode/
+# textures project files
+.pxm

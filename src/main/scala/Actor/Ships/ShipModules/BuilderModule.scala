@@ -14,12 +14,12 @@ enum BuilderAction:
   case BUILDING
 
 class BuildingStats (
-  var buildSpeed : Int,
-  var droneStats : DroneStats,
-  var dronePrice : Price
+  var buildSpeed : Int = 200,
+  var droneStats : DroneStats = DroneStats(),
+  var dronePrice : Price = Price()
 ) {}
 
-class BuilderModule(parent : CapitalShip, stats : BuildingStats) extends ShipModule(parent, "Builder") {
+class BuilderModule(parent : CapitalShip, stats : BuildingStats = BuildingStats()) extends ShipModule(parent, "Builder") {
   var buildSpeed = stats.buildSpeed
   var buildCoolDown = 0
 

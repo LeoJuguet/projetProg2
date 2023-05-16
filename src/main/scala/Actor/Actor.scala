@@ -30,7 +30,8 @@ extends Transformable with Drawable with Clickable {
     var texture: Texture = TextureManager.get(textureFile)
     var live: Boolean = false
 
-    var sprite: Sprite = Sprite(texture)
+    var sprite: Sprite = _
+    applyTexture()
     //collision box are arbitrarily defined as a circle with radius equal to half the smallest dimension of the sprite
     var collisionRadius: Float = min(this.sprite.globalBounds.height, this.sprite.globalBounds.width) / 2
     
@@ -80,7 +81,6 @@ extends Transformable with Drawable with Clickable {
             var topLeft = Vector2[Float](min(firstPos.x, secondPos.x), min(firstPos.y, secondPos.y))
             var bottomRight = Vector2[Float](max(firstPos.x, secondPos.x), max(firstPos.y, secondPos.y))
             var size = bottomRight - topLeft
-            // TODO : draw the selection rectangle (to be done in the right file, not here)
             var selectionRect = Rect(topLeft.x, topLeft.y, size.x, size.y)
 
             if this.clickBounds.intersects(selectionRect) then
@@ -165,7 +165,6 @@ extends Transformable with Drawable with Clickable {
 
     def destroy() =
         // code pour supprimer l'actor
-        println("destroying actor")
         GameState.delete_list += this
         this.live = false
 

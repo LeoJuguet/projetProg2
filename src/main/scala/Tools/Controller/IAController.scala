@@ -57,19 +57,23 @@ object IAController {
         }
     
     def selectUnit() = {
-        //TODO : replace this random behavior by a real IA.
-        //       select only from available units.
-        //       target only ennemy units or resources.
-        //       decide the priority of the actions.
-        //       decide the number of units to send on a target unit or resource.
-        //       ...
+        //TODO : Even if the AI has been "improved" it is still very dumb. We really need a good AI for the game to be playable.
+        //       For example decide the number of units to send on a target unit or resource, decide the urgence (as a probability) to
+        //       go minig exploring regrouping, or attacking, etc.
+        //
+        //       To have a smarter IA we need to be able to know what unit is closest to a target, or what target is the closest to a unit.
+        //       This is not possible with the current data structures as it would require to iterate over all the units and targets and
+        //       the complexity would be stupid.
+        
         //we select a random unit.
         var unit = GameState.enemy_actors_list(Random.nextInt(GameState.enemy_actors_list.length))
         this.select(unit)
 
         //we select a random target.
-        // /!\ currently, the target can be a friendly unit. It can even be the self !
         var targ = GameState.actors_list(Random.nextInt(GameState.actors_list.length))
+        if !targ.isInstanceOf[Asteroid] then
+            targ = GameState.player_actors_list(Random.nextInt(GameState.player_actors_list.length))
+        
         this.target(targ)
     }
 
@@ -77,27 +81,24 @@ object IAController {
         //If a unit is selected, we give it an action depending on the target.
         this.selectedUnit match {
         case Some(unit) => {
-            if unit.isInstanceOf[Ship] then {
-                var ship = unit.asInstanceOf[Ship]
+            if unit.isInstanceOf[Drone] then {
+                val ship = unit.asInstanceOf[Drone]
                 if ship.action == Action.IDLE then {
-                print("deciding action...")
                 this.selectedTarget match {
                 case Some(target) => {
-                    if distance(unit.position, target.position) < 300 then {
+                if distance(unit.position, target.position) < 300 then {
                     if target.isInstanceOf[Ship] then {
-                        print("attacking ship\n")
                         ship.action = Action.ATTACK(target)
                     } else if target.isInstanceOf[Base] then {
-                        print("attacking base\n")
                         ship.action = Action.ATTACK(target)
                     } else if target.isInstanceOf[Asteroid] then {
-                        print("mining\n")
                         ship.action = Action.MINE(target.asInstanceOf[Asteroid])
                     }
                 } else {
-                    print("moving\n")
                     //move the ship to a random position
-                    var targetPos = Vector2(Random.nextFloat() * 100, Random.nextFloat() * 100)
+                    val radius = (Random.nextFloat() + 1 ) * 50
+                    val angle = Random.nextFloat() * 2 * Math.PI
+                    var targetPos = Vector2(radius * Math.cos(angle).toFloat, radius * Math.sin(angle).toFloat)
                     ship.action = Action.MOVE(ship.position + targetPos)
                 }}
                 case None => {}
@@ -116,7 +117,7 @@ object IAController {
     //this function updates the actions of the player's units.
     def updateActors() = {
         this.selectUnit()
-        this.decideAction()
+        //this.decideAction()
         this.releaseUnit()
 
         //update the player's units (not only the selected ones as they may have been selected in the previous turn and not finished their action)
