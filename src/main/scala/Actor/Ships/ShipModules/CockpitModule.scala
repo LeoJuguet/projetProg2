@@ -9,7 +9,7 @@ import controller.Camera
 class CockpitModule(
     parent : CapitalShip
 ) 
-extends ShipModule(parent,"Cockpit","Textures/Module/module.png"){
+extends ShipModule(parent,"Cockpit","Textures/Module/on_ship_icons/blank_module.png"){
 
 
 
