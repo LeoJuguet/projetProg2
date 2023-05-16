@@ -57,7 +57,8 @@ class ShipModule(
 
 
     override def draw(target: RenderTarget, states: RenderStates) =
-        val render_states = RenderStates(this.transform.combine(states.transform))
+        var render_transform = states.transform.translate(this.localPosition)
+        val render_states = RenderStates(render_transform)
         target.draw(sprite, render_states)
 
     this.parent.drawModule.connect( (target,states) => {draw(target, states)})
@@ -74,18 +75,21 @@ class ShipModule(
     var localPosition : Vector2[Float] = Vector2(0, 0)
 
     //TODO : calibrate the radius with the sprites !!!
-    var radius : Float = 1
+    var radius : Float = 50
 
     def setConnection(connection : Int, module : ShipModule) : Unit = {
         // connection is an integer between 0 and 5
         this.connections_points(connection) = Some(module)
         module.connections_points((connection + connection_number/2) % connection_number)
+        println(connection)
+        println((connection + connection_number/2) % connection_number)
         
         var angle : Float = 0
-        angle = (angle + (connection - 1) * Pi / connection_number).toFloat
+        angle = (angle + (connection) * 2 * Pi / connection_number).toFloat
 
         module.localPosition = Vector2(this.localPosition.x + 2 * this.radius * Math.cos(angle).toFloat, this.localPosition.y + 2 * this.radius * Math.sin(angle).toFloat)
         module.checkOtherNeighoors()
+        println(module.localPosition)
     }
 
     def checkOtherNeighoors() = {

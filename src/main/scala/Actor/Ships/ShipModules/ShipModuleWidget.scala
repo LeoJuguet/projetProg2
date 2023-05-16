@@ -102,7 +102,7 @@ class ModuleCard(
       var xi = modulePos
       shipModule.connections_points(xi) match{
         case None => {
-          shipModule.connections_points(modulePos) = Some(MinerModule(shipModule.parent))
+          shipModule.setConnection(modulePos,MinerModule(shipModule.parent))
           shipModule.parent.scrap -= module.price.scrap
           shipModule.parent.copper -= module.price.copper
           shipModule.parent.iron -= module.price.iron
@@ -167,7 +167,7 @@ class ModuleCard(
 class ShopModuleStruct(
   var name : String = "Default Name",
   var description : String = "Default description",
-  var image : String = "Textures/Module/PNGs/Mining_module.png",
+  var image : String = "Textures/Module/module.png",
   var price : Price = Price()
 )
 
@@ -180,7 +180,7 @@ class SelectModuleWidget(var parent: ShipModuleWidget, shipModule: ShipModule) e
   // purchasable modules
   var moduleBuyable = Array[ShopModuleStruct](
     ShopModuleStruct(),
-    ShopModuleStruct(name = "Test2", image = "Textures/Module/PNGs/Weapon_module.png")
+    ShopModuleStruct(name = "Test2", image = "Textures/Module/module.png")
   )
 
   private var selectedModule = 0

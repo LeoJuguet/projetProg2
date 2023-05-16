@@ -68,7 +68,7 @@ object GameState {
         var noise = perlin2D(256, 256)
 
 
-        createMotherShip(0, Vector2(0,0))
+        createMotherShip(0, Vector2(-1000,1000))
 
         //adding some resources and ships for the demo only
         //player ships
