@@ -47,7 +47,6 @@ class ShipModule(
             GameState.widgets += shopWidget
     })
 
-    onPressed.connect(Unit => println("ca fonctionne bien 4"))
 
     onReleased.connect( Unit =>
         {
@@ -58,11 +57,14 @@ class ShipModule(
 
 
     override def draw(target: RenderTarget, states: RenderStates) =
-        var render_transform = states.transform.translate(this.localPosition)
-        val render_states = RenderStates(render_transform)
-        target.draw(sprite, render_states)
+        //var render_transform = states.transform.translate(this.localPosition)
+        this.sprite.position = parent.position + this.localPosition
+        //val render_states = RenderStates(render_transform)
+        this.clickBounds = this.sprite.globalBounds
+        target.draw(sprite, states)
 
     this.parent.drawModule.connect( (target,states) => {draw(target, states)})
+    this.parent.updateModule.connect( - => {updateModule()})
 
     //
     // Gestion of Module connections
@@ -170,6 +172,7 @@ class ShipModule(
             if this.state == States.HOVER then
                 this.state = States.IDLE
                 this.onUnhovered(())
+
 
 
 }

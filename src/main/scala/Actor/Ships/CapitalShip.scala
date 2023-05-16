@@ -3,7 +3,7 @@ package ship
 import sfml.system.Vector2
 import sfml.graphics.*
 
-import shipmodule.ShipModule
+import shipmodule.{ShipModule, CockpitModule}
 import manager.TextureManager
 import gamestate.*
 import event.KeyboardState
@@ -22,27 +22,20 @@ class CapitalShip(
 ) extends Ship(teamID,"CapitalShip") {
     texture = Texture()
     this.applyTexture()
-    this.moveActor(initialPosition)
+    
     
     this.maxHealth = 1000
     this.health = this.maxHealth
     this.regenerationRate = 10
     
     var drawModule = Event[(RenderTarget /* target */, RenderStates /* states */)]
+    var updateModule = Event[Unit]
 
-    var capitalShipModule = ShipModule(this,"CapitalShipModule")
-
-    // TODO : remove that !!! Now we have a graph !
-    var shipDimension = Vector2(5,5)
-    var modules = Array.ofDim[Option[ShipModule]](shipDimension.x,shipDimension.y)
-
-    for x <- 0 until shipDimension.x do {
-        for y <- 0 until shipDimension.y do {
-            modules(x)(y) = None
-        }
-    }
+    var capitalShipModule = CockpitModule(this)
 
 
+
+    this.moveActor(initialPosition)
 
     def enough(price : Price) : Boolean =
         this.ethereum >= price.ethereum && this.uranium >= price.uranium && this.iron >= price.iron && this.copper >= price.copper && this.scrap >= price.scrap
@@ -76,10 +69,7 @@ class CapitalShip(
             case _ => print("Action not valid for capital ship\n")
         }
 
-        for i <- 0 until shipDimension.x do
-            for j <- 0 until shipDimension.y do
-                if modules(i)(j).isDefined then
-                    modules(i)(j).get.updateModule()
+        updateModule(())
 
     //click behavior of the capital ships. They have to be pressed by a simple clic, not a hold clic with ctrl.
     if this.teamID == 0 then

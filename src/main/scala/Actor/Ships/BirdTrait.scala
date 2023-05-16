@@ -102,6 +102,6 @@ trait Bird extends Transformable {
         if speedNorm > maxSpeed then
             this.speed = this.speed * (maxSpeed / speedNorm)
 
-        this.position = this.position + this.speed * speedFactor
+        this.asInstanceOf[Actor].moveActor(this.position + this.speed * speedFactor)
     }
    }
