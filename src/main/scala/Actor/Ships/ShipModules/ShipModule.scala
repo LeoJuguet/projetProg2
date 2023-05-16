@@ -12,8 +12,6 @@ import ship.{CapitalShip, Price}
 import gamestate.GameState
 import shipmodule.ModuleHexGraph
 
-//TODO : in all the types of modules, create precise variants.
-
 //This is the base of what will be the ship modules in the final game (weapons, engines, etc.). It is an actor that can be placed on a ship.
 class ShipModule(
     var parent : CapitalShip,
@@ -21,7 +19,6 @@ class ShipModule(
     textureFile : String = "Textures/Module/PNGs/Mining_module.png"
 ) extends Actor(textureFile) with ModuleHexGraph {
     sprite = Sprite()
-
 
     //TODO : GameState function createModule(module, parent, position) -> onDestroyed, added to actor lists, etc.
     this.parent.onDestroyed.connect(Unit => this.destroy())

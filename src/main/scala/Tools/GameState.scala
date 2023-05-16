@@ -12,12 +12,13 @@ import tilemap.TileMap
 import gui.{Widget, DemoWidget}
 import manager.FontManager
 import controller.Camera
-import ship.{Drone, Base, DroneStats}
+import ship.{Drone, Base, DroneStats, Ship}
 import controller.PlayerController
 import controller.IAController
 import asteroid.*
 import perlin.generateField
 import ship.CapitalShip
+import container.Wreck
 
 /** Provides an interface for generate images
  * @constructor create a new GameState with a window.
@@ -234,9 +235,10 @@ object GameState {
             PlayerController.selectedTargets -= drone
         })
         //when the drone is destroyed, we remove it from the lists and disconnect the connections.
-        //TODO : verify that removing the drone from the lists doesn't cause any problem as it can happen at any time.
         drone.onDestroyed.connect(Unit => {
             this.delete_list += drone
+
+            this.createWreckage(drone)
 
             c1.disconnect()
             c2.disconnect()
@@ -268,7 +270,6 @@ object GameState {
             PlayerController.selectedTargets -= motherShip
         })
         //when the drone is destroyed, we remove it from the lists and disconnect the connections.
-        //TODO : verify that removing the drone from the lists doesn't cause any problem as it can happen at any time.
         motherShip.onDestroyed.connect(Unit => {
             this.delete_list += motherShip
 
@@ -352,8 +353,32 @@ object GameState {
 
         asteroid.onDestroyed.connect(Unit => {
             this.delete_list += asteroid
+
+            c2.disconnect()
+            c3.disconnect()
         })
         asteroid
+    }
+
+    def createWreckage(from : Ship) : Wreck = {
+        var wreckage = new Wreck(from.position, from.rotation)
+        this.actors_list += wreckage
+        this.playerCollisionList += wreckage
+        this.enemyCollisionList += wreckage
+
+        var c2 = wreckage.onTargeted.connect(Unit => {
+            PlayerController.selectedTargets += wreckage
+        })
+        var c3 = wreckage.onReleased.connect(Unit => {
+            PlayerController.selectedTargets -= wreckage
+        })
+        wreckage.onDestroyed.connect(Unit => {
+            this.delete_list += wreckage
+
+            c2.disconnect()
+            c3.disconnect()
+        })
+        wreckage
     }
 
     def clearDeleteList() = {
@@ -405,6 +430,14 @@ object GameState {
         this.enemyCollisionList -= asteroid
 
         PlayerController.selectedTargets -= asteroid
+    }
+
+    def clearWreckage(wreckage : Wreck) = {
+        this.actors_list -= wreckage
+        this.playerCollisionList -= wreckage
+        this.enemyCollisionList -= wreckage
+
+        PlayerController.selectedTargets -= wreckage
     }
 }
 

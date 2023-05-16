@@ -42,7 +42,6 @@ trait Container {
         this.totalLoad += quantity
         quantity
     
-    //TODO : this function serves only for capital ships, it should be moved to a different class
     def in(price : Price) : Unit =
         this.in("scrap", price.scrap)
         this.in("copper", price.copper)

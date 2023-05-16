@@ -51,7 +51,6 @@ object Camera {
             case ViewBind.ACTOR(actor) => ViewBind.POINT(actor.position + delta)
         }
 
-    //TODO : account for potential zoom
     def updatePlayerView() = {
         if KeyboardState.is_Press(Key.KeyUp) then
             this.moveViewBind(Vector2(0, -10))
@@ -102,8 +101,5 @@ object Camera {
                             GameState.map_array(j)(i) = Some(new TileMap("maps/purple/purple_" +  i.toString + j.toString + ".png", i, j))
                             GameState.map_array(j)(i).get.loadTexture()
                     }
-                //TODO : ça marche pas
-                //else
-                //    GameState.map_array(j)(i) = None
     }
 }

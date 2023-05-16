@@ -23,22 +23,19 @@ import ship.{CapitalShip, Drone, Base}
 def game_loop(window: RenderWindow) : Unit =
     window.clear(Color(0, 0, 0))
     
-    while window.isOpen() do
+    while window.isOpen() do {
         InputManager.update()
 
-        PlayerController.updateClick()
         PlayerController.updateActors()
-
         IAController.updateActors()
 
         Camera.updateView()
 
-        //Delete destroyed actors
         GameState.actors_list --= GameState.delete_list
-
         GameState.clearDeleteList()
 
         GameState.drawGame()
+    }
 
 
 @main def main =
@@ -49,9 +46,7 @@ def game_loop(window: RenderWindow) : Unit =
         val window = use(RenderWindow(VideoMode(width, height), "Slower Than Light"))
 
         GameState.init(window, View(Vector2(0f,0f), Vector2(1080, 720)), View(Vector2(width/2f,height/2f), Vector2(1080, 720)))
-
         InputManager.init(window)
 
         game_loop(window)
-        
     }.get

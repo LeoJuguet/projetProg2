@@ -6,7 +6,7 @@ import sfml.system.*
 import sfml.graphics.*
 
 import shipmodule.ShipModule
-import container.Container
+import container.{Container, Wreck}
 import actor.Actor
 import clickable.Clickable
 import gamestate.GameState
@@ -83,4 +83,8 @@ extends Actor with Container with Bird {
             false
 
     def updateUnit() = {}
+
+    def createWreckage() : Unit = {
+        var wreck = new Wreck(this.position, this.rotation)
+    }
 }

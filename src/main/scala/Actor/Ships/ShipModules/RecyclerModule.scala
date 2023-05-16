@@ -11,7 +11,7 @@ import gamestate.GameState
 enum RecyclerAction:
   case IDLE
   //TODO : when actions will behave as a list, change the behavior so that while not idle, the parent moves to the next target. Priority to the closest target.
-  //       The priority between actions of different modules are not yet defined. It will most certainly depend on the module's position in the ship grid.
+  //       The priority between actions of different modules are not yet defined.
   case RECYCLING(target: Wreck, state : Int = 0)
 
 class RecyclerStat(
