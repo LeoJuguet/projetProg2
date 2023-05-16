@@ -45,12 +45,7 @@ trait Bird extends Transformable {
 
         center = center * (1 / max(birds.length, 1))
 
-<<<<<<< HEAD
-        val normalized = (center - this.position) * (1 / distance(center, this.position))
 
-
-=======
->>>>>>> origin/crashes
         this.speed = this.speed + (center - this.position) * centeringFactor
 
     def flyTowardsTarget(target_position : Vector2[Float]) =
@@ -67,12 +62,11 @@ trait Bird extends Transformable {
                 correction = correction + (this.position - b.position) * (1 / distance(this.position, b.position)) * (1 / dist + 0.05f)
         })
 
-<<<<<<< HEAD
-=======
+
         correction = correction * (avoidFactor)// / (norm(correction) + 1))
 
         val nor = min(norm(correction), avoidFactor)
->>>>>>> origin/crashes
+
 
         if correction != Vector2(0f, 0f) then
             this.speed += correction * (nor / norm(correction))
@@ -94,10 +88,7 @@ trait Bird extends Transformable {
         val kClosestBirds = kclosest(birds, k_nearest)
         val birdsInRadius = findInRadius(kClosestBirds)
 
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/crashes
         if target_position.isDefined then
             flyTowardsTarget(target_position.get)
         else
