@@ -9,7 +9,7 @@ val rand = new scala.util.Random
 
 class Asteroid(
     initialPosition: Vector2[Float],
-    textureFile : String = "asteroid.png",
+    textureFile : String = "Textures/Asteroids/blank_asteroid.png",
 ) extends Actor {
     // Map will be considered 32768*32768 units² for now
     this.texture = TextureManager.get(textureFile)

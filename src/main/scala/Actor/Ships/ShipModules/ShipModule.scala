@@ -47,24 +47,33 @@ class ShipModule(
             GameState.widgets += shopWidget
     })
 
-
     onReleased.connect( Unit =>
         {
             print("release")
             GameState.widgets -= shopWidget
         })
+    
+    def moveModule() = {
+        var angle = this.parent.sprite.rotation
+        this.sprite.rotation = angle
+        angle = angle * Pi.toFloat / 180
 
-
-
-    override def draw(target: RenderTarget, states: RenderStates) =
-        //var render_transform = states.transform.translate(this.localPosition)
-        this.sprite.position = parent.position + this.localPosition
-        //val render_states = RenderStates(render_transform)
-        this.clickBounds = this.sprite.globalBounds
-        target.draw(sprite, states)
+        var pos = this.localPosition
+        var new_position = Vector2(0f, 0f)
+        new_position += Vector2(
+            pos.x * Math.cos(angle).toFloat - pos.y * Math.sin(angle).toFloat,
+            pos.x * Math.sin(angle).toFloat + pos.y * Math.cos(angle).toFloat
+        )
+        new_position += this.parent.position
+        this.moveActor(new_position)
+    }
 
     this.parent.drawModule.connect( (target,states) => {draw(target, states)})
-    this.parent.updateModule.connect( _ => {updateModule()})
+
+    this.parent.updateModule.connect( - => {
+        this.updateModule()
+        this.moveModule()
+    })
 
     //
     // Gestion of Module connections
@@ -135,10 +144,6 @@ class ShipModule(
             addNeighboorsToToDo(currentModule)
         end while
     }
-
-
-
-
 
     if this.parent.teamID == 0 then
         this.updateLeftClick = () =>

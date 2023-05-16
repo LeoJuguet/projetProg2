@@ -33,8 +33,6 @@ class CapitalShip(
 
     var capitalShipModule = CockpitModule(this)
 
-
-
     this.moveActor(initialPosition)
 
     def enough(price : Price) : Boolean =
@@ -46,10 +44,6 @@ class CapitalShip(
         this.iron -= price.iron
         this.copper -= price.copper
         this.scrap -= price.scrap
-
-
-    
-    
 
     override def draw(target: RenderTarget, states: RenderStates) =
         val render_states = RenderStates(this.transform.combine(states.transform))
