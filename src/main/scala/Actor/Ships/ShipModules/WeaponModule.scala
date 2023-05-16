@@ -14,16 +14,16 @@ enum WeaponAction:
   case FIRING(target: Ship)
 
 class WeaponStat (
-    var fireSpeed: Int,
-    var fireRange: Int,
-    var damage: Int,
+    var fireSpeed: Int = 1,
+    var fireRange: Int = 5,
+    var damage: Int = 5,
     //TODO : use this when shields are implemented
-    var ballistic: Boolean,
+    var ballistic: Boolean = false,
     var accuracy: Float = 1f
 ) {}
 
-class WeaponModule(parent : CapitalShip, stat : WeaponStat)
-extends ShipModule(parent, "Weapon") {
+class WeaponModule(parent : CapitalShip, stat : WeaponStat = WeaponStat())
+extends ShipModule(parent, "Weapon", "Textures/Module/on_ship_icons/weapon_module.png") {
     var action = WeaponAction.IDLE
 
     var fireSpeed = stat.fireSpeed

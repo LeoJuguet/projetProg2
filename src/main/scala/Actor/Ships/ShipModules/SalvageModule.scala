@@ -13,12 +13,12 @@ enum SalvageAction:
 
 class SalvagingStats (
 //between 0 and 1, the efficiency of the scalvage
-  var efficiency: Float,
-  var scalvageSpeed: Int,
-  var scalvageRange: Int
+  var efficiency: Float = 0.5f,
+  var scalvageSpeed: Int = 1,
+  var scalvageRange: Int = 5
 ) {}
 
-class SalvageModule(parent : CapitalShip, stat : SalvagingStats) extends ShipModule(parent, "Salvage") {
+class SalvageModule(parent : CapitalShip, stat : SalvagingStats = SalvagingStats()) extends ShipModule(parent, "Salvage") {
     var action = SalvageAction.IDLE
 
     var efficiency = stat.efficiency

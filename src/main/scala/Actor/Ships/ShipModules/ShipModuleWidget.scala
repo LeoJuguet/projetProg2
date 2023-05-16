@@ -98,7 +98,7 @@ class ModuleCard(
       var xi = modulePos
       shipModule.connections_points(xi) match{
         case None => {
-          shipModule.setConnection(modulePos,MinerModule(shipModule.parent))
+          shipModule.setConnection(modulePos,getModuleType(module.moduleType,shipModule.parent))
           shipModule.parent.scrap -= module.price.scrap
           shipModule.parent.copper -= module.price.copper
           shipModule.parent.iron -= module.price.iron
@@ -108,7 +108,7 @@ class ModuleCard(
         }
         case Some(value) => {
           if value.name != module.name then {
-            shipModule.setConnection(modulePos,MinerModule(shipModule.parent))
+            shipModule.setConnection(modulePos,getModuleType(module.moduleType,shipModule.parent))
             shipModule.parent.scrap -= module.price.scrap
             shipModule.parent.copper -= module.price.copper
             shipModule.parent.iron -= module.price.iron
@@ -121,7 +121,16 @@ class ModuleCard(
     }
   }
 
-
+  def getModuleType(module_type : String, parent : CapitalShip): ShipModule = 
+    module_type match
+      case "builder" => BuilderModule(parent)
+      case "miner" => MinerModule(parent)
+      case "nurse" => NurseModule(parent)
+      case "recycler" => RecyclerModule(parent)
+      case "salvage" => SalvageModule(parent)
+      case "weapon" => WeaponModule(parent)
+      case _ => ShipModule(parent)
+    
 
   var verticalInfo = VerticalBox()
 
@@ -163,6 +172,7 @@ class ModuleCard(
 class ShopModuleStruct(
   var name : String = "Default Name",
   var description : String = "Default description",
+  var moduleType : String = "miner",
   var image : String = "Textures/Module/module.png",
   var price : Price = Price()
 )
@@ -176,7 +186,7 @@ class SelectModuleWidget(var parent: ShipModuleWidget, shipModule: ShipModule) e
   // purchasable modules
   var moduleBuyable = Array[ShopModuleStruct](
     ShopModuleStruct(),
-    ShopModuleStruct(name = "Test2", image = "Textures/Module/module.png")
+    ShopModuleStruct(name = "Test2",moduleType = "weapon", image = "Textures/Module/on_ship_icons/weapon_module.png")
   )
 
   private var selectedModule = 0

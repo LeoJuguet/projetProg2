@@ -12,13 +12,13 @@ enum NurseAction:
   case HEALING(targets : ArrayBuffer[Ship])
 
 class NurseStat (
-  var healingSpeed : Int,
-  var healingRange : Int,
-  var maxBurst : Int,
-  var totalHeal : Int
+  var healingSpeed : Int = 10,
+  var healingRange : Int = 5,
+  var maxBurst : Int = 5,
+  var totalHeal : Int = 100
 ) {}
 
-class NurseModule(parent : CapitalShip, stat : NurseStat) extends ShipModule(parent, "Nurse") {
+class NurseModule(parent : CapitalShip, stat : NurseStat = NurseStat()) extends ShipModule(parent, "Nurse") {
   var action = NurseAction.IDLE
 
   var healingSpeed = stat.healingSpeed

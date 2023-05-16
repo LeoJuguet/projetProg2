@@ -26,7 +26,7 @@ import scala.math.Pi
 //This is the base of what will be the ship modules in the final game (weapons, engines, etc.). It is an actor that can be placed on a ship.
 class ShipModule(
     var parent : CapitalShip,
-    var name : String,
+    var name : String = "ShipModule",
     textureFile : String = "Textures/Module/module.png"
 ) extends Actor(textureFile) {
 
@@ -41,7 +41,6 @@ class ShipModule(
     var shopWidget : ShipModuleWidget = _
     onPressed.connect( Unit =>
         {
-            print("clic")
             GameState.widgets -= shopWidget
             shopWidget = ShipModuleWidget(this)
             GameState.widgets += shopWidget
@@ -49,7 +48,6 @@ class ShipModule(
 
     onReleased.connect( Unit =>
         {
-            print("release")
             GameState.widgets -= shopWidget
         })
     
@@ -93,15 +91,12 @@ class ShipModule(
         // connection is an integer between 0 and 5
         this.connections_points(connection) = Some(module)
         module.connections_points((connection + connection_number/2) % connection_number)
-        println(connection)
-        println((connection + connection_number/2) % connection_number)
         
         var angle : Float = 0
         angle = (angle + (connection) * 2 * Pi / connection_number).toFloat
 
         module.localPosition = Vector2(this.localPosition.x + 2 * this.radius * Math.cos(angle).toFloat, this.localPosition.y + 2 * this.radius * Math.sin(angle).toFloat)
         module.checkOtherNeighoors()
-        println(module.localPosition)
     }
 
     def checkOtherNeighoors() = {

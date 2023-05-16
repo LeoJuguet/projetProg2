@@ -15,14 +15,14 @@ enum RecyclerAction:
   case RECYCLING(target: Wreck, state : Int = 0)
 
 class RecyclerStat(
-    var recyclerSpeed: Int,
-    var recyclerRange: Int,
+    var recyclerSpeed: Int = 1,
+    var recyclerRange: Int = 5,
     //TODO : when deltatime, do this in time, not in frame
-    var recyclingTime: Int,
-    var droneStats : DroneStats
+    var recyclingTime: Int = 5,
+    var droneStats : DroneStats = DroneStats()
 ) {}
 
-class RecyclerModule(parent : CapitalShip, stat : RecyclerStat) extends ShipModule(parent, "Recycler") {
+class RecyclerModule(parent : CapitalShip, stat : RecyclerStat = RecyclerStat()) extends ShipModule(parent, "Recycler") {
     var action = RecyclerAction.IDLE
 
     var recycleSpeed = stat.recyclerSpeed
