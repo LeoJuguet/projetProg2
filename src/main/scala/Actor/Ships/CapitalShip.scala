@@ -11,6 +11,7 @@ import sfml.window.Keyboard.Key
 import clickable.States
 import controller.Camera
 import shipmodule.{ModuleHexGraph, ShipModuleWidget}
+import event.*
 
 //this is the capital ship class. They are large ship able to hold a lot of cargo and house a lot of modules.
 //Their behavior is similar to the drone, except their action can only be IDLE or MOVE, the modules they are controlling will do the rest.
@@ -27,6 +28,8 @@ class CapitalShip(
     this.health = this.maxHealth
     this.regenerationRate = 10
     
+    var drawModule = Event[(RenderTarget /* target */, RenderStates /* states */)]
+
     var capitalShipModule = ShipModule(this,"CapitalShipModule")
 
     // TODO : remove that !!! Now we have a graph !
@@ -52,9 +55,12 @@ class CapitalShip(
         this.scrap -= price.scrap
 
 
+    
+    
+
     override def draw(target: RenderTarget, states: RenderStates) =
         val render_states = RenderStates(this.transform.combine(states.transform))
-        target.draw(capitalShipModule, render_states)
+        drawModule(target, states)
 
     //This function is the capital ship self controller, same as for the drones.
     override def updateUnit() : Unit =

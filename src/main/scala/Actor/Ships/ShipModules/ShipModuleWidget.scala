@@ -112,7 +112,7 @@ class ModuleCard(
         }
         case Some(value) => {
           if value.name != module.name then {
-            shipModule.connections_points(modulePos) = Some(MinerModule(shipModule.parent))
+            shipModule.setConnection(modulePos,MinerModule(shipModule.parent))
             shipModule.parent.scrap -= module.price.scrap
             shipModule.parent.copper -= module.price.copper
             shipModule.parent.iron -= module.price.iron

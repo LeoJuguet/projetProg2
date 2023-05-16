@@ -29,7 +29,6 @@ class ShipModule(
     textureFile : String = "Textures/Module/module.png"
 ) extends Actor(textureFile) {
 
-
     //TODO : GameState function createModule(module, parent, position) -> onDestroyed, added to actor lists, etc.
     this.parent.onDestroyed.connect(Unit => this.destroy())
 
@@ -61,7 +60,7 @@ class ShipModule(
         val render_states = RenderStates(this.transform.combine(states.transform))
         target.draw(sprite, render_states)
 
-
+    this.parent.drawModule.connect( (target,states) => {draw(target, states)})
 
     //
     // Gestion of Module connections
@@ -78,7 +77,7 @@ class ShipModule(
     var radius : Float = 1
 
     def setConnection(connection : Int, module : ShipModule) : Unit = {
-        // connection is an integer between 1 and 3
+        // connection is an integer between 0 and 5
         this.connections_points(connection) = Some(module)
         module.connections_points((connection + connection_number/2) % connection_number)
         
